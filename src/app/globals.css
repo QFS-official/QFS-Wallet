@@ -61,7 +61,7 @@
   --secondary-foreground: #E8EAF0;
   --muted: #151D2E;
   --muted-foreground: #6B7A99;
-  --accent: #D4A843;
+  --accent: #F0B90B;
   --accent-foreground: #1A1200;
   --destructive: #EF4444;
   --border: #1E293B;
@@ -98,7 +98,7 @@
   --secondary-foreground: #E8EAF0;
   --muted: #151D2E;
   --muted-foreground: #6B7A99;
-  --accent: #D4A843;
+  --accent: #F0B90B;
   --accent-foreground: #1A1200;
   --destructive: #EF4444;
   --border: #1E293B;
@@ -140,7 +140,7 @@
 }
 
 .qfs-glow-gold {
-  box-shadow: 0 0 20px rgba(212, 168, 67, 0.2), 0 0 60px rgba(212, 168, 67, 0.06);
+  box-shadow: 0 0 20px rgba(240, 185, 11, 0.2), 0 0 60px rgba(240, 185, 11, 0.06);
 }
 
 .qfs-glow-text {
@@ -148,7 +148,7 @@
 }
 
 .qfs-gold-text {
-  text-shadow: 0 0 20px rgba(212, 168, 67, 0.4);
+  text-shadow: 0 0 20px rgba(240, 185, 11, 0.4);
 }
 
 /* Card glass effect */
@@ -160,7 +160,7 @@
 
 /* Gradient backgrounds - Blue & Gold */
 .blue-gold-gradient {
-  background: linear-gradient(135deg, #1D4ED8 0%, #2563EB 40%, #D4A843 100%);
+  background: linear-gradient(135deg, #1D4ED8 0%, #2563EB 40%, #F0B90B 100%);
 }
 
 .blue-gradient {
@@ -190,7 +190,7 @@
   inset: 0;
   border-radius: inherit;
   padding: 1px;
-  background: linear-gradient(135deg, #2563EB, #D4A843, #2563EB);
+  background: linear-gradient(135deg, #2563EB, #F0B90B, #2563EB);
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
