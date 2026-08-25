@@ -174,7 +174,7 @@ function OnboardingScreen() {
         className="relative mb-6"
       >
         <div className="w-36 h-36 rounded-[2rem] qfs-glow overflow-hidden shadow-[0_0_60px_rgba(37,99,235,0.25)]">
-          <img src="/qfs-logo.png" alt="QFS Wallet" className="w-full h-full object-cover" />
+          <img src="/qfs-logo.jpg" alt="QFS Wallet" className="w-full h-full object-cover" />
         </div>
       </motion.div>
 
@@ -698,7 +698,7 @@ function DashboardScreen() {
       <div className="px-4 pt-4 pb-2 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="w-9 h-9 rounded-xl overflow-hidden">
-            <img src="/qfs-logo.png" alt="QFS" className="w-full h-full object-cover" />
+            <img src="/qfs-logo.jpg" alt="QFS" className="w-full h-full object-cover" />
           </div>
           <div>
             <p className="text-xs text-muted-foreground">QFS Wallet</p>
@@ -1704,7 +1704,7 @@ function SettingsScreen() {
         {/* App info */}
         <div className="text-center py-4">
           <div className="w-8 h-8 rounded-lg overflow-hidden mx-auto mb-2">
-            <img src="/qfs-logo.png" alt="QFS" className="w-full h-full object-cover" />
+            <img src="/qfs-logo.jpg" alt="QFS" className="w-full h-full object-cover" />
           </div>
           <p className="text-xs text-muted-foreground">QFS Wallet v1.0.0</p>
           <p className="text-[10px] text-muted-foreground mt-1">Secure. Non-Custodial. Multichain.</p>
@@ -1797,7 +1797,7 @@ function WalletLockScreen() {
         transition={{ delay: 0.1 }}
         className="w-20 h-20 rounded-3xl qfs-glow mb-8 overflow-hidden"
       >
-        <img src="/qfs-logo.png" alt="QFS" className="w-full h-full object-cover" />
+        <img src="/qfs-logo.jpg" alt="QFS" className="w-full h-full object-cover" />
       </motion.div>
 
       <motion.h1
