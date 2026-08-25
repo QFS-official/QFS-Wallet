@@ -163,8 +163,8 @@ function OnboardingScreen() {
       className="min-h-screen flex flex-col items-center justify-center px-6 relative overflow-hidden"
     >
       {/* Background glow orbs */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full bg-primary/5 blur-[100px] pointer-events-none" />
-      <div className="absolute bottom-1/4 left-1/3 w-[200px] h-[200px] rounded-full bg-primary/3 blur-[80px] pointer-events-none" />
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full bg-primary/6 blur-[100px] pointer-events-none" />
+      <div className="absolute bottom-1/4 left-1/3 w-[200px] h-[200px] rounded-full bg-accent/4 blur-[80px] pointer-events-none" />
 
       {/* Large Logo */}
       <motion.div
@@ -173,7 +173,7 @@ function OnboardingScreen() {
         transition={{ delay: 0.15, duration: 0.7, ease: 'easeOut' }}
         className="relative mb-6"
       >
-        <div className="w-36 h-36 rounded-[2rem] qfs-glow overflow-hidden shadow-[0_0_60px_rgba(16,185,129,0.2)]">
+        <div className="w-36 h-36 rounded-[2rem] qfs-glow overflow-hidden shadow-[0_0_60px_rgba(37,99,235,0.25)]">
           <img src="/qfs-logo.png" alt="QFS Wallet" className="w-full h-full object-cover" />
         </div>
       </motion.div>
@@ -185,7 +185,7 @@ function OnboardingScreen() {
         className="text-4xl font-bold tracking-tight mb-1.5"
       >
         <span className="qfs-glow-text text-primary">QFS</span>{' '}
-        <span className="text-foreground">Wallet</span>
+        <span className="text-accent font-bold">Wallet</span>
       </motion.h1>
 
       <motion.p
@@ -226,7 +226,7 @@ function OnboardingScreen() {
       >
         <button
           onClick={() => { setShowOnboarding(false); navigate('create-wallet'); }}
-          className="w-full h-13 rounded-xl emerald-gradient text-black font-semibold text-base tracking-wide hover:opacity-90 transition-opacity qfs-glow"
+          className="w-full h-13 rounded-xl blue-gold-gradient text-white font-semibold text-base tracking-wide hover:opacity-90 transition-opacity qfs-glow"
         >
           Create Wallet
         </button>
@@ -370,7 +370,7 @@ function CreateWalletScreen() {
               <button
                 onClick={handleGenerate}
                 disabled={isLoading}
-                className="mt-10 w-full max-w-xs h-12 rounded-xl emerald-gradient text-black font-semibold hover:opacity-90 transition-opacity disabled:opacity-50"
+                className="mt-10 w-full max-w-xs h-12 rounded-xl blue-gold-gradient text-white font-semibold hover:opacity-90 transition-opacity disabled:opacity-50"
               >
                 {isLoading ? 'Generating...' : 'Generate Recovery Phrase'}
               </button>
@@ -396,7 +396,7 @@ function CreateWalletScreen() {
               </div>
               <button
                 onClick={() => setStep(2)}
-                className="w-full h-12 rounded-xl emerald-gradient text-black font-semibold hover:opacity-90 transition-opacity"
+                className="w-full h-12 rounded-xl blue-gold-gradient text-white font-semibold hover:opacity-90 transition-opacity"
               >
                 I&apos;ve Saved My Phrase — Continue
               </button>
@@ -426,7 +426,7 @@ function CreateWalletScreen() {
               </div>
               <button
                 onClick={handleVerifyNext}
-                className="w-full h-12 rounded-xl emerald-gradient text-black font-semibold hover:opacity-90 transition-opacity"
+                className="w-full h-12 rounded-xl blue-gold-gradient text-white font-semibold hover:opacity-90 transition-opacity"
               >
                 Verify
               </button>
@@ -474,7 +474,7 @@ function CreateWalletScreen() {
               <button
                 onClick={handleCreateWallet}
                 disabled={isLoading}
-                className="w-full h-12 rounded-xl emerald-gradient text-black font-semibold hover:opacity-90 transition-opacity disabled:opacity-50"
+                className="w-full h-12 rounded-xl blue-gold-gradient text-white font-semibold hover:opacity-90 transition-opacity disabled:opacity-50"
               >
                 {isLoading ? 'Creating...' : 'Create Wallet'}
               </button>
@@ -503,7 +503,7 @@ function CreateWalletScreen() {
               </p>
               <button
                 onClick={() => navigate('dashboard')}
-                className="w-full max-w-xs h-12 rounded-xl emerald-gradient text-black font-semibold hover:opacity-90 transition-opacity"
+                className="w-full max-w-xs h-12 rounded-xl blue-gold-gradient text-white font-semibold hover:opacity-90 transition-opacity"
               >
                 Go to Dashboard
               </button>
@@ -637,7 +637,7 @@ function ImportWalletScreen() {
             <button
               onClick={handleImport}
               disabled={isLoading}
-              className="w-full h-12 rounded-xl emerald-gradient text-black font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 mt-8"
+              className="w-full h-12 rounded-xl blue-gold-gradient text-white font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 mt-8"
             >
               Import Wallet
             </button>
@@ -654,7 +654,7 @@ function ImportWalletScreen() {
             <button
               onClick={handleConfirm}
               disabled={isLoading}
-              className="w-full max-w-xs h-12 rounded-xl emerald-gradient text-black font-semibold hover:opacity-90 transition-opacity disabled:opacity-50"
+              className="w-full max-w-xs h-12 rounded-xl blue-gold-gradient text-white font-semibold hover:opacity-90 transition-opacity disabled:opacity-50"
             >
               {isLoading ? 'Importing...' : 'Confirm Import'}
             </button>
@@ -717,8 +717,9 @@ function DashboardScreen() {
 
       {/* Balance Card */}
       <div className="px-4 mb-4">
-        <motion.div className="glass-card rounded-2xl p-5 qfs-glow relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-[60px] pointer-events-none" />
+        <motion.div className="glass-card rounded-2xl p-5 qfs-glow relative overflow-hidden gradient-border">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-accent/5 rounded-full blur-[60px] pointer-events-none" />
+          <div className="absolute bottom-0 left-0 w-24 h-24 bg-primary/8 rounded-full blur-[50px] pointer-events-none" />
           <p className="text-xs text-muted-foreground mb-1">Total Portfolio Value</p>
           <div className="flex items-center gap-2 mb-1">
             <h2 className="text-3xl font-bold">
@@ -736,7 +737,7 @@ function DashboardScreen() {
           </div>
 
           {/* QFS specific balance */}
-          <div className="bg-black/30 rounded-xl p-3.5 flex items-center justify-between">
+          <div className="bg-accent/5 border border-accent/10 rounded-xl p-3.5 flex items-center justify-between">
             <div className="flex items-center gap-2.5">
               <div className="w-8 h-8 rounded-lg overflow-hidden">
                 <img src="/qfs-token-logo.png" alt="QFS" className="w-full h-full object-cover" />
@@ -748,7 +749,7 @@ function DashboardScreen() {
             </div>
             <div className="text-right">
               <p className="text-sm font-medium">{balanceHidden ? '••••' : `$${qfsValue.toFixed(2)}`}</p>
-              <p className="text-xs text-qfs-green">+4.2%</p>
+              <p className="text-xs text-accent">+4.2%</p>
             </div>
           </div>
         </motion.div>
@@ -989,7 +990,7 @@ function SendScreen() {
 
               <button
                 onClick={handleSend}
-                className="w-full h-12 rounded-xl emerald-gradient text-black font-semibold hover:opacity-90 transition-opacity mt-2"
+                className="w-full h-12 rounded-xl blue-gold-gradient text-white font-semibold hover:opacity-90 transition-opacity mt-2"
               >
                 Review Transaction
               </button>
@@ -1030,7 +1031,7 @@ function SendScreen() {
 
               <button
                 onClick={handleConfirm}
-                className="w-full h-12 rounded-xl emerald-gradient text-black font-semibold hover:opacity-90 transition-opacity"
+                className="w-full h-12 rounded-xl blue-gold-gradient text-white font-semibold hover:opacity-90 transition-opacity"
               >
                 Confirm & Send
               </button>
@@ -1284,7 +1285,7 @@ function SwapScreen() {
 
               <button
                 onClick={handleSwap}
-                className="w-full h-12 rounded-xl emerald-gradient text-black font-semibold hover:opacity-90 transition-opacity"
+                className="w-full h-12 rounded-xl blue-gold-gradient text-white font-semibold hover:opacity-90 transition-opacity"
               >
                 {fromAmount ? 'Review Swap' : 'Enter Amount'}
               </button>
@@ -1336,7 +1337,7 @@ function SwapScreen() {
 
               <button
                 onClick={handleConfirm}
-                className="w-full h-12 rounded-xl emerald-gradient text-black font-semibold hover:opacity-90 transition-opacity"
+                className="w-full h-12 rounded-xl blue-gold-gradient text-white font-semibold hover:opacity-90 transition-opacity"
               >
                 Confirm Swap
               </button>
@@ -1455,15 +1456,15 @@ function StakingScreen() {
             >
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-10 h-10 rounded-xl emerald-gradient flex items-center justify-center">
-                    <Coins className="size-5 text-black" />
+                  <div className="w-10 h-10 rounded-xl blue-gold-gradient flex items-center justify-center">
+                    <Coins className="size-5 text-white" />
                   </div>
                   <div>
                     <p className="text-sm font-semibold">{sp.name}</p>
                     <p className="text-xs text-muted-foreground">{sp.durationLabel} lock</p>
                   </div>
                 </div>
-                <Badge className="bg-qfs-green/10 text-qfs-green border-qfs-green/20 hover:bg-qfs-green/15">{formatAPY(sp.apy)}</Badge>
+                <Badge className="bg-accent/10 text-accent border-accent/20 hover:bg-accent/15">{formatAPY(sp.apy)}</Badge>
               </div>
               <div className="flex items-center justify-between text-xs text-muted-foreground">
                 <span>TVL: {formatTVL(sp.tvl)}</span>
@@ -1507,7 +1508,7 @@ function StakingScreen() {
                       </div>
                       <button
                         onClick={handleStake}
-                        className="w-full h-10 rounded-xl emerald-gradient text-black font-semibold text-sm hover:opacity-90 transition-opacity"
+                        className="w-full h-10 rounded-xl blue-gold-gradient text-white font-semibold text-sm hover:opacity-90 transition-opacity"
                       >
                         Stake QFS
                       </button>
@@ -1787,7 +1788,8 @@ function WalletLockScreen() {
       animate={{ opacity: 1 }}
       className="min-h-screen flex flex-col items-center justify-center px-6"
     >
-      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] rounded-full bg-primary/5 blur-[80px] pointer-events-none" />
+      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] rounded-full bg-primary/6 blur-[80px] pointer-events-none" />
+      <div className="absolute bottom-1/3 right-1/4 w-[200px] h-[200px] rounded-full bg-accent/4 blur-[80px] pointer-events-none" />
 
       <motion.div
         initial={{ scale: 0.8, opacity: 0 }}
@@ -1838,7 +1840,7 @@ function WalletLockScreen() {
         <button
           onClick={handleUnlock}
           disabled={isUnlocking}
-          className="w-full h-12 rounded-xl emerald-gradient text-black font-semibold hover:opacity-90 transition-opacity disabled:opacity-50"
+          className="w-full h-12 rounded-xl blue-gold-gradient text-white font-semibold hover:opacity-90 transition-opacity disabled:opacity-50"
         >
           {isUnlocking ? 'Unlocking...' : 'Unlock'}
         </button>
@@ -2119,7 +2121,7 @@ function AddTokenModal({ chainId, onClose }: { chainId: number; onClose: () => v
               <label className="text-xs text-muted-foreground mb-1.5 block">Name (optional)</label>
               <Input placeholder="Token Name" value={customName} onChange={(e) => setCustomName(e.target.value)} />
             </div>
-            <button onClick={handleAddCustom} className="w-full h-12 rounded-xl emerald-gradient text-black font-semibold hover:opacity-90 transition-opacity mt-2">
+            <button onClick={handleAddCustom} className="w-full h-12 rounded-xl blue-gold-gradient text-white font-semibold hover:opacity-90 transition-opacity mt-2">
               Add Token
             </button>
           </div>
