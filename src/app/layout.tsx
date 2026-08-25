@@ -15,8 +15,18 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "QFS Wallet | Quantum Financial System",
-  description: "QFS Wallet - Your gateway to the Quantum Financial System. Manage, swap, stake and track your digital assets securely.",
-  keywords: ["QFS", "Wallet", "Crypto", "Blockchain", "DeFi", "Quantum Financial System"],
+  description:
+    "QFS Wallet - Your gateway to the Quantum Financial System. Non-custodial, multi-chain crypto wallet with built-in DeFi features.",
+  keywords: [
+    "QFS",
+    "Wallet",
+    "Crypto",
+    "Blockchain",
+    "DeFi",
+    "Quantum Financial System",
+    "Non-custodial",
+    "Multi-chain",
+  ],
   authors: [{ name: "QFS Official" }],
   icons: {
     icon: "/logo.svg",
