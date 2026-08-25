@@ -184,8 +184,8 @@ function OnboardingScreen() {
         transition={{ delay: 0.35, duration: 0.5 }}
         className="text-4xl font-bold tracking-tight mb-1.5"
       >
-        <span className="qfs-glow-text text-primary">QFS</span>{' '}
-        <span className="text-accent font-bold">Wallet</span>
+        <span className="font-extrabold tracking-wider" style={{textShadow: '0 1px 0 rgba(255,255,255,0.15), 0 -1px 0 rgba(0,0,0,0.8), 0 0 20px rgba(212,168,67,0.3)'}}>QFS</span>{' '}
+        <span className="text-accent font-bold qfs-gold-text">Wallet</span>
       </motion.h1>
 
       <motion.p
@@ -207,7 +207,7 @@ function OnboardingScreen() {
         {features.map((f, i) => (
           <div key={i} className="flex items-center gap-3 text-sm">
             <div className="w-8 h-8 rounded-lg bg-primary/10 border border-primary/15 flex items-center justify-center shrink-0">
-              <f.icon className="size-4 text-primary" />
+              <f.icon className="size-4 text-accent" />
             </div>
             <div className="leading-tight">
               <span className="text-foreground font-medium">{f.label}</span>
@@ -351,7 +351,7 @@ function CreateWalletScreen() {
           {step === 0 && (
             <motion.div key="step0" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="flex flex-col items-center pt-12">
               <div className="w-20 h-20 rounded-2xl bg-primary/10 border border-primary/15 flex items-center justify-center mb-6">
-                <Wallet className="size-10 text-primary" />
+                <Wallet className="size-10 text-accent" />
               </div>
               <h2 className="text-xl font-semibold mb-3">Create a New Wallet</h2>
               <p className="text-muted-foreground text-sm text-center max-w-xs mb-8">
@@ -361,7 +361,7 @@ function CreateWalletScreen() {
                 {['Non-custodial, only you control your keys', 'Multi-chain support from day one', 'Built-in staking & swap features'].map((feature, i) => (
                   <div key={i} className="flex items-center gap-3 text-sm text-muted-foreground">
                     <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                      <Check className="size-3 text-primary" />
+                      <Check className="size-3 text-accent" />
                     </div>
                     {feature}
                   </div>
@@ -438,7 +438,7 @@ function CreateWalletScreen() {
             <motion.div key="step3" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="pt-4">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center">
-                  <Lock className="size-6 text-primary" />
+                  <Lock className="size-6 text-accent" />
                 </div>
                 <div>
                   <h2 className="text-lg font-semibold">Set Password</h2>
@@ -645,7 +645,7 @@ function ImportWalletScreen() {
         ) : (
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col items-center pt-12">
             <div className="w-16 h-16 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-6">
-              <Key className="size-8 text-primary" />
+              <Key className="size-8 text-accent" />
             </div>
             <h2 className="text-lg font-semibold mb-2">Confirm Import</h2>
             <p className="text-sm text-muted-foreground text-center mb-8">
@@ -685,11 +685,11 @@ function DashboardScreen() {
   const displayTransactions = transactions.length > 0 ? transactions.slice(0, 5) : DEMO_TRANSACTIONS;
 
   const quickActions = [
-    { icon: Send, label: 'Send', screen: 'send' as Screen, color: 'text-qfs-green' },
-    { icon: QrCode, label: 'Receive', screen: 'receive' as Screen, color: 'text-blue-400' },
-    { icon: Zap, label: 'Buy', screen: 'dashboard' as Screen, color: 'text-primary' },
-    { icon: ArrowLeftRight, label: 'Swap', screen: 'swap' as Screen, color: 'text-purple-400' },
-    { icon: TrendingUp, label: 'Stake', screen: 'staking' as Screen, color: 'text-orange-400' },
+    { icon: Send, label: 'Send', screen: 'send' as Screen, color: 'text-accent' },
+    { icon: QrCode, label: 'Receive', screen: 'receive' as Screen, color: 'text-accent' },
+    { icon: Zap, label: 'Buy', screen: 'dashboard' as Screen, color: 'text-accent' },
+    { icon: ArrowLeftRight, label: 'Swap', screen: 'swap' as Screen, color: 'text-accent' },
+    { icon: TrendingUp, label: 'Stake', screen: 'staking' as Screen, color: 'text-accent' },
   ];
 
   return (
@@ -710,7 +710,7 @@ function DashboardScreen() {
           </button>
           <button className="p-2 rounded-lg hover:bg-white/5 transition-colors relative">
             <Bell className="size-4 text-muted-foreground" />
-            <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-primary" />
+            <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-accent" />
           </button>
         </div>
       </div>
@@ -860,7 +860,7 @@ function DashboardScreen() {
               }`}>
                 {tx.type === 'receive' ? <ArrowDownLeft className="size-4 text-qfs-green" /> :
                  tx.type === 'send' ? <ArrowUpRight className="size-4 text-qfs-red" /> :
-                 tx.type === 'swap' ? <ArrowLeftRight className="size-4 text-primary" /> :
+                 tx.type === 'swap' ? <ArrowLeftRight className="size-4 text-accent" /> :
                  <TrendingUp className="size-4 text-qfs-green" />}
               </div>
               <div className="flex-1 min-w-0">
@@ -972,7 +972,7 @@ function SendScreen() {
                   <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
                     <button
                       onClick={() => setAmount('0.4521')}
-                      className="text-xs text-primary px-2 py-0.5 rounded bg-primary/10 hover:bg-primary/20 transition-colors"
+                      className="text-xs text-accent px-2 py-0.5 rounded bg-primary/10 hover:bg-primary/20 transition-colors"
                     >
                       MAX
                     </button>
@@ -1205,7 +1205,7 @@ function SwapScreen() {
                   onClick={handleSwapTokens}
                   className="w-10 h-10 rounded-xl bg-secondary border-4 border-background flex items-center justify-center hover:bg-primary/10 transition-colors"
                 >
-                  <ArrowLeftRight className="size-4 text-primary" />
+                  <ArrowLeftRight className="size-4 text-accent" />
                 </button>
               </div>
 
@@ -1240,7 +1240,7 @@ function SwapScreen() {
                     <span className="text-sm">Slippage Tolerance</span>
                   </div>
                   <div className="flex items-center gap-1">
-                    <span className="text-sm font-medium text-primary">{slippage}%</span>
+                    <span className="text-sm font-medium text-accent">{slippage}%</span>
                     <ChevronDown className={`size-3.5 text-muted-foreground transition-transform ${showSlippage ? 'rotate-180' : ''}`} />
                   </div>
                 </button>
@@ -1294,7 +1294,7 @@ function SwapScreen() {
             <motion.div key="swap-confirm" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="pt-4">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
-                  <ArrowLeftRight className="size-6 text-primary" />
+                  <ArrowLeftRight className="size-6 text-accent" />
                 </div>
                 <div>
                   <h2 className="text-lg font-semibold">Confirm Swap</h2>
@@ -1308,7 +1308,7 @@ function SwapScreen() {
                     <p className="text-2xl font-bold">{parseFloat(fromAmount).toLocaleString('en-US', { maximumFractionDigits: 2 })}</p>
                     <p className="text-sm text-muted-foreground">{fromToken}</p>
                   </div>
-                  <ArrowLeftRight className="size-5 text-primary" />
+                  <ArrowLeftRight className="size-5 text-accent" />
                   <div className="text-center">
                     <p className="text-2xl font-bold text-primary">{parseFloat(toAmountCalc).toFixed(6)}</p>
                     <p className="text-sm text-muted-foreground">{toToken}</p>
@@ -1399,7 +1399,7 @@ function StakingScreen() {
           onClick={() => setShowCalculator(!showCalculator)}
           className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-secondary hover:bg-white/5 transition-colors"
         >
-          <BarChart3 className="size-3.5 text-primary" />
+          <BarChart3 className="size-3.5 text-accent" />
           <span className="text-xs">Calculator</span>
         </button>
       </div>
@@ -1421,7 +1421,7 @@ function StakingScreen() {
             </div>
             <div className="bg-primary/5 rounded-lg p-3 flex items-center justify-between">
               <span className="text-xs text-muted-foreground">Estimated Rewards</span>
-              <span className="text-lg font-bold text-primary">{estimatedRewards.toFixed(2)} QFS</span>
+              <span className="text-lg font-bold text-accent">{estimatedRewards.toFixed(2)} QFS</span>
             </div>
           </div>
         </motion.div>
@@ -1496,7 +1496,7 @@ function StakingScreen() {
                           />
                           <button
                             onClick={() => setStakeAmount(qfsBalance || '12580')}
-                            className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-primary px-2 py-0.5 rounded bg-primary/10"
+                            className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-accent px-2 py-0.5 rounded bg-primary/10"
                           >
                             MAX
                           </button>
@@ -1596,7 +1596,7 @@ function DAppsScreen() {
           <p className="text-xs text-muted-foreground mb-4">Browse and interact with decentralized applications directly from your wallet</p>
           <button
             onClick={() => addToast('DApp browser coming soon!', 'info')}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-secondary hover:bg-white/5 transition-colors text-sm text-primary"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-secondary hover:bg-white/5 transition-colors text-sm text-accent"
           >
             <ExternalLink className="size-3.5" />
             Enter URL
@@ -1937,10 +1937,10 @@ function BottomNav() {
                   key={item.screen}
                   onClick={() => navigate(item.screen)}
                   className={`flex flex-col items-center gap-0.5 px-2 py-1.5 rounded-xl transition-colors min-w-[56px] ${
-                    isActive(item.screen) ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
+                    isActive(item.screen) ? 'text-accent' : 'text-muted-foreground hover:text-foreground'
                   }`}
                 >
-                  <item.icon className={`size-5 ${isActive(item.screen) ? 'text-primary' : ''}`} />
+                  <item.icon className={`size-5 ${isActive(item.screen) ? 'text-accent' : ''}`} />
                   <span className="text-[10px] font-medium">{item.label}</span>
                   {isActive(item.screen) && (
                     <motion.div layoutId="nav-indicator" className="w-1 h-1 rounded-full bg-primary" />
@@ -1953,7 +1953,7 @@ function BottomNav() {
                 <button
                   onClick={() => setShowMore(!showMore)}
                   className={`flex flex-col items-center gap-0.5 px-2 py-1.5 rounded-xl transition-colors min-w-[56px] ${
-                    isActive('settings') ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
+                    isActive('settings') ? 'text-accent' : 'text-muted-foreground hover:text-foreground'
                   }`}
                 >
                   <Menu className="size-5" />
@@ -2090,7 +2090,7 @@ function AddTokenModal({ chainId, onClose }: { chainId: number; onClose: () => v
                   </div>
                   <button
                     onClick={() => { addToken({ ...token, balance: '0.00', valueUsd: 0 }); addToast(`${token.symbol} added`, 'success'); onClose(); }}
-                    className="px-3 py-1.5 rounded-lg bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20 transition-colors"
+                    className="px-3 py-1.5 rounded-lg bg-primary/10 text-accent text-xs font-medium hover:bg-primary/20 transition-colors"
                   >Add</button>
                 </div>
               ))}
@@ -2171,7 +2171,7 @@ function WalletScreen() {
             {balanceHidden ? <EyeOff className="size-4 text-muted-foreground" /> : <Eye className="size-4 text-muted-foreground" />}
           </button>
           <button onClick={() => setShowAddToken(true)} className="p-2 rounded-lg hover:bg-white/5">
-            <Plus className="size-4 text-primary" />
+            <Plus className="size-4 text-accent" />
           </button>
         </div>
       </div>
