@@ -89,6 +89,32 @@ const DAPP_CONNECTIONS = [
   { id: '3', name: 'Uniswap', domain: 'app.uniswap.org', icon: '🦄', chainId: 1, permissions: ['View Address'], connected: true, lastUsed: '1 day ago' },
 ];
 
+// ─── Token Icon Helper ─────────────────────────────────────────────
+const TOKEN_ICONS: Record<string, string> = {
+  'QFS': '/qfs-token-logo.png',
+  'GCRM': '/gcrm-token-logo.png',
+  'AlA': '/ala-token-logo.png',
+  'NESG': '/nesg-token-logo.png',
+  'ETH': '/eth-token-logo.png',
+  'BNB': '/bnb-token-logo.png',
+  'SOL': '/sol-token-logo.png',
+  'POL': '/pol-token-logo.png',
+  'USDT': '/usdt-token-logo.png',
+  'USDC': '/usdc-token-logo.png',
+};
+
+const TOKEN_SYMBOLS_WITH_ICONS = new Set(Object.keys(TOKEN_ICONS));
+
+function TokenIcon({ symbol, className = 'w-full h-full object-cover' }: { symbol: string; className?: string }) {
+  const icon = TOKEN_ICONS[symbol];
+  if (icon) return <img src={icon} alt={symbol} className={className} />;
+  return <span>{symbol.charAt(0)}</span>;
+}
+
+function hasTokenIcon(symbol: string): boolean {
+  return TOKEN_SYMBOLS_WITH_ICONS.has(symbol);
+}
+
 // ─── Helper Components ───────────────────────────────────────────────
 function ScreenHeader({ title, onBack, rightAction }: { title: string; onBack?: () => void; rightAction?: React.ReactNode }) {
   return (
@@ -816,9 +842,9 @@ function DashboardScreen() {
             >
               <div className="flex items-center gap-3">
                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-sm font-bold overflow-hidden ${
-                  token.symbol === 'QFS' || token.symbol === 'GCRM' || token.symbol === 'AlA' || token.symbol === 'NESG' || token.symbol === 'USDT' || token.symbol === 'USDC' ? '' : 'bg-secondary text-muted-foreground'
+                  hasTokenIcon(token.symbol) ? '' : 'bg-secondary text-muted-foreground'
                 }`}>
-                  {token.symbol === 'QFS' ? <img src="/qfs-token-logo.png" alt="QFS" className="w-full h-full object-cover" /> : token.symbol === 'GCRM' ? <img src="/gcrm-token-logo.png" alt="GCRM" className="w-full h-full object-cover" /> : token.symbol === 'AlA' ? <img src="/ala-token-logo.png" alt="AlA" className="w-full h-full object-cover" /> : token.symbol === 'NESG' ? <img src="/nesg-token-logo.png" alt="NESG" className="w-full h-full object-cover" /> : token.symbol === 'USDT' ? <img src="/usdt-token-logo.png" alt="USDT" className="w-full h-full object-cover" /> : token.symbol === 'USDC' ? <img src="/usdc-token-logo.png" alt="USDC" className="w-full h-full object-cover" /> : token.symbol.charAt(0)}
+                  <TokenIcon symbol={token.symbol} />
                 </div>
                 <div>
                   <p className="text-sm font-medium">{token.symbol}</p>
@@ -1191,8 +1217,8 @@ function SwapScreen() {
                     className="flex-1 bg-transparent text-2xl font-semibold outline-none min-w-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   />
                   <button className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-secondary hover:bg-white/5 transition-colors shrink-0">
-                    <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold overflow-hidden ${fromToken === 'QFS' || fromToken === 'GCRM' ? '' : 'bg-blue-500/20 text-blue-400'}`}>
-                      {fromToken === 'QFS' ? <img src="/qfs-token-logo.png" alt="QFS" className="w-full h-full object-cover" /> : fromToken === 'GCRM' ? <img src="/gcrm-token-logo.png" alt="GCRM" className="w-full h-full object-cover" /> : fromToken === 'AlA' ? <img src="/ala-token-logo.png" alt="AlA" className="w-full h-full object-cover" /> : fromToken === 'NESG' ? <img src="/nesg-token-logo.png" alt="NESG" className="w-full h-full object-cover" /> : fromToken === 'USDT' ? <img src="/usdt-token-logo.png" alt="USDT" className="w-full h-full object-cover" /> : fromToken === 'USDC' ? <img src="/usdc-token-logo.png" alt="USDC" className="w-full h-full object-cover" /> : fromToken.charAt(0)}
+                    <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold overflow-hidden ${hasTokenIcon(fromToken) ? '' : 'bg-blue-500/20 text-blue-400'}`}>
+                      <TokenIcon symbol={fromToken} />
                     </span>
                     <span className="text-sm font-medium">{fromToken}</span>
                   </button>
@@ -1224,8 +1250,8 @@ function SwapScreen() {
                     className="flex-1 bg-transparent text-2xl font-semibold outline-none min-w-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                   />
                   <button className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-secondary hover:bg-white/5 transition-colors shrink-0">
-                    <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold overflow-hidden ${toToken === 'QFS' || toToken === 'GCRM' ? '' : 'bg-blue-500/20 text-blue-400'}`}>
-                      {toToken === 'QFS' ? <img src="/qfs-token-logo.png" alt="QFS" className="w-full h-full object-cover" /> : toToken === 'GCRM' ? <img src="/gcrm-token-logo.png" alt="GCRM" className="w-full h-full object-cover" /> : toToken === 'AlA' ? <img src="/ala-token-logo.png" alt="AlA" className="w-full h-full object-cover" /> : toToken === 'NESG' ? <img src="/nesg-token-logo.png" alt="NESG" className="w-full h-full object-cover" /> : toToken === 'USDT' ? <img src="/usdt-token-logo.png" alt="USDT" className="w-full h-full object-cover" /> : toToken === 'USDC' ? <img src="/usdc-token-logo.png" alt="USDC" className="w-full h-full object-cover" /> : toToken.charAt(0)}
+                    <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold overflow-hidden ${hasTokenIcon(toToken) ? '' : 'bg-blue-500/20 text-blue-400'}`}>
+                      <TokenIcon symbol={toToken} />
                     </span>
                     <span className="text-sm font-medium">{toToken}</span>
                   </button>
@@ -2081,8 +2107,8 @@ function AddTokenModal({ chainId, onClose }: { chainId: number; onClose: () => v
             <div className="flex flex-col gap-1.5">
               {filteredTokens.map((token) => (
                 <div key={token.address + token.symbol} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/[0.03] transition-colors">
-                  <div className={`w-9 h-9 rounded-lg flex items-center justify-center text-xs font-bold shrink-0 ${token.symbol === 'QFS' || token.symbol === 'GCRM' || token.symbol === 'AlA' || token.symbol === 'NESG' || token.symbol === 'USDT' || token.symbol === 'USDC' ? 'overflow-hidden' : 'bg-secondary text-muted-foreground'}`}>
-                    {token.symbol === 'QFS' ? <img src="/qfs-token-logo.png" alt="QFS" className="w-full h-full object-cover" /> : token.symbol === 'GCRM' ? <img src="/gcrm-token-logo.png" alt="GCRM" className="w-full h-full object-cover" /> : token.symbol === 'AlA' ? <img src="/ala-token-logo.png" alt="AlA" className="w-full h-full object-cover" /> : token.symbol === 'NESG' ? <img src="/nesg-token-logo.png" alt="NESG" className="w-full h-full object-cover" /> : token.symbol === 'USDT' ? <img src="/usdt-token-logo.png" alt="USDT" className="w-full h-full object-cover" /> : token.symbol === 'USDC' ? <img src="/usdc-token-logo.png" alt="USDC" className="w-full h-full object-cover" /> : token.symbol.charAt(0)}
+                  <div className={`w-9 h-9 rounded-lg flex items-center justify-center text-xs font-bold shrink-0 ${hasTokenIcon(token.symbol) ? 'overflow-hidden' : 'bg-secondary text-muted-foreground'}`}>
+                    <TokenIcon symbol={token.symbol} />
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium">{token.symbol}</p>
@@ -2209,9 +2235,8 @@ function WalletScreen() {
               className="glass-card rounded-xl p-4 flex items-center justify-between cursor-pointer hover:bg-white/[0.03] transition-colors"
             >
               <div className="flex items-center gap-3">
-                <div className={`w-11 h-11 rounded-xl flex items-center justify-center text-sm font-bold ${token.symbol === 'QFS' || token.symbol === 'GCRM' || token.symbol === 'AlA' || token.symbol === 'NESG' || token.symbol === 'USDT' || token.symbol === 'USDC' ? 'overflow-hidden' : 'bg-secondary text-muted-foreground'}`}>
-                  {token.symbol === 'QFS' ? <img src="/qfs-token-logo.png" alt="QFS" className="w-full h-full object-cover" /> : token.symbol === 'GCRM' ? <img src="/gcrm-token-logo.png" alt="GCRM" className="w-full h-full object-cover" /> : token.symbol === 'AlA' ? <img src="/ala-token-logo.png" alt="AlA" className="w-full h-full object-cover" /> : token.symbol === 'NESG' ? <img src="/nesg-token-logo.png" alt="NESG" className="w-full h-full object-cover" /> : token.symbol === 'USDT' ? <img src="/usdt-token-logo.png" alt="USDT" className="w-full h-full object-cover" /> : token.symbol === 'USDC' ? <img src="/usdc-token-logo.png" alt="USDC" className="w-full h-full object-cover" /> : token.symbol.charAt(0)}
-                </div>
+                <div className={`w-11 h-11 rounded-xl flex items-center justify-center text-sm font-bold ${hasTokenIcon(token.symbol) ? 'overflow-hidden' : 'bg-secondary text-muted-foreground'}`}>
+                  <TokenIcon symbol={token.symbol} />
                 <div>
                   <p className="text-sm font-semibold">{token.symbol}</p>
                   <p className="text-xs text-muted-foreground">{token.name}</p>
