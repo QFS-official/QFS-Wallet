@@ -185,7 +185,7 @@ function OnboardingScreen() {
         className="text-4xl font-bold tracking-tight mb-1.5"
       >
         <span className="font-extrabold tracking-wider" style={{textShadow: '0 1px 0 rgba(255,255,255,0.15), 0 -1px 0 rgba(0,0,0,0.8), 0 0 20px rgba(212,168,67,0.3)'}}>QFS</span>{' '}
-        <span className="text-accent font-bold qfs-gold-text">Wallet</span>
+        <span className="font-bold" style={{color: '#F0B90B', textShadow: '0 0 15px rgba(240,185,11,0.4)'}}>Wallet</span>
       </motion.h1>
 
       <motion.p
