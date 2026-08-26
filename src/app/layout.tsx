@@ -29,7 +29,11 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "QFS Official" }],
   icons: {
-    icon: "/logo.svg",
+    icon: [
+      { url: "/favicon.ico", sizes: "32x32" },
+      { url: "/favicon.png", sizes: "551x535", type: "image/png" },
+    ],
+    apple: "/apple-touch-icon.png",
   },
 };
 
