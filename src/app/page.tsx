@@ -2237,6 +2237,7 @@ function WalletScreen() {
               <div className="flex items-center gap-3">
                 <div className={`w-11 h-11 rounded-xl flex items-center justify-center text-sm font-bold ${hasTokenIcon(token.symbol) ? 'overflow-hidden' : 'bg-secondary text-muted-foreground'}`}>
                   <TokenIcon symbol={token.symbol} />
+                </div>
                 <div>
                   <p className="text-sm font-semibold">{token.symbol}</p>
                   <p className="text-xs text-muted-foreground">{token.name}</p>
