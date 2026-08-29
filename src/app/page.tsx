@@ -58,6 +58,7 @@ import {
   Clock,
   ChevronDown,
   Copy as CopyIcon,
+  CircleDot,
 } from 'lucide-react';
 
 // ─── Animation Variants ─────────────────────────────────────────────
@@ -66,7 +67,7 @@ const pageVariants = {
   animate: { opacity: 1, x: 0 },
   exit: { opacity: 0, x: -20 },
 };
-const pageTransition = { type: 'tween', duration: 0.25 };
+const pageTransition = { type: 'tween', duration: 0.2 };
 
 // ─── Demo Data ───────────────────────────────────────────────────────
 const DEMO_TRANSACTIONS = [
@@ -105,10 +106,14 @@ const TOKEN_ICONS: Record<string, string> = {
 
 const TOKEN_SYMBOLS_WITH_ICONS = new Set(Object.keys(TOKEN_ICONS));
 
-function TokenIcon({ symbol, className = 'w-full h-full object-cover' }: { symbol: string; className?: string }) {
+function TokenIcon({ symbol, size = 40, className = '' }: { symbol: string; size?: number; className?: string }) {
   const icon = TOKEN_ICONS[symbol];
-  if (icon) return <img src={icon} alt={symbol} className={className} />;
-  return <span>{symbol.charAt(0)}</span>;
+  if (icon) return <img src={icon} alt={symbol} className={`rounded-full ${className}`} style={{ width: size, height: size }} />;
+  return (
+    <div className={`rounded-full bg-[#2B3139] flex items-center justify-center font-semibold text-[#848E9C] ${className}`} style={{ width: size, height: size, fontSize: size * 0.38 }}>
+      {symbol.charAt(0)}
+    </div>
+  );
 }
 
 function hasTokenIcon(symbol: string): boolean {
@@ -118,16 +123,16 @@ function hasTokenIcon(symbol: string): boolean {
 // ─── Helper Components ───────────────────────────────────────────────
 function ScreenHeader({ title, onBack, rightAction }: { title: string; onBack?: () => void; rightAction?: React.ReactNode }) {
   return (
-    <div className="flex items-center justify-between px-4 py-3">
+    <div className="flex items-center justify-between px-4 py-3 sticky top-0 bg-[#181A20] z-10">
       {onBack ? (
-        <button onClick={onBack} className="p-2 -ml-2 rounded-xl hover:bg-white/5 transition-colors">
-          <ChevronLeft className="size-5 text-muted-foreground" />
+        <button onClick={onBack} className="p-2 -ml-2 rounded-xl hover:bg-[#2B3139] transition-colors">
+          <ChevronLeft className="size-5 text-[#EAECEF]" />
         </button>
       ) : (
         <div className="w-9" />
       )}
-      <h1 className="text-lg font-semibold">{title}</h1>
-      <div className="w-9">{rightAction}</div>
+      <h1 className="text-base font-semibold text-[#EAECEF]">{title}</h1>
+      <div className="w-9 flex justify-center">{rightAction}</div>
     </div>
   );
 }
@@ -143,21 +148,13 @@ function ToastContainer() {
             initial={{ opacity: 0, y: -20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -20, scale: 0.95 }}
-            className={`glass-card rounded-xl px-4 py-3 flex items-center gap-3 ${
-              toast.type === 'success'
-                ? 'border-qfs-green/30'
-                : toast.type === 'error'
-                  ? 'border-qfs-red/30'
-                  : 'border-primary/30'
-            }`}
+            className="rounded-xl px-4 py-3 flex items-center gap-3 bg-[#2B3139] border border-[#363C45]"
           >
-            <div
-              className={`w-2 h-2 rounded-full shrink-0 ${
-                toast.type === 'success' ? 'bg-qfs-green' : toast.type === 'error' ? 'bg-qfs-red' : 'bg-primary'
-              }`}
-            />
-            <span className="text-sm flex-1">{toast.message}</span>
-            <button onClick={() => removeToast(toast.id)} className="text-muted-foreground hover:text-foreground">
+            <div className={`w-2 h-2 rounded-full shrink-0 ${
+              toast.type === 'success' ? 'bg-[#0ECB81]' : toast.type === 'error' ? 'bg-[#F6465D]' : 'bg-[#F0B90B]'
+            }`} />
+            <span className="text-sm flex-1 text-[#EAECEF]">{toast.message}</span>
+            <button onClick={() => removeToast(toast.id)} className="text-[#848E9C] hover:text-[#EAECEF]">
               <X className="size-4" />
             </button>
           </motion.div>
@@ -174,8 +171,8 @@ function OnboardingScreen() {
 
   const features = [
     { icon: Key, label: 'Non-custodial', desc: 'Only you control your keys' },
-    { icon: Globe, label: 'Multi-chain', desc: 'Support from day one' },
-    { icon: ArrowLeftRight, label: 'Staking & Swap', desc: 'Built-in DeFi features' },
+    { icon: Globe, label: 'Multi-chain', desc: 'BNB, ETH, SOL & more' },
+    { icon: ArrowLeftRight, label: 'Swap & Stake', desc: 'Built-in DeFi tools' },
   ];
 
   return (
@@ -186,20 +183,16 @@ function OnboardingScreen() {
       animate="animate"
       exit="exit"
       transition={pageTransition}
-      className="min-h-screen flex flex-col items-center justify-center px-6 relative overflow-hidden"
+      className="min-h-screen flex flex-col items-center justify-center px-6 relative overflow-hidden bg-[#181A20]"
     >
-      {/* Background glow orbs */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full bg-primary/6 blur-[100px] pointer-events-none" />
-      <div className="absolute bottom-1/4 left-1/3 w-[200px] h-[200px] rounded-full bg-accent/4 blur-[80px] pointer-events-none" />
-
-      {/* Large Logo */}
+      {/* Logo */}
       <motion.div
         initial={{ scale: 0.7, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        transition={{ delay: 0.15, duration: 0.7, ease: 'easeOut' }}
-        className="relative mb-6"
+        transition={{ delay: 0.15, duration: 0.6, ease: 'easeOut' }}
+        className="relative mb-8"
       >
-        <div className="w-36 h-36 rounded-[2rem] qfs-glow overflow-hidden shadow-[0_0_60px_rgba(37,99,235,0.25)]">
+        <div className="w-28 h-28 rounded-3xl overflow-hidden shadow-lg shadow-[#F0B90B]/10">
           <img src="/qfs-logo.jpg" alt="QFS Wallet" className="w-full h-full object-cover" />
         </div>
       </motion.div>
@@ -207,58 +200,58 @@ function OnboardingScreen() {
       <motion.h1
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.35, duration: 0.5 }}
-        className="text-4xl font-bold tracking-tight mb-1.5"
+        transition={{ delay: 0.3, duration: 0.5 }}
+        className="text-3xl font-bold tracking-tight mb-1 text-[#EAECEF]"
       >
-        <span className="font-extrabold tracking-wider" style={{textShadow: '0 1px 0 rgba(255,255,255,0.15), 0 -1px 0 rgba(0,0,0,0.8), 0 0 20px rgba(212,168,67,0.3)'}}>QFS</span>{' '}
-        <span className="font-bold" style={{color: '#F0B90B', textShadow: '0 0 15px rgba(240,185,11,0.4)'}}>Wallet</span>
+        <span className="font-extrabold">QFS</span>{' '}
+        <span style={{ color: '#F0B90B' }}>Wallet</span>
       </motion.h1>
 
       <motion.p
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.5, duration: 0.5 }}
-        className="text-muted-foreground text-sm tracking-widest uppercase mb-6"
+        transition={{ delay: 0.45, duration: 0.5 }}
+        className="text-[#848E9C] text-sm tracking-wider uppercase mb-10"
       >
-        Secure. Non-Custodial. Multichain. Web3.
+        Secure · Non-Custodial · Multichain
       </motion.p>
 
-      {/* Feature list with icons */}
+      {/* Features */}
       <motion.div
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.6, duration: 0.5 }}
-        className="w-full max-w-xs flex flex-col gap-3 mb-8"
+        transition={{ delay: 0.55, duration: 0.5 }}
+        className="w-full max-w-xs flex flex-col gap-4 mb-10"
       >
         {features.map((f, i) => (
           <div key={i} className="flex items-center gap-3 text-sm">
-            <div className="w-8 h-8 rounded-lg bg-primary/10 border border-primary/15 flex items-center justify-center shrink-0">
-              <f.icon className="size-4 text-accent" />
+            <div className="w-10 h-10 rounded-xl bg-[#2B3139] flex items-center justify-center shrink-0">
+              <f.icon className="size-4 text-[#F0B90B]" />
             </div>
             <div className="leading-tight">
-              <span className="text-foreground font-medium">{f.label}</span>
-              <span className="text-muted-foreground"> {f.desc}</span>
+              <span className="text-[#EAECEF] font-medium">{f.label}</span>
+              <p className="text-[#848E9C] text-xs mt-0.5">{f.desc}</p>
             </div>
           </div>
         ))}
       </motion.div>
 
-      {/* Action Buttons */}
+      {/* Buttons */}
       <motion.div
         initial={{ y: 30, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.75, duration: 0.5 }}
+        transition={{ delay: 0.7, duration: 0.5 }}
         className="w-full max-w-xs flex flex-col gap-3"
       >
         <button
           onClick={() => { setShowOnboarding(false); navigate('create-wallet'); }}
-          className="w-full h-13 rounded-xl blue-gold-gradient text-white font-semibold text-base tracking-wide hover:opacity-90 transition-opacity qfs-glow"
+          className="w-full h-[52px] rounded-xl bnb-btn-primary text-base"
         >
           Create Wallet
         </button>
         <button
           onClick={() => { setShowOnboarding(false); navigate('import-wallet'); }}
-          className="w-full h-13 rounded-xl border border-border bg-transparent text-foreground font-medium text-base hover:bg-white/5 transition-colors"
+          className="w-full h-[52px] rounded-xl bnb-btn-outline text-base font-medium"
         >
           Import Wallet
         </button>
@@ -267,8 +260,8 @@ function OnboardingScreen() {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 1 }}
-        className="mt-8 flex items-center gap-2 text-muted-foreground text-xs"
+        transition={{ delay: 0.9 }}
+        className="mt-8 flex items-center gap-2 text-[#848E9C] text-xs"
       >
         <Shield className="size-3" />
         <span>Your keys, your crypto. Always.</span>
@@ -312,29 +305,16 @@ function CreateWalletScreen() {
 
   const handleVerifyNext = useCallback(() => {
     const errors = new Set<number>();
-    const challengeIndices = [1, 4, 8, 11];
-    challengeIndices.forEach((idx) => {
-      if (verifyWords[idx]?.toLowerCase().trim() !== seedPhrase[idx]?.toLowerCase()) {
-        errors.add(idx);
-      }
+    [1, 4, 8, 11].forEach((idx) => {
+      if (verifyWords[idx]?.toLowerCase().trim() !== seedPhrase[idx]?.toLowerCase()) errors.add(idx);
     });
     setVerifyErrors(errors);
-    if (errors.size === 0) {
-      setStep(3);
-    } else {
-      addToast('Some words are incorrect. Please try again.', 'error');
-    }
+    if (errors.size === 0) { setStep(3); } else { addToast('Some words are incorrect.', 'error'); }
   }, [verifyWords, seedPhrase, addToast]);
 
   const handleCreateWallet = useCallback(async () => {
-    if (password.length < 8) {
-      addToast('Password must be at least 8 characters', 'error');
-      return;
-    }
-    if (password !== confirmPassword) {
-      addToast('Passwords do not match', 'error');
-      return;
-    }
+    if (password.length < 8) { addToast('Password must be at least 8 characters', 'error'); return; }
+    if (password !== confirmPassword) { addToast('Passwords do not match', 'error'); return; }
     setLoading(true);
     try {
       const result = await createEncryptedWallet(password);
@@ -350,187 +330,133 @@ function CreateWalletScreen() {
   }, [password, confirmPassword, setWalletCreated, setLoading, addToast]);
 
   return (
-    <motion.div
-      key="create-wallet"
-      variants={pageVariants}
-      initial="initial"
-      animate="animate"
-      exit="exit"
-      transition={pageTransition}
-      className="min-h-screen flex flex-col"
-    >
+    <motion.div key="create-wallet" variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={pageTransition} className="min-h-screen flex flex-col bg-[#181A20]">
       <ScreenHeader title="Create Wallet" onBack={step === 0 ? () => setShowOnboarding(true) || navigate('create-wallet') : () => setStep((s) => Math.max(0, (s - 1)) as 0)} />
 
       {/* Progress bar */}
       <div className="px-4 mb-2">
         <div className="flex gap-1.5">
           {[0, 1, 2, 3, 4].map((i) => (
-            <div key={i} className={`h-1 flex-1 rounded-full transition-colors duration-300 ${i <= step ? 'bg-primary' : 'bg-border'}`} />
+            <div key={i} className={`h-1 flex-1 rounded-full transition-colors duration-300 ${i <= step ? 'bg-[#F0B90B]' : 'bg-[#2B3139]'}`} />
           ))}
         </div>
-        <p className="text-xs text-muted-foreground mt-2 text-center">Step {step + 1} of 5</p>
+        <p className="text-xs text-[#848E9C] mt-2 text-center">Step {step + 1} of 5</p>
       </div>
 
       <div className="flex-1 px-4 pb-8 overflow-y-auto">
         <AnimatePresence mode="wait">
-          {/* Step 0: Info */}
           {step === 0 && (
             <motion.div key="step0" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="flex flex-col items-center pt-12">
-              <div className="w-20 h-20 rounded-2xl bg-primary/10 border border-primary/15 flex items-center justify-center mb-6">
-                <Wallet className="size-10 text-accent" />
+              <div className="w-20 h-20 rounded-2xl bg-[#2B3139] flex items-center justify-center mb-6">
+                <Wallet className="size-10 text-[#F0B90B]" />
               </div>
-              <h2 className="text-xl font-semibold mb-3">Create a New Wallet</h2>
-              <p className="text-muted-foreground text-sm text-center max-w-xs mb-8">
-                Your wallet will be secured by a 12-word recovery phrase. Keep it safe, it&apos;s the only way to recover your funds.
+              <h2 className="text-xl font-semibold mb-3 text-[#EAECEF]">Create a New Wallet</h2>
+              <p className="text-[#848E9C] text-sm text-center max-w-xs mb-8">
+                Your wallet will be secured by a 12-word recovery phrase. Keep it safe.
               </p>
               <div className="w-full max-w-xs flex flex-col gap-3">
-                {['Non-custodial, only you control your keys', 'Multi-chain support from day one', 'Built-in staking & swap features'].map((feature, i) => (
-                  <div key={i} className="flex items-center gap-3 text-sm text-muted-foreground">
-                    <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                      <Check className="size-3 text-accent" />
+                {['Non-custodial — only you control your keys', 'Multi-chain support from day one', 'Built-in staking & swap features'].map((feature, i) => (
+                  <div key={i} className="flex items-center gap-3 text-sm text-[#848E9C]">
+                    <div className="w-5 h-5 rounded-full bg-[#F0B90B]/10 flex items-center justify-center shrink-0">
+                      <Check className="size-3 text-[#F0B90B]" />
                     </div>
                     {feature}
                   </div>
                 ))}
               </div>
-              <button
-                onClick={handleGenerate}
-                disabled={isLoading}
-                className="mt-10 w-full max-w-xs h-12 rounded-xl blue-gold-gradient text-white font-semibold hover:opacity-90 transition-opacity disabled:opacity-50"
-              >
+              <button onClick={handleGenerate} disabled={isLoading} className="mt-10 w-full max-w-xs h-[52px] rounded-xl bnb-btn-primary text-base">
                 {isLoading ? 'Generating...' : 'Generate Recovery Phrase'}
               </button>
             </motion.div>
           )}
 
-          {/* Step 1: Show seed phrase */}
           {step === 1 && (
             <motion.div key="step1" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="pt-4">
-              <div className="flex items-center gap-2 mb-2 p-3 rounded-xl bg-qfs-red/10 border border-qfs-red/20">
-                <AlertTriangle className="size-4 text-qfs-red shrink-0" />
-                <p className="text-xs text-qfs-red">Never share your recovery phrase with anyone. Store it offline in a secure place.</p>
+              <div className="flex items-center gap-2 mb-4 p-3 rounded-xl bg-[#F6465D]/10 border border-[#F6465D]/20">
+                <AlertTriangle className="size-4 text-[#F6465D] shrink-0" />
+                <p className="text-xs text-[#F6465D]">Never share your recovery phrase with anyone. Store it offline.</p>
               </div>
-              <h2 className="text-lg font-semibold mb-1">Your Recovery Phrase</h2>
-              <p className="text-sm text-muted-foreground mb-4">Write down these 12 words in order.</p>
+              <h2 className="text-lg font-semibold mb-1 text-[#EAECEF]">Your Recovery Phrase</h2>
+              <p className="text-sm text-[#848E9C] mb-4">Write down these 12 words in order.</p>
               <div className="grid grid-cols-3 gap-2 mb-6">
                 {seedPhrase.map((word, i) => (
-                  <div key={i} className="bg-secondary rounded-lg px-3 py-2.5 flex items-center gap-2">
-                    <span className="text-xs text-muted-foreground w-4">{i + 1}.</span>
-                    <span className="text-sm font-medium">{word}</span>
+                  <div key={i} className="bg-[#2B3139] rounded-xl px-3 py-2.5 flex items-center gap-2">
+                    <span className="text-xs text-[#848E9C] w-4">{i + 1}.</span>
+                    <span className="text-sm font-medium text-[#EAECEF]">{word}</span>
                   </div>
                 ))}
               </div>
-              <button
-                onClick={() => setStep(2)}
-                className="w-full h-12 rounded-xl blue-gold-gradient text-white font-semibold hover:opacity-90 transition-opacity"
-              >
+              <button onClick={() => setStep(2)} className="w-full h-[52px] rounded-xl bnb-btn-primary text-base">
                 I&apos;ve Saved My Phrase — Continue
               </button>
             </motion.div>
           )}
 
-          {/* Step 2: Verify seed phrase */}
           {step === 2 && (
             <motion.div key="step2" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="pt-4">
-              <h2 className="text-lg font-semibold mb-1">Verify Your Phrase</h2>
-              <p className="text-sm text-muted-foreground mb-6">Select the correct word for each position.</p>
+              <h2 className="text-lg font-semibold mb-1 text-[#EAECEF]">Verify Your Phrase</h2>
+              <p className="text-sm text-[#848E9C] mb-6">Select the correct word for each position.</p>
               <div className="flex flex-col gap-4 mb-6">
                 {[1, 4, 8, 11].map((idx) => (
                   <div key={idx}>
-                    <label className="text-xs text-muted-foreground mb-1.5 block">Word #{idx + 1}</label>
-                    <Input
-                      placeholder={`Enter word ${idx + 1}`}
-                      value={verifyWords[idx] || ''}
-                      onChange={(e) => {
-                        setVerifyWords((p) => ({ ...p, [idx]: e.target.value }));
-                        setVerifyErrors((p) => { const n = new Set(p); n.delete(idx); return n; });
-                      }}
-                      className={verifyErrors.has(idx) ? 'border-qfs-red' : ''}
-                    />
+                    <label className="text-xs text-[#848E9C] mb-1.5 block">Word #{idx + 1}</label>
+                    <Input placeholder={`Enter word ${idx + 1}`} value={verifyWords[idx] || ''} onChange={(e) => { setVerifyWords((p) => ({ ...p, [idx]: e.target.value })); setVerifyErrors((p) => { const n = new Set(p); n.delete(idx); return n; }); }} className={verifyErrors.has(idx) ? 'border-[#F6465D]' : ''} />
                   </div>
                 ))}
               </div>
-              <button
-                onClick={handleVerifyNext}
-                className="w-full h-12 rounded-xl blue-gold-gradient text-white font-semibold hover:opacity-90 transition-opacity"
-              >
+              <button onClick={handleVerifyNext} className="w-full h-[52px] rounded-xl bnb-btn-primary text-base">
                 Verify
               </button>
             </motion.div>
           )}
 
-          {/* Step 3: Set password */}
           {step === 3 && (
             <motion.div key="step3" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="pt-4">
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center">
-                  <Lock className="size-6 text-accent" />
+                <div className="w-12 h-12 rounded-xl bg-[#F0B90B]/10 flex items-center justify-center">
+                  <Lock className="size-6 text-[#F0B90B]" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-semibold">Set Password</h2>
-                  <p className="text-xs text-muted-foreground">This encrypts your wallet locally</p>
+                  <h2 className="text-lg font-semibold text-[#EAECEF]">Set Password</h2>
+                  <p className="text-xs text-[#848E9C]">This encrypts your wallet locally</p>
                 </div>
               </div>
               <div className="flex flex-col gap-4 mb-6">
                 <div>
-                  <label className="text-xs text-muted-foreground mb-1.5 block">Password</label>
+                  <label className="text-xs text-[#848E9C] mb-1.5 block">Password</label>
                   <div className="relative">
-                    <Input
-                      type={showPassword ? 'text' : 'password'}
-                      placeholder="Min. 8 characters"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="pr-10"
-                    />
-                    <button onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+                    <Input type={showPassword ? 'text' : 'password'} placeholder="Min. 8 characters" value={password} onChange={(e) => setPassword(e.target.value)} className="pr-10" />
+                    <button onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#848E9C] hover:text-[#EAECEF]">
                       {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
                     </button>
                   </div>
                 </div>
                 <div>
-                  <label className="text-xs text-muted-foreground mb-1.5 block">Confirm Password</label>
-                  <Input
-                    type={showPassword ? 'text' : 'password'}
-                    placeholder="Re-enter password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                  />
+                  <label className="text-xs text-[#848E9C] mb-1.5 block">Confirm Password</label>
+                  <Input type={showPassword ? 'text' : 'password'} placeholder="Re-enter password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
                 </div>
               </div>
-              <button
-                onClick={handleCreateWallet}
-                disabled={isLoading}
-                className="w-full h-12 rounded-xl blue-gold-gradient text-white font-semibold hover:opacity-90 transition-opacity disabled:opacity-50"
-              >
+              <button onClick={handleCreateWallet} disabled={isLoading} className="w-full h-[52px] rounded-xl bnb-btn-primary text-base">
                 {isLoading ? 'Creating...' : 'Create Wallet'}
               </button>
             </motion.div>
           )}
 
-          {/* Step 4: Success / Show Address */}
           {step === 4 && (
             <motion.div key="step4" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="flex flex-col items-center pt-12">
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ type: 'spring', stiffness: 200, damping: 15, delay: 0.2 }}
-                className="w-20 h-20 rounded-full bg-qfs-green/10 border-2 border-qfs-green/30 flex items-center justify-center mb-6"
-              >
-                <Check className="size-10 text-qfs-green" />
+              <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 200, damping: 15, delay: 0.2 }} className="w-20 h-20 rounded-full bg-[#0ECB81]/10 border-2 border-[#0ECB81]/30 flex items-center justify-center mb-6">
+                <Check className="size-10 text-[#0ECB81]" />
               </motion.div>
-              <h2 className="text-xl font-semibold mb-2">Wallet Created!</h2>
-              <p className="text-sm text-muted-foreground mb-6">Your wallet address:</p>
-              <div className="glass-card rounded-xl px-4 py-3 mb-2 flex items-center gap-2">
-                <span className="text-sm font-mono text-primary">{walletAddress ? truncateAddress(walletAddress) : truncateAddress(useWalletStore.getState().address)}</span>
+              <h2 className="text-xl font-semibold mb-2 text-[#EAECEF]">Wallet Created!</h2>
+              <p className="text-sm text-[#848E9C] mb-6">Your wallet address:</p>
+              <div className="bnb-card rounded-xl px-4 py-3 mb-2 flex items-center gap-2">
+                <span className="text-sm font-mono text-[#F0B90B]">{walletAddress ? truncateAddress(walletAddress) : truncateAddress(useWalletStore.getState().address)}</span>
                 <CopyButton text={walletAddress || useWalletStore.getState().address} />
               </div>
-              <p className="text-xs text-muted-foreground mb-8 text-center max-w-xs">
+              <p className="text-xs text-[#848E9C] mb-8 text-center max-w-xs">
                 You can find your address anytime on the Receive screen.
               </p>
-              <button
-                onClick={() => navigate('dashboard')}
-                className="w-full max-w-xs h-12 rounded-xl blue-gold-gradient text-white font-semibold hover:opacity-90 transition-opacity"
-              >
+              <button onClick={() => navigate('dashboard')} className="w-full max-w-xs h-[52px] rounded-xl bnb-btn-primary text-base">
                 Go to Dashboard
               </button>
             </motion.div>
@@ -556,22 +482,13 @@ function ImportWalletScreen() {
   const [showPassword, setShowPassword] = useState(false);
   const [step, setStep] = useState<0 | 1>(0);
 
-  const handleImport = useCallback(async () => {
+  const handleImport = useCallback(() => {
     if (mode === 'seed') {
       const words = seedInput.trim().split(/\s+/);
-      if (words.length !== 12) {
-        addToast('Seed phrase must be exactly 12 words', 'error');
-        return;
-      }
-      if (!validateSeedPhrase(seedInput.trim())) {
-        addToast('Invalid seed phrase. Please check your words.', 'error');
-        return;
-      }
+      if (words.length !== 12) { addToast('Seed phrase must be exactly 12 words', 'error'); return; }
+      if (!validateSeedPhrase(seedInput.trim())) { addToast('Invalid seed phrase.', 'error'); return; }
     }
-    if (password.length < 8) {
-      addToast('Password must be at least 8 characters', 'error');
-      return;
-    }
+    if (password.length < 8) { addToast('Password must be at least 8 characters', 'error'); return; }
     setStep(1);
   }, [mode, seedInput, password, addToast]);
 
@@ -583,105 +500,59 @@ function ImportWalletScreen() {
       setWalletCreated(result.address, result.encryptedPrivateKey);
       addToast('Wallet imported successfully!', 'success');
       navigate('dashboard');
-    } catch {
-      addToast('Failed to import wallet', 'error');
-    }
+    } catch { addToast('Failed to import wallet', 'error'); }
     setLoading(false);
   }, [mode, seedInput, password, setWalletCreated, navigate, setLoading, addToast]);
 
   return (
-    <motion.div
-      key="import-wallet"
-      variants={pageVariants}
-      initial="initial"
-      animate="animate"
-      exit="exit"
-      transition={pageTransition}
-      className="min-h-screen flex flex-col"
-    >
+    <motion.div key="import-wallet" variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={pageTransition} className="min-h-screen flex flex-col bg-[#181A20]">
       <ScreenHeader title="Import Wallet" onBack={() => navigate('onboarding' as Screen)} />
       <div className="flex-1 px-4 pb-8 overflow-y-auto">
         {step === 0 ? (
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="pt-4">
-            <div className="flex gap-2 mb-6">
+            <div className="flex gap-2 mb-6 p-1 bg-[#2B3139] rounded-xl">
               {(['seed', 'key'] as const).map((m) => (
-                <button
-                  key={m}
-                  onClick={() => setMode(m)}
-                  className={`flex-1 h-10 rounded-lg text-sm font-medium transition-colors ${
-                    mode === m ? 'bg-primary text-black' : 'bg-secondary text-muted-foreground hover:text-foreground'
-                  }`}
-                >
+                <button key={m} onClick={() => setMode(m)} className={`flex-1 h-10 rounded-lg text-sm font-medium transition-colors ${mode === m ? 'bg-[#F0B90B] text-[#0B0E11]' : 'text-[#848E9C] hover:text-[#EAECEF]'}`}>
                   {m === 'seed' ? 'Seed Phrase' : 'Private Key'}
                 </button>
               ))}
             </div>
-
             {mode === 'seed' ? (
               <div>
-                <label className="text-xs text-muted-foreground mb-1.5 block">12-Word Recovery Phrase</label>
-                <textarea
-                  value={seedInput}
-                  onChange={(e) => setSeedInput(e.target.value)}
-                  placeholder="Enter your 12-word recovery phrase separated by spaces"
-                  rows={4}
-                  className="w-full bg-secondary border border-border rounded-lg px-3 py-2.5 text-sm placeholder:text-muted-foreground focus:outline-none focus:border-primary resize-none"
-                />
+                <label className="text-xs text-[#848E9C] mb-1.5 block">12-Word Recovery Phrase</label>
+                <textarea value={seedInput} onChange={(e) => setSeedInput(e.target.value)} placeholder="Enter your 12-word recovery phrase separated by spaces" rows={4} className="w-full bg-[#2B3139] border border-[#2B3139] rounded-xl px-3 py-2.5 text-sm text-[#EAECEF] placeholder:text-[#5E6673] focus:outline-none focus:border-[#F0B90B] resize-none" />
               </div>
             ) : (
               <div>
-                <label className="text-xs text-muted-foreground mb-1.5 block">Private Key</label>
-                <Input
-                  value={keyInput}
-                  onChange={(e) => setKeyInput(e.target.value)}
-                  placeholder="Enter your private key (hex format)"
-                  type="password"
-                />
+                <label className="text-xs text-[#848E9C] mb-1.5 block">Private Key</label>
+                <Input value={keyInput} onChange={(e) => setKeyInput(e.target.value)} placeholder="Enter your private key (hex format)" type="password" />
                 <div className="flex items-center gap-1.5 mt-2">
-                  <AlertTriangle className="size-3 text-qfs-red" />
-                  <p className="text-xs text-muted-foreground">Importing via private key is less secure</p>
+                  <AlertTriangle className="size-3 text-[#F6465D]" />
+                  <p className="text-xs text-[#848E9C]">Importing via private key is less secure</p>
                 </div>
               </div>
             )}
-
             <div className="mt-6">
-              <label className="text-xs text-muted-foreground mb-1.5 block">Encryption Password</label>
+              <label className="text-xs text-[#848E9C] mb-1.5 block">Encryption Password</label>
               <div className="relative">
-                <Input
-                  type={showPassword ? 'text' : 'password'}
-                  placeholder="Min. 8 characters"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="pr-10"
-                />
-                <button onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+                <Input type={showPassword ? 'text' : 'password'} placeholder="Min. 8 characters" value={password} onChange={(e) => setPassword(e.target.value)} className="pr-10" />
+                <button onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#848E9C] hover:text-[#EAECEF]">
                   {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
                 </button>
               </div>
             </div>
-
-            <button
-              onClick={handleImport}
-              disabled={isLoading}
-              className="w-full h-12 rounded-xl blue-gold-gradient text-white font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 mt-8"
-            >
+            <button onClick={handleImport} disabled={isLoading} className="w-full h-[52px] rounded-xl bnb-btn-primary text-base mt-8">
               Import Wallet
             </button>
           </motion.div>
         ) : (
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col items-center pt-12">
-            <div className="w-16 h-16 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-6">
-              <Key className="size-8 text-accent" />
+            <div className="w-16 h-16 rounded-2xl bg-[#F0B90B]/10 flex items-center justify-center mb-6">
+              <Key className="size-8 text-[#F0B90B]" />
             </div>
-            <h2 className="text-lg font-semibold mb-2">Confirm Import</h2>
-            <p className="text-sm text-muted-foreground text-center mb-8">
-              Make sure you have saved your recovery phrase. This action cannot be undone.
-            </p>
-            <button
-              onClick={handleConfirm}
-              disabled={isLoading}
-              className="w-full max-w-xs h-12 rounded-xl blue-gold-gradient text-white font-semibold hover:opacity-90 transition-opacity disabled:opacity-50"
-            >
+            <h2 className="text-lg font-semibold mb-2 text-[#EAECEF]">Confirm Import</h2>
+            <p className="text-sm text-[#848E9C] text-center mb-8 max-w-xs">Make sure you have saved your recovery phrase. This action cannot be undone.</p>
+            <button onClick={handleConfirm} disabled={isLoading} className="w-full max-w-xs h-[52px] rounded-xl bnb-btn-primary text-base">
               {isLoading ? 'Importing...' : 'Confirm Import'}
             </button>
           </motion.div>
@@ -691,170 +562,107 @@ function ImportWalletScreen() {
   );
 }
 
-// ─── Dashboard Screen ────────────────────────────────────────────────
+// ─── Dashboard Screen (Trust Wallet Style) ───────────────────────────
 function DashboardScreen() {
   const navigate = useWalletStore((s) => s.navigate);
   const address = useWalletStore((s) => s.address);
   const qfsBalance = useWalletStore((s) => s.qfsBalance);
   const qfsPrice = useWalletStore((s) => s.qfsPrice);
-  const currentChainId = useWalletStore((s) => s.currentChainId);
-  const selectChain = useWalletStore((s) => s.selectChain);
   const addToast = useWalletStore((s) => s.addToast);
   const transactions = useWalletStore((s) => s.transactions);
-  const [showChainPicker, setShowChainPicker] = useState(false);
   const [balanceHidden, setBalanceHidden] = useState(false);
 
-  const chain = getChainById(currentChainId);
-  const totalValue = 4001.10; // Demo
+  const totalValue = 4001.10;
   const qfsValue = parseFloat(qfsBalance) * qfsPrice || 1132.20;
-
   const displayTransactions = transactions.length > 0 ? transactions.slice(0, 5) : DEMO_TRANSACTIONS;
 
-  const quickActions = [
-    { icon: Send, label: 'Send', screen: 'send' as Screen, color: 'text-accent' },
-    { icon: QrCode, label: 'Receive', screen: 'receive' as Screen, color: 'text-accent' },
-    { icon: Zap, label: 'Buy', screen: 'dashboard' as Screen, color: 'text-accent' },
-    { icon: ArrowLeftRight, label: 'Swap', screen: 'swap' as Screen, color: 'text-accent' },
-    { icon: TrendingUp, label: 'Stake', screen: 'staking' as Screen, color: 'text-accent' },
-  ];
-
   return (
-    <motion.div key="dashboard" variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={pageTransition} className="min-h-screen pb-24">
-      {/* Header */}
-      <div className="px-4 pt-4 pb-2 flex items-center justify-between">
-        <div className="flex items-center gap-2">
+    <motion.div key="dashboard" variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={pageTransition} className="min-h-screen pb-24 bg-[#181A20]">
+      {/* Header - Trust Wallet style: simple top bar */}
+      <div className="px-4 pt-5 pb-3 flex items-center justify-between">
+        <div className="flex items-center gap-2.5">
           <div className="w-9 h-9 rounded-xl overflow-hidden">
             <img src="/qfs-logo.jpg" alt="QFS" className="w-full h-full object-cover" />
           </div>
           <div>
-            <p className="text-xs text-muted-foreground">QFS Wallet</p>
+            <p className="text-sm font-semibold text-[#EAECEF]">QFS Wallet</p>
+            <p className="text-[11px] text-[#848E9C]">Main Portfolio</p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <button onClick={() => setBalanceHidden(!balanceHidden)} className="p-2 rounded-lg hover:bg-white/5 transition-colors">
-            {balanceHidden ? <EyeOff className="size-4 text-muted-foreground" /> : <Eye className="size-4 text-muted-foreground" />}
+        <div className="flex items-center gap-1">
+          <button onClick={() => setBalanceHidden(!balanceHidden)} className="p-2.5 rounded-xl hover:bg-[#2B3139] transition-colors">
+            {balanceHidden ? <EyeOff className="size-[18px] text-[#848E9C]" /> : <Eye className="size-[18px] text-[#848E9C]" />}
           </button>
-          <button className="p-2 rounded-lg hover:bg-white/5 transition-colors relative">
-            <Bell className="size-4 text-muted-foreground" />
-            <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-accent" />
+          <button className="p-2.5 rounded-xl hover:bg-[#2B3139] transition-colors relative">
+            <Bell className="size-[18px] text-[#848E9C]" />
+            <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-[#F0B90B]" />
           </button>
         </div>
       </div>
 
-      {/* Balance Card */}
-      <div className="px-4 mb-4">
-        <motion.div className="glass-card rounded-2xl p-5 qfs-glow relative overflow-hidden gradient-border">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-accent/5 rounded-full blur-[60px] pointer-events-none" />
-          <div className="absolute bottom-0 left-0 w-24 h-24 bg-primary/8 rounded-full blur-[50px] pointer-events-none" />
-          <p className="text-xs text-muted-foreground mb-1">Total Portfolio Value</p>
-          <div className="flex items-center gap-2 mb-1">
-            <h2 className="text-3xl font-bold">
-              {balanceHidden ? '••••••' : `$${totalValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
-            </h2>
-            <button onClick={() => {}} className="p-1 hover:bg-white/5 rounded">
-              <Eye className="size-3.5 text-muted-foreground" />
-            </button>
-          </div>
-          <div className="flex items-center gap-1.5 mb-4">
-            <span className={`text-xs font-medium px-1.5 py-0.5 rounded ${1.2 >= 0 ? 'bg-qfs-green/10 text-qfs-green' : 'bg-qfs-red/10 text-qfs-red'}`}>
-              {1.2 >= 0 ? '+' : ''}{1.2}%
-            </span>
-            <span className="text-xs text-muted-foreground">24h</span>
-          </div>
-
-          {/* QFS specific balance */}
-          <div className="bg-accent/5 border border-accent/10 rounded-xl p-3.5 flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-lg overflow-hidden">
-                <img src="/qfs-token-logo.png" alt="QFS" className="w-full h-full object-cover" />
-              </div>
-              <div>
-                <p className="text-sm font-medium">QFS</p>
-                <p className="text-xs text-muted-foreground">{balanceHidden ? '••••••' : `${qfsBalance || '12,580.00'} QFS`}</p>
-              </div>
-            </div>
-            <div className="text-right">
-              <p className="text-sm font-medium">{balanceHidden ? '••••' : `$${qfsValue.toFixed(2)}`}</p>
-              <p className="text-xs text-accent">+4.2%</p>
-            </div>
-          </div>
-        </motion.div>
-      </div>
-
-      {/* Quick Actions */}
-      <div className="px-4 mb-6">
-        <div className="grid grid-cols-5 gap-2">
-          {quickActions.map((action) => (
-            <button
-              key={action.label}
-              onClick={() => {
-                if (action.label === 'Buy') {
-                  addToast('Buy feature coming soon!', 'info');
-                } else {
-                  navigate(action.screen);
-                }
-              }}
-              className="flex flex-col items-center gap-1.5 py-3 rounded-xl hover:bg-white/5 transition-colors"
-            >
-              <div className={`w-10 h-10 rounded-xl bg-secondary flex items-center justify-center ${action.color}`}>
-                <action.icon className="size-4.5" />
-              </div>
-              <span className="text-[11px] text-muted-foreground">{action.label}</span>
-            </button>
-          ))}
+      {/* Balance Section - Trust Wallet: centered, large, clean */}
+      <div className="px-4 pt-2 pb-4 text-center">
+        <p className="text-[13px] text-[#848E9C] mb-1">Total Balance</p>
+        <h2 className="text-[36px] font-bold text-[#EAECEF] leading-tight tracking-tight">
+          {balanceHidden ? '••••••' : `$${totalValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+        </h2>
+        <div className="flex items-center justify-center gap-1.5 mt-1.5">
+          <span className={`text-xs font-medium px-1.5 py-0.5 rounded-md ${1.2 >= 0 ? 'bg-[#0ECB81]/10 text-[#0ECB81]' : 'bg-[#F6465D]/10 text-[#F6465D]'}`}>
+            {1.2 >= 0 ? '+' : ''}{1.2}%
+          </span>
+          <span className="text-xs text-[#848E9C]">24h</span>
         </div>
       </div>
 
-      {/* Chain Selector & Token List */}
-      <div className="px-4 mb-4">
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="text-sm font-semibold">Tokens</h3>
-          <button onClick={() => setShowChainPicker(!showChainPicker)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-secondary hover:bg-white/5 transition-colors">
-            <span className="text-xs">{chain?.icon} {chain?.name}</span>
-            <ChevronDown className={`size-3 text-muted-foreground transition-transform ${showChainPicker ? 'rotate-180' : ''}`} />
+      {/* Action Buttons - Trust Wallet: 4 circles in a row */}
+      <div className="px-6 mb-6">
+        <div className="flex items-center justify-between">
+          <button onClick={() => navigate('send')} className="flex flex-col items-center gap-2">
+            <div className="action-circle"><ArrowUpRight className="size-5 text-[#F0B90B]" /></div>
+            <span className="text-[11px] text-[#848E9C]">Send</span>
+          </button>
+          <button onClick={() => navigate('receive')} className="flex flex-col items-center gap-2">
+            <div className="action-circle"><ArrowDownLeft className="size-5 text-[#0ECB81]" /></div>
+            <span className="text-[11px] text-[#848E9C]">Receive</span>
+          </button>
+          <button onClick={() => navigate('swap')} className="flex flex-col items-center gap-2">
+            <div className="action-circle"><ArrowLeftRight className="size-5 text-[#1E90FF]" /></div>
+            <span className="text-[11px] text-[#848E9C]">Swap</span>
+          </button>
+          <button onClick={() => addToast('Buy feature coming soon!', 'info')} className="flex flex-col items-center gap-2">
+            <div className="action-circle"><Zap className="size-5 text-[#F0B90B]" /></div>
+            <span className="text-[11px] text-[#848E9C]">Buy</span>
           </button>
         </div>
+      </div>
 
-        {showChainPicker && (
-          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="mb-3 flex flex-wrap gap-2">
-            {SUPPORTED_CHAINS.map((c) => (
-              <button
-                key={c.id}
-                onClick={() => { selectChain(c.id); setShowChainPicker(false); }}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs transition-colors ${
-                  c.id === currentChainId ? 'bg-primary text-black font-medium' : 'bg-secondary text-muted-foreground hover:text-foreground'
-                }`}
-              >
-                <span>{c.icon}</span> {c.name}
-              </button>
-            ))}
-          </motion.div>
-        )}
-
-        <div className="flex flex-col gap-2">
+      {/* Token List - Trust Wallet: clean rows, no cards */}
+      <div className="px-2">
+        <div className="flex items-center justify-between px-3 mb-2">
+          <h3 className="text-sm font-semibold text-[#EAECEF]">Tokens</h3>
+          <span className="text-xs text-[#F0B90B]">View All</span>
+        </div>
+        <div className="flex flex-col">
           {DEMO_TOKENS.map((token, i) => (
             <motion.div
               key={token.symbol}
               initial={{ opacity: 0, y: 5 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.05 }}
-              className="glass-card rounded-xl p-3.5 flex items-center justify-between hover:bg-white/[0.03] transition-colors cursor-pointer"
+              transition={{ delay: i * 0.04 }}
+              className="token-row"
+              onClick={() => navigate('wallet' as Screen)}
             >
               <div className="flex items-center gap-3">
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-sm font-bold overflow-hidden ${
-                  hasTokenIcon(token.symbol) ? '' : 'bg-secondary text-muted-foreground'
-                }`}>
-                  <TokenIcon symbol={token.symbol} />
-                </div>
+                <TokenIcon symbol={token.symbol} size={40} />
                 <div>
-                  <p className="text-sm font-medium">{token.symbol}</p>
-                  <p className="text-xs text-muted-foreground">{token.name}</p>
+                  <p className="text-sm font-semibold text-[#EAECEF]">{token.symbol}</p>
+                  <p className="text-[11px] text-[#848E9C]">{token.name}</p>
                 </div>
               </div>
               <div className="text-right">
-                <p className="text-sm font-medium">{balanceHidden ? '••••' : token.balance}</p>
-                <p className={`text-xs ${token.change24h >= 0 ? 'text-qfs-green' : 'text-qfs-red'}`}>
-                  {balanceHidden ? '••••' : `$${token.valueUsd.toLocaleString('en-US', { minimumFractionDigits: 2 })}`}
+                <p className="text-sm font-semibold text-[#EAECEF]">{balanceHidden ? '••••' : token.balance}</p>
+                <p className={`text-[11px] ${token.change24h >= 0 ? 'text-[#0ECB81]' : 'text-[#F6465D]'}`}>
+                  {balanceHidden ? '' : `$${token.valueUsd.toLocaleString('en-US', { minimumFractionDigits: 2 })}`}
                 </p>
               </div>
             </motion.div>
@@ -862,54 +670,52 @@ function DashboardScreen() {
         </div>
       </div>
 
-      {/* Recent Transactions */}
-      <div className="px-4">
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="text-sm font-semibold">Recent Activity</h3>
-          <span className="text-xs text-primary">View All</span>
+      {/* Recent Transactions - Trust Wallet style */}
+      <div className="px-2 mt-4">
+        <div className="flex items-center justify-between px-3 mb-2">
+          <h3 className="text-sm font-semibold text-[#EAECEF]">Recent Activity</h3>
+          <span className="text-xs text-[#F0B90B]">View All</span>
         </div>
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col">
           {displayTransactions.map((tx, i) => (
             <motion.div
               key={tx.id}
               initial={{ opacity: 0, x: -5 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: i * 0.05 }}
-              className="glass-card rounded-xl p-3 flex items-center gap-3"
+              transition={{ delay: i * 0.04 }}
+              className="token-row"
             >
-              <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${
-                tx.type === 'receive' || tx.type === 'stake'
-                  ? 'bg-qfs-green/10'
-                  : tx.type === 'send'
-                    ? 'bg-qfs-red/10'
-                    : 'bg-primary/10'
-              }`}>
-                {tx.type === 'receive' ? <ArrowDownLeft className="size-4 text-qfs-green" /> :
-                 tx.type === 'send' ? <ArrowUpRight className="size-4 text-qfs-red" /> :
-                 tx.type === 'swap' ? <ArrowLeftRight className="size-4 text-accent" /> :
-                 <TrendingUp className="size-4 text-qfs-green" />}
+              <div className="flex items-center gap-3">
+                <div className={`w-9 h-9 rounded-full flex items-center justify-center ${
+                  tx.type === 'receive' || tx.type === 'stake' ? 'bg-[#0ECB81]/10' : tx.type === 'send' ? 'bg-[#F6465D]/10' : 'bg-[#F0B90B]/10'
+                }`}>
+                  {tx.type === 'receive' ? <ArrowDownLeft className="size-4 text-[#0ECB81]" /> :
+                   tx.type === 'send' ? <ArrowUpRight className="size-4 text-[#F6465D]" /> :
+                   tx.type === 'swap' ? <ArrowLeftRight className="size-4 text-[#F0B90B]" /> :
+                   <TrendingUp className="size-4 text-[#0ECB81]" />}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-[#EAECEF] capitalize">{tx.type}</p>
+                  <p className="text-[11px] text-[#848E9C] truncate">
+                    {tx.type === 'receive' ? `From: ${truncateAddress(tx.from)}` : tx.type === 'send' ? `To: ${truncateAddress(tx.to)}` : tx.token}
+                  </p>
+                </div>
               </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center justify-between">
-                  <p className="text-sm font-medium capitalize">{tx.type}</p>
-                  <p className={`text-sm font-medium ${tx.type === 'send' ? 'text-qfs-red' : 'text-qfs-green'}`}>
-                    {tx.type === 'send' ? '-' : '+'}{tx.amount} {tx.token.includes('→') ? '' : tx.token}
-                  </p>
-                </div>
-                <div className="flex items-center justify-between">
-                  <p className="text-xs text-muted-foreground truncate">{tx.type === 'receive' ? `From: ${truncateAddress(tx.from)}` : tx.type === 'send' ? `To: ${truncateAddress(tx.to)}` : tx.token}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {new Date(tx.timestamp).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                  </p>
-                </div>
+              <div className="text-right">
+                <p className={`text-sm font-medium ${tx.type === 'send' ? 'text-[#F6465D]' : 'text-[#0ECB81]'}`}>
+                  {tx.type === 'send' ? '-' : '+'}{tx.amount} {tx.token.includes('→') ? '' : tx.token}
+                </p>
+                <p className="text-[11px] text-[#848E9C]">
+                  {new Date(tx.timestamp).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                </p>
               </div>
             </motion.div>
           ))}
         </div>
         {transactions.length === 0 && (
           <div className="mt-2 flex items-center gap-1.5 justify-center">
-            <Info className="size-3 text-muted-foreground" />
-            <p className="text-xs text-muted-foreground">Showing demo data</p>
+            <Info className="size-3 text-[#848E9C]" />
+            <p className="text-[11px] text-[#848E9C]">Showing demo data</p>
           </div>
         )}
       </div>
@@ -935,130 +741,95 @@ function SendScreen() {
   const usdValue = parseFloat(amount || '0') * 3270;
 
   const handleSend = useCallback(() => {
-    if (!toAddress || !amount || parseFloat(amount) <= 0) {
-      addToast('Please fill in all fields', 'error');
-      return;
-    }
+    if (!toAddress || !amount || parseFloat(amount) <= 0) { addToast('Please fill in all fields', 'error'); return; }
     setStep(1);
   }, [toAddress, amount, addToast]);
 
   const handleConfirm = useCallback(() => {
     addTransaction({
-      id: Date.now().toString(),
-      type: 'send',
-      status: 'pending',
-      from: address,
-      to: toAddress,
-      amount: parseFloat(amount).toLocaleString('en-US', { maximumFractionDigits: 6 }),
-      token: selectedToken,
-      chain: chain?.name || 'Ethereum',
-      hash: '0x' + Math.random().toString(16).slice(2, 10) + '...',
-      timestamp: Date.now(),
-      gasFee: gasEstimate,
+      id: Date.now().toString(), type: 'send', status: 'pending', from: address, to: toAddress,
+      amount: parseFloat(amount).toLocaleString('en-US', { maximumFractionDigits: 6 }), token: selectedToken,
+      chain: chain?.name || 'Ethereum', hash: '0x' + Math.random().toString(16).slice(2, 10) + '...',
+      timestamp: Date.now(), gasFee: gasEstimate,
     });
     addToast('Transaction submitted!', 'success');
     navigate('dashboard');
   }, [address, toAddress, amount, selectedToken, chain, gasEstimate, addTransaction, addToast, navigate]);
 
   return (
-    <motion.div key="send" variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={pageTransition} className="min-h-screen flex flex-col">
+    <motion.div key="send" variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={pageTransition} className="min-h-screen flex flex-col bg-[#181A20]">
       <ScreenHeader title="Send" onBack={() => step === 1 ? setStep(0) : navigate('dashboard')} />
       <div className="flex-1 px-4 pb-8 overflow-y-auto">
         <AnimatePresence mode="wait">
           {step === 0 ? (
             <motion.div key="send-form" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="pt-4 flex flex-col gap-5">
               <div>
-                <label className="text-xs text-muted-foreground mb-1.5 block">Recipient Address</label>
+                <label className="text-xs text-[#848E9C] mb-1.5 block">Recipient Address</label>
                 <div className="relative">
-                  <Input
-                    value={toAddress}
-                    onChange={(e) => setToAddress(e.target.value)}
-                    placeholder="0x... or ENS name"
-                    className="pr-20"
-                  />
-                  <button className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded-lg hover:bg-white/5">
-                    <ScanLine className="size-4 text-muted-foreground" />
+                  <Input value={toAddress} onChange={(e) => setToAddress(e.target.value)} placeholder="0x... or ENS name" className="pr-20" />
+                  <button className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded-lg hover:bg-[#363C45]">
+                    <ScanLine className="size-4 text-[#848E9C]" />
                   </button>
                 </div>
               </div>
-
               <div>
                 <div className="flex items-center justify-between mb-1.5">
-                  <label className="text-xs text-muted-foreground">Amount</label>
-                  <span className="text-xs text-muted-foreground">Balance: 0.4521 {selectedToken}</span>
+                  <label className="text-xs text-[#848E9C]">Amount</label>
+                  <span className="text-xs text-[#848E9C]">Balance: 0.4521 {selectedToken}</span>
                 </div>
                 <div className="relative">
-                  <Input
-                    type="number"
-                    value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
-                    placeholder="0.00"
-                    className="pr-24 text-xl font-semibold"
-                  />
+                  <Input type="number" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="0.00" className="pr-24 text-xl font-semibold" />
                   <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
-                    <button
-                      onClick={() => setAmount('0.4521')}
-                      className="text-xs text-accent px-2 py-0.5 rounded bg-primary/10 hover:bg-primary/20 transition-colors"
-                    >
+                    <button onClick={() => setAmount('0.4521')} className="text-xs text-[#F0B90B] px-2 py-0.5 rounded-md bg-[#F0B90B]/10 hover:bg-[#F0B90B]/20 transition-colors font-medium">
                       MAX
                     </button>
                   </div>
                 </div>
                 {parseFloat(amount) > 0 && (
-                  <p className="text-xs text-muted-foreground mt-1.5">≈ ${usdValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD</p>
+                  <p className="text-xs text-[#848E9C] mt-1.5">≈ ${usdValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD</p>
                 )}
               </div>
-
-              <div className="glass-card rounded-xl p-3.5 flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Network Fee</span>
-                <span className="text-sm font-medium">{gasEstimate}</span>
+              <div className="bnb-card rounded-xl p-3.5 flex items-center justify-between">
+                <span className="text-sm text-[#848E9C]">Network Fee</span>
+                <span className="text-sm font-medium text-[#EAECEF]">{gasEstimate}</span>
               </div>
-
-              <button
-                onClick={handleSend}
-                className="w-full h-12 rounded-xl blue-gold-gradient text-white font-semibold hover:opacity-90 transition-opacity mt-2"
-              >
+              <button onClick={handleSend} className="w-full h-[52px] rounded-xl bnb-btn-primary text-base mt-2">
                 Review Transaction
               </button>
             </motion.div>
           ) : (
             <motion.div key="send-review" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="pt-4">
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 rounded-xl bg-qfs-red/10 flex items-center justify-center">
-                  <ArrowUpRight className="size-6 text-qfs-red" />
+                <div className="w-12 h-12 rounded-xl bg-[#F6465D]/10 flex items-center justify-center">
+                  <ArrowUpRight className="size-6 text-[#F6465D]" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-semibold">Confirm Send</h2>
-                  <p className="text-xs text-muted-foreground">Review the details below</p>
+                  <h2 className="text-lg font-semibold text-[#EAECEF]">Confirm Send</h2>
+                  <p className="text-xs text-[#848E9C]">Review the details below</p>
                 </div>
               </div>
-
-              <div className="glass-card rounded-xl p-4 flex flex-col gap-4 mb-6">
+              <div className="bnb-card rounded-xl p-4 flex flex-col gap-4 mb-6">
                 <div className="flex justify-between">
-                  <span className="text-sm text-muted-foreground">Sending</span>
-                  <span className="text-sm font-semibold">{amount} {selectedToken}</span>
+                  <span className="text-sm text-[#848E9C]">Sending</span>
+                  <span className="text-sm font-semibold text-[#EAECEF]">{amount} {selectedToken}</span>
                 </div>
-                <Separator className="bg-border" />
+                <Separator className="bg-[#2B3139]" />
                 <div className="flex justify-between">
-                  <span className="text-sm text-muted-foreground">To</span>
-                  <span className="text-sm font-mono text-primary">{truncateAddress(toAddress)}</span>
+                  <span className="text-sm text-[#848E9C]">To</span>
+                  <span className="text-sm font-mono text-[#F0B90B]">{truncateAddress(toAddress)}</span>
                 </div>
-                <Separator className="bg-border" />
+                <Separator className="bg-[#2B3139]" />
                 <div className="flex justify-between">
-                  <span className="text-sm text-muted-foreground">Network</span>
-                  <span className="text-sm">{chain?.icon} {chain?.name}</span>
+                  <span className="text-sm text-[#848E9C]">Network</span>
+                  <span className="text-sm text-[#EAECEF]">{chain?.icon} {chain?.name}</span>
                 </div>
-                <Separator className="bg-border" />
+                <Separator className="bg-[#2B3139]" />
                 <div className="flex justify-between">
-                  <span className="text-sm text-muted-foreground">Network Fee</span>
-                  <span className="text-sm">{gasEstimate}</span>
+                  <span className="text-sm text-[#848E9C]">Network Fee</span>
+                  <span className="text-sm text-[#EAECEF]">{gasEstimate}</span>
                 </div>
               </div>
-
-              <button
-                onClick={handleConfirm}
-                className="w-full h-12 rounded-xl blue-gold-gradient text-white font-semibold hover:opacity-90 transition-opacity"
-              >
+              <button onClick={handleConfirm} className="w-full h-[52px] rounded-xl bnb-btn-primary text-base">
                 Confirm & Send
               </button>
             </motion.div>
@@ -1078,7 +849,6 @@ function ReceiveScreen() {
   const addToast = useWalletStore((s) => s.addToast);
   const chain = getChainById(currentChainId);
   const [copied, setCopied] = useState(false);
-
   const displayAddress = address || '0x742d35Cc6634C0532925a3b844Bc9e7595f2bD18';
 
   const handleCopy = useCallback(() => {
@@ -1089,53 +859,35 @@ function ReceiveScreen() {
   }, [displayAddress, addToast]);
 
   return (
-    <motion.div key="receive" variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={pageTransition} className="min-h-screen flex flex-col">
+    <motion.div key="receive" variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={pageTransition} className="min-h-screen flex flex-col bg-[#181A20]">
       <ScreenHeader title="Receive" onBack={() => navigate('dashboard')} />
       <div className="flex-1 px-4 pb-8 flex flex-col items-center pt-4">
         {/* Chain selector */}
         <div className="flex flex-wrap gap-2 mb-6 justify-center">
           {SUPPORTED_CHAINS.map((c) => (
-            <button
-              key={c.id}
-              onClick={() => selectChain(c.id)}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs transition-colors ${
-                c.id === currentChainId ? 'bg-primary text-black font-medium' : 'bg-secondary text-muted-foreground hover:text-foreground'
-              }`}
-            >
+            <button key={c.id} onClick={() => selectChain(c.id)} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs transition-colors ${c.id === currentChainId ? 'bg-[#F0B90B] text-[#0B0E11] font-medium' : 'bg-[#2B3139] text-[#848E9C] hover:text-[#EAECEF]'}`}>
               <span>{c.icon}</span> {c.symbol}
             </button>
           ))}
         </div>
 
         {/* QR Code */}
-        <motion.div
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ delay: 0.1 }}
-          className="glass-card rounded-2xl p-6 mb-6 qfs-glow"
-        >
+        <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ delay: 0.1 }} className="bnb-card-elevated rounded-2xl p-6 mb-6">
           <div className="bg-white rounded-xl p-4">
-            <QRCodeSVG
-              value={displayAddress}
-              size={200}
-              level="H"
-              bgColor="#ffffff"
-              fgColor="#0a0a0f"
-            />
+            <QRCodeSVG value={displayAddress} size={200} level="H" bgColor="#ffffff" fgColor="#0a0a0f" />
           </div>
         </motion.div>
 
-        <p className="text-xs text-muted-foreground mb-2">Your {chain?.name || 'Ethereum'} Address</p>
+        <p className="text-xs text-[#848E9C] mb-2">Your {chain?.name || 'Ethereum'} Address</p>
 
-        {/* Address display */}
-        <div className="glass-card rounded-xl px-4 py-3 flex items-center gap-2 w-full max-w-sm mb-6">
-          <p className="text-sm font-mono text-primary flex-1 truncate">{displayAddress}</p>
-          <button onClick={handleCopy} className="p-1.5 rounded-lg hover:bg-white/5 transition-colors shrink-0">
-            {copied ? <Check className="size-4 text-qfs-green" /> : <CopyIcon className="size-4 text-muted-foreground" />}
+        <div className="bnb-card rounded-xl px-4 py-3 flex items-center gap-2 w-full max-w-sm mb-6">
+          <p className="text-sm font-mono text-[#F0B90B] flex-1 truncate">{displayAddress}</p>
+          <button onClick={handleCopy} className="p-1.5 rounded-lg hover:bg-[#363C45] transition-colors shrink-0">
+            {copied ? <Check className="size-4 text-[#0ECB81]" /> : <CopyIcon className="size-4 text-[#848E9C]" />}
           </button>
         </div>
 
-        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+        <div className="flex items-center gap-2 text-xs text-[#848E9C]">
           <Info className="size-3" />
           <span>Only send {chain?.symbol} and tokens on {chain?.name} to this address</span>
         </div>
@@ -1163,123 +915,85 @@ function SwapScreen() {
   const toAmountCalc = fromAmount ? (parseFloat(fromAmount) * 0.00027).toFixed(6) : '';
 
   const handleSwapTokens = useCallback(() => {
-    setFromToken(toToken);
-    setToToken(fromToken);
-    setFromAmount(toAmount);
-    setToAmount(fromAmount);
+    setFromToken(toToken); setToToken(fromToken); setFromAmount(toAmount); setToAmount(fromAmount);
   }, [fromToken, toToken, fromAmount, toAmount]);
 
   const handleSwap = useCallback(() => {
-    if (!fromAmount || parseFloat(fromAmount) <= 0) {
-      addToast('Please enter an amount', 'error');
-      return;
-    }
+    if (!fromAmount || parseFloat(fromAmount) <= 0) { addToast('Please enter an amount', 'error'); return; }
     setStep(1);
   }, [fromAmount, addToast]);
 
   const handleConfirm = useCallback(() => {
     addTransaction({
-      id: Date.now().toString(),
-      type: 'swap',
-      status: 'pending',
-      from: '',
-      to: '',
+      id: Date.now().toString(), type: 'swap', status: 'pending', from: '', to: '',
       amount: parseFloat(fromAmount).toLocaleString('en-US', { maximumFractionDigits: 2 }),
-      token: `${fromToken} → ${toToken}`,
-      chain: chain?.name || 'Ethereum',
+      token: `${fromToken} → ${toToken}`, chain: chain?.name || 'Ethereum',
       hash: '0x' + Math.random().toString(16).slice(2, 10) + '...',
-      timestamp: Date.now(),
-      gasFee: '0.003 ' + (chain?.symbol || 'ETH'),
+      timestamp: Date.now(), gasFee: '0.003 ' + (chain?.symbol || 'ETH'),
     });
-    addToast('Swap submitted!', 'success');
-    navigate('dashboard');
+    addToast('Swap submitted!', 'success'); navigate('dashboard');
   }, [fromAmount, fromToken, toToken, chain, addTransaction, addToast, navigate]);
 
   return (
-    <motion.div key="swap" variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={pageTransition} className="min-h-screen flex flex-col">
+    <motion.div key="swap" variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={pageTransition} className="min-h-screen flex flex-col bg-[#181A20]">
       <ScreenHeader title="Swap" onBack={() => step === 1 ? setStep(0) : navigate('dashboard')} />
       <div className="flex-1 px-4 pb-8 overflow-y-auto">
         <AnimatePresence mode="wait">
           {step === 0 ? (
             <motion.div key="swap-form" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="pt-4">
               {/* From */}
-              <div className="glass-card rounded-xl p-4 mb-2">
+              <div className="bnb-card rounded-xl p-4 mb-2">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs text-muted-foreground">From</span>
-                  <span className="text-xs text-muted-foreground">Balance: 12,580.00 {fromToken}</span>
+                  <span className="text-xs text-[#848E9C]">From</span>
+                  <span className="text-xs text-[#848E9C]">Balance: 12,580.00 {fromToken}</span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <input
-                    type="number"
-                    value={fromAmount}
-                    onChange={(e) => { setFromAmount(e.target.value); setToAmount((parseFloat(e.target.value) * 0.00027).toFixed(6)); }}
-                    placeholder="0.00"
-                    className="flex-1 bg-transparent text-2xl font-semibold outline-none min-w-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                  />
-                  <button className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-secondary hover:bg-white/5 transition-colors shrink-0">
-                    <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold overflow-hidden ${hasTokenIcon(fromToken) ? '' : 'bg-blue-500/20 text-blue-400'}`}>
-                      <TokenIcon symbol={fromToken} />
-                    </span>
-                    <span className="text-sm font-medium">{fromToken}</span>
+                  <input type="number" value={fromAmount} onChange={(e) => { setFromAmount(e.target.value); setToAmount((parseFloat(e.target.value) * 0.00027).toFixed(6)); }} placeholder="0.00" className="flex-1 bg-transparent text-2xl font-semibold text-[#EAECEF] outline-none min-w-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
+                  <button className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#2B3139] hover:bg-[#363C45] transition-colors shrink-0">
+                    <TokenIcon symbol={fromToken} size={22} />
+                    <span className="text-sm font-medium text-[#EAECEF]">{fromToken}</span>
                   </button>
                 </div>
               </div>
 
-              {/* Swap direction button */}
+              {/* Swap direction */}
               <div className="flex justify-center -my-3 relative z-10">
-                <button
-                  onClick={handleSwapTokens}
-                  className="w-10 h-10 rounded-xl bg-secondary border-4 border-background flex items-center justify-center hover:bg-primary/10 transition-colors"
-                >
-                  <ArrowLeftRight className="size-4 text-accent" />
+                <button onClick={handleSwapTokens} className="w-10 h-10 rounded-xl bg-[#2B3139] border-4 border-[#181A20] flex items-center justify-center hover:bg-[#363C45] transition-colors">
+                  <ArrowLeftRight className="size-4 text-[#F0B90B]" />
                 </button>
               </div>
 
               {/* To */}
-              <div className="glass-card rounded-xl p-4 mb-4">
+              <div className="bnb-card rounded-xl p-4 mb-4">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs text-muted-foreground">To</span>
-                  <span className="text-xs text-muted-foreground">Balance: 0.0000 {toToken}</span>
+                  <span className="text-xs text-[#848E9C]">To</span>
+                  <span className="text-xs text-[#848E9C]">Balance: 0.0000 {toToken}</span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <input
-                    type="number"
-                    value={toAmount}
-                    onChange={(e) => setToAmount(e.target.value)}
-                    placeholder="0.00"
-                    className="flex-1 bg-transparent text-2xl font-semibold outline-none min-w-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                  />
-                  <button className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-secondary hover:bg-white/5 transition-colors shrink-0">
-                    <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold overflow-hidden ${hasTokenIcon(toToken) ? '' : 'bg-blue-500/20 text-blue-400'}`}>
-                      <TokenIcon symbol={toToken} />
-                    </span>
-                    <span className="text-sm font-medium">{toToken}</span>
+                  <input type="number" value={toAmount} onChange={(e) => setToAmount(e.target.value)} placeholder="0.00" className="flex-1 bg-transparent text-2xl font-semibold text-[#EAECEF] outline-none min-w-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
+                  <button className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#2B3139] hover:bg-[#363C45] transition-colors shrink-0">
+                    <TokenIcon symbol={toToken} size={22} />
+                    <span className="text-sm font-medium text-[#EAECEF]">{toToken}</span>
                   </button>
                 </div>
               </div>
 
               {/* Slippage */}
-              <div className="glass-card rounded-xl p-3.5 mb-4">
+              <div className="bnb-card rounded-xl p-3.5 mb-4">
                 <button onClick={() => setShowSlippage(!showSlippage)} className="flex items-center justify-between w-full">
                   <div className="flex items-center gap-2">
-                    <Settings className="size-3.5 text-muted-foreground" />
-                    <span className="text-sm">Slippage Tolerance</span>
+                    <Settings className="size-3.5 text-[#848E9C]" />
+                    <span className="text-sm text-[#EAECEF]">Slippage Tolerance</span>
                   </div>
                   <div className="flex items-center gap-1">
-                    <span className="text-sm font-medium text-accent">{slippage}%</span>
-                    <ChevronDown className={`size-3.5 text-muted-foreground transition-transform ${showSlippage ? 'rotate-180' : ''}`} />
+                    <span className="text-sm font-medium text-[#F0B90B]">{slippage}%</span>
+                    <ChevronDown className={`size-3.5 text-[#848E9C] transition-transform ${showSlippage ? 'rotate-180' : ''}`} />
                   </div>
                 </button>
                 {showSlippage && (
                   <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="flex gap-2 mt-3">
                     {['0.1', '0.5', '1.0', '2.0'].map((s) => (
-                      <button
-                        key={s}
-                        onClick={() => setSlippage(s)}
-                        className={`flex-1 py-1.5 rounded-lg text-xs font-medium transition-colors ${
-                          slippage === s ? 'bg-primary text-black' : 'bg-secondary text-muted-foreground hover:text-foreground'
-                        }`}
-                      >
+                      <button key={s} onClick={() => setSlippage(s)} className={`flex-1 py-1.5 rounded-lg text-xs font-medium transition-colors ${slippage === s ? 'bg-[#F0B90B] text-[#0B0E11]' : 'bg-[#2B3139] text-[#848E9C] hover:text-[#EAECEF]'}`}>
                         {s}%
                       </button>
                     ))}
@@ -1287,84 +1001,51 @@ function SwapScreen() {
                 )}
               </div>
 
-              {/* Quote details */}
               {fromAmount && parseFloat(fromAmount) > 0 && (
-                <div className="glass-card rounded-xl p-3.5 mb-6 flex flex-col gap-2.5">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Rate</span>
-                    <span>1 {fromToken} = 0.00027 {toToken}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Price Impact</span>
-                    <span className="text-qfs-green">{'<0.01%'}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Min. Received</span>
-                    <span>{(parseFloat(toAmountCalc) * (1 - parseFloat(slippage) / 100)).toFixed(6)} {toToken}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Network Fee</span>
-                    <span>~$3.50</span>
-                  </div>
+                <div className="bnb-card rounded-xl p-3.5 mb-6 flex flex-col gap-2.5">
+                  <div className="flex justify-between text-sm"><span className="text-[#848E9C]">Rate</span><span className="text-[#EAECEF]">1 {fromToken} = 0.00027 {toToken}</span></div>
+                  <div className="flex justify-between text-sm"><span className="text-[#848E9C]">Price Impact</span><span className="text-[#0ECB81]">{'<0.01%'}</span></div>
+                  <div className="flex justify-between text-sm"><span className="text-[#848E9C]">Min. Received</span><span className="text-[#EAECEF]">{(parseFloat(toAmountCalc) * (1 - parseFloat(slippage) / 100)).toFixed(6)} {toToken}</span></div>
+                  <div className="flex justify-between text-sm"><span className="text-[#848E9C]">Network Fee</span><span className="text-[#EAECEF]">~$3.50</span></div>
                 </div>
               )}
 
-              <button
-                onClick={handleSwap}
-                className="w-full h-12 rounded-xl blue-gold-gradient text-white font-semibold hover:opacity-90 transition-opacity"
-              >
+              <button onClick={handleSwap} className="w-full h-[52px] rounded-xl bnb-btn-primary text-base">
                 {fromAmount ? 'Review Swap' : 'Enter Amount'}
               </button>
             </motion.div>
           ) : (
             <motion.div key="swap-confirm" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="pt-4">
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
-                  <ArrowLeftRight className="size-6 text-accent" />
+                <div className="w-12 h-12 rounded-xl bg-[#F0B90B]/10 flex items-center justify-center">
+                  <ArrowLeftRight className="size-6 text-[#F0B90B]" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-semibold">Confirm Swap</h2>
-                  <p className="text-xs text-muted-foreground">You are swapping</p>
+                  <h2 className="text-lg font-semibold text-[#EAECEF]">Confirm Swap</h2>
+                  <p className="text-xs text-[#848E9C]">You are swapping</p>
                 </div>
               </div>
-
-              <div className="glass-card rounded-2xl p-6 mb-6">
+              <div className="bnb-card rounded-2xl p-6 mb-6">
                 <div className="flex items-center justify-center gap-4 mb-4">
                   <div className="text-center">
-                    <p className="text-2xl font-bold">{parseFloat(fromAmount).toLocaleString('en-US', { maximumFractionDigits: 2 })}</p>
-                    <p className="text-sm text-muted-foreground">{fromToken}</p>
+                    <p className="text-2xl font-bold text-[#EAECEF]">{parseFloat(fromAmount).toLocaleString('en-US', { maximumFractionDigits: 2 })}</p>
+                    <p className="text-sm text-[#848E9C]">{fromToken}</p>
                   </div>
-                  <ArrowLeftRight className="size-5 text-accent" />
+                  <ArrowLeftRight className="size-5 text-[#F0B90B]" />
                   <div className="text-center">
-                    <p className="text-2xl font-bold text-primary">{parseFloat(toAmountCalc).toFixed(6)}</p>
-                    <p className="text-sm text-muted-foreground">{toToken}</p>
+                    <p className="text-2xl font-bold text-[#F0B90B]">{parseFloat(toAmountCalc).toFixed(6)}</p>
+                    <p className="text-sm text-[#848E9C]">{toToken}</p>
                   </div>
                 </div>
-                <Separator className="bg-border mb-4" />
+                <Separator className="bg-[#2B3139] mb-4" />
                 <div className="flex flex-col gap-2.5">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Rate</span>
-                    <span>1 {fromToken} = 0.00027 {toToken}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Slippage</span>
-                    <span>{slippage}%</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Network</span>
-                    <span>{chain?.icon} {chain?.name}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Network Fee</span>
-                    <span>~$3.50</span>
-                  </div>
+                  <div className="flex justify-between text-sm"><span className="text-[#848E9C]">Rate</span><span className="text-[#EAECEF]">1 {fromToken} = 0.00027 {toToken}</span></div>
+                  <div className="flex justify-between text-sm"><span className="text-[#848E9C]">Slippage</span><span className="text-[#EAECEF]">{slippage}%</span></div>
+                  <div className="flex justify-between text-sm"><span className="text-[#848E9C]">Network</span><span className="text-[#EAECEF]">{chain?.icon} {chain?.name}</span></div>
+                  <div className="flex justify-between text-sm"><span className="text-[#848E9C]">Network Fee</span><span className="text-[#EAECEF]">~$3.50</span></div>
                 </div>
               </div>
-
-              <button
-                onClick={handleConfirm}
-                className="w-full h-12 rounded-xl blue-gold-gradient text-white font-semibold hover:opacity-90 transition-opacity"
-              >
+              <button onClick={handleConfirm} className="w-full h-[52px] rounded-xl bnb-btn-primary text-base">
                 Confirm Swap
               </button>
             </motion.div>
@@ -1395,147 +1076,99 @@ function StakingScreen() {
   const handleStake = () => {
     const currentPool = STAKING_POOLS.find((p) => p.id === selectedPool);
     if (!currentPool) return;
-    if (parseFloat(stakeAmount) < currentPool.minStake) {
-      addToast(`Minimum stake is ${currentPool.minStake} QFS`, 'error');
-      return;
-    }
-    const endDate = new Date();
-    endDate.setDate(endDate.getDate() + currentPool.duration);
-    addTransaction({
-      id: Date.now().toString(),
-      type: 'stake',
-      status: 'confirmed',
-      from: '',
-      to: '',
-      amount: parseFloat(stakeAmount).toLocaleString('en-US', { maximumFractionDigits: 2 }),
-      token: 'QFS',
-      chain: 'BNB Smart Chain',
-      timestamp: Date.now(),
-    });
+    if (parseFloat(stakeAmount) < currentPool.minStake) { addToast(`Minimum stake is ${currentPool.minStake} QFS`, 'error'); return; }
+    const endDate = new Date(); endDate.setDate(endDate.getDate() + currentPool.duration);
+    addTransaction({ id: Date.now().toString(), type: 'stake', status: 'confirmed', from: '', to: '', amount: parseFloat(stakeAmount).toLocaleString('en-US', { maximumFractionDigits: 2 }), token: 'QFS', chain: 'BNB Smart Chain', timestamp: Date.now() });
     addToast(`Staked ${stakeAmount} QFS successfully!`, 'success');
-    setSelectedPool(null);
-    setStakeAmount('');
+    setSelectedPool(null); setStakeAmount('');
   };
 
   return (
-    <motion.div key="staking" variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={pageTransition} className="min-h-screen pb-24">
+    <motion.div key="staking" variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={pageTransition} className="min-h-screen pb-24 bg-[#181A20]">
       <div className="px-4 pt-4 pb-2 flex items-center justify-between">
-        <h1 className="text-lg font-semibold">Staking</h1>
-        <button
-          onClick={() => setShowCalculator(!showCalculator)}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-secondary hover:bg-white/5 transition-colors"
-        >
-          <BarChart3 className="size-3.5 text-accent" />
-          <span className="text-xs">Calculator</span>
+        <h1 className="text-lg font-semibold text-[#EAECEF]">Staking</h1>
+        <button onClick={() => setShowCalculator(!showCalculator)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#2B3139] hover:bg-[#363C45] transition-colors">
+          <BarChart3 className="size-3.5 text-[#F0B90B]" />
+          <span className="text-xs text-[#EAECEF]">Calculator</span>
         </button>
       </div>
 
-      {/* Calculator */}
       {showCalculator && (
         <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="px-4 mb-4">
-          <div className="glass-card rounded-xl p-4">
-            <h3 className="text-sm font-semibold mb-3">Rewards Calculator</h3>
+          <div className="bnb-card rounded-xl p-4">
+            <h3 className="text-sm font-semibold mb-3 text-[#EAECEF]">Rewards Calculator</h3>
             <div className="flex gap-3 mb-3">
               <div className="flex-1">
-                <label className="text-xs text-muted-foreground mb-1 block">Amount (QFS)</label>
+                <label className="text-xs text-[#848E9C] mb-1 block">Amount (QFS)</label>
                 <Input type="number" value={calcAmount} onChange={(e) => setCalcAmount(e.target.value)} placeholder="1000" />
               </div>
               <div className="flex-1">
-                <label className="text-xs text-muted-foreground mb-1 block">Days</label>
+                <label className="text-xs text-[#848E9C] mb-1 block">Days</label>
                 <Input type="number" value={calcDays} onChange={(e) => setCalcDays(e.target.value)} placeholder="90" />
               </div>
             </div>
-            <div className="bg-primary/5 rounded-lg p-3 flex items-center justify-between">
-              <span className="text-xs text-muted-foreground">Estimated Rewards</span>
-              <span className="text-lg font-bold text-accent">{estimatedRewards.toFixed(2)} QFS</span>
+            <div className="bg-[#F0B90B]/5 rounded-lg p-3 flex items-center justify-between">
+              <span className="text-xs text-[#848E9C]">Estimated Rewards</span>
+              <span className="text-lg font-bold text-[#F0B90B]">{estimatedRewards.toFixed(2)} QFS</span>
             </div>
           </div>
         </motion.div>
       )}
 
-      {/* Your Staking Info */}
       <div className="px-4 mb-4">
-        <div className="glass-card rounded-xl p-4 flex items-center justify-between">
+        <div className="bnb-card rounded-xl p-4 flex items-center justify-between">
           <div>
-            <p className="text-xs text-muted-foreground">Total Staked</p>
-            <p className="text-lg font-semibold">{stakingPositions.length > 0 ? '5,000.00' : '0.00'} QFS</p>
+            <p className="text-xs text-[#848E9C]">Total Staked</p>
+            <p className="text-lg font-semibold text-[#EAECEF]">{stakingPositions.length > 0 ? '5,000.00' : '0.00'} QFS</p>
           </div>
           <div className="text-right">
-            <p className="text-xs text-muted-foreground">Total Rewards</p>
-            <p className="text-lg font-semibold text-qfs-green">{stakingPositions.length > 0 ? '123.45' : '0.00'} QFS</p>
+            <p className="text-xs text-[#848E9C]">Total Rewards</p>
+            <p className="text-lg font-semibold text-[#0ECB81]">{stakingPositions.length > 0 ? '123.45' : '0.00'} QFS</p>
           </div>
         </div>
       </div>
 
-      {/* Pools */}
       <div className="px-4">
-        <h3 className="text-sm font-semibold mb-3">Staking Pools</h3>
+        <h3 className="text-sm font-semibold mb-3 text-[#EAECEF]">Staking Pools</h3>
         <div className="flex flex-col gap-3">
           {STAKING_POOLS.map((sp, i) => (
-            <motion.div
-              key={sp.id}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.08 }}
-              className="glass-card rounded-xl p-4 cursor-pointer hover:bg-white/[0.03] transition-colors"
-              onClick={() => setSelectedPool(selectedPool === sp.id ? null : sp.id)}
-            >
+            <motion.div key={sp.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }} className="bnb-card rounded-xl p-4 cursor-pointer hover:border-[#363C45] transition-colors" onClick={() => setSelectedPool(selectedPool === sp.id ? null : sp.id)}>
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-10 h-10 rounded-xl blue-gold-gradient flex items-center justify-center">
-                    <Coins className="size-5 text-white" />
+                  <div className="w-10 h-10 rounded-xl bg-[#F0B90B] flex items-center justify-center">
+                    <Coins className="size-5 text-[#0B0E11]" />
                   </div>
                   <div>
-                    <p className="text-sm font-semibold">{sp.name}</p>
-                    <p className="text-xs text-muted-foreground">{sp.durationLabel} lock</p>
+                    <p className="text-sm font-semibold text-[#EAECEF]">{sp.name}</p>
+                    <p className="text-xs text-[#848E9C]">{sp.durationLabel} lock</p>
                   </div>
                 </div>
-                <Badge className="bg-accent/10 text-accent border-accent/20 hover:bg-accent/15">{formatAPY(sp.apy)}</Badge>
+                <Badge className="bg-[#F0B90B]/10 text-[#F0B90B] border-[#F0B90B]/20 hover:bg-[#F0B90B]/15 text-xs">{formatAPY(sp.apy)}</Badge>
               </div>
-              <div className="flex items-center justify-between text-xs text-muted-foreground">
+              <div className="flex items-center justify-between text-xs text-[#848E9C]">
                 <span>TVL: {formatTVL(sp.tvl)}</span>
                 <span>Min: {sp.minStake.toLocaleString()} QFS</span>
               </div>
-
-              {/* Stake form when expanded */}
               <AnimatePresence>
                 {selectedPool === sp.id && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    exit={{ opacity: 0, height: 0 }}
-                    className="mt-4"
-                  >
-                    <Separator className="bg-border mb-4" />
+                  <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="mt-4">
+                    <Separator className="bg-[#2B3139] mb-4" />
                     <div className="flex flex-col gap-3">
                       <div>
                         <div className="flex items-center justify-between mb-1.5">
-                          <label className="text-xs text-muted-foreground">Amount (QFS)</label>
-                          <span className="text-xs text-muted-foreground">Balance: {qfsBalance || '12,580.00'}</span>
+                          <label className="text-xs text-[#848E9C]">Amount (QFS)</label>
+                          <span className="text-xs text-[#848E9C]">Balance: {qfsBalance || '12,580.00'}</span>
                         </div>
                         <div className="relative">
-                          <Input
-                            type="number"
-                            value={stakeAmount}
-                            onChange={(e) => setStakeAmount(e.target.value)}
-                            placeholder={`Min ${sp.minStake}`}
-                          />
-                          <button
-                            onClick={() => setStakeAmount(qfsBalance || '12580')}
-                            className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-accent px-2 py-0.5 rounded bg-primary/10"
-                          >
-                            MAX
-                          </button>
+                          <Input type="number" value={stakeAmount} onChange={(e) => setStakeAmount(e.target.value)} placeholder={`Min ${sp.minStake}`} />
+                          <button onClick={() => setStakeAmount(qfsBalance || '12580')} className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-[#F0B90B] px-2 py-0.5 rounded-md bg-[#F0B90B]/10 font-medium">MAX</button>
                         </div>
                       </div>
-                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                      <div className="flex items-center gap-2 text-xs text-[#848E9C]">
                         <Clock className="size-3" />
                         <span>Estimated: {calculateStakingRewards(parseFloat(stakeAmount) || 0, sp.apy, sp.duration).toFixed(2)} QFS rewards</span>
                       </div>
-                      <button
-                        onClick={handleStake}
-                        className="w-full h-10 rounded-xl blue-gold-gradient text-white font-semibold text-sm hover:opacity-90 transition-opacity"
-                      >
+                      <button onClick={handleStake} className="w-full h-10 rounded-xl bnb-btn-primary text-sm">
                         Stake QFS
                       </button>
                     </div>
@@ -1552,7 +1185,6 @@ function StakingScreen() {
 
 // ─── DApps Screen ────────────────────────────────────────────────────
 function DAppsScreen() {
-  const navigate = useWalletStore((s) => s.navigate);
   const addToast = useWalletStore((s) => s.addToast);
 
   const popularDApps = [
@@ -1566,66 +1198,50 @@ function DAppsScreen() {
   ];
 
   return (
-    <motion.div key="dapps" variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={pageTransition} className="min-h-screen pb-24">
+    <motion.div key="dapps" variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={pageTransition} className="min-h-screen pb-24 bg-[#181A20]">
       <div className="px-4 pt-4 pb-2 flex items-center justify-between">
-        <h1 className="text-lg font-semibold">DApps</h1>
-        <button className="p-2 rounded-lg hover:bg-white/5">
-          <Search className="size-4 text-muted-foreground" />
-        </button>
+        <h1 className="text-lg font-semibold text-[#EAECEF]">DApps</h1>
+        <button className="p-2 rounded-lg hover:bg-[#2B3139]"><Search className="size-4 text-[#848E9C]" /></button>
       </div>
 
-      {/* Connected DApps */}
       <div className="px-4 mb-6">
-        <h3 className="text-sm font-semibold mb-3">Connected</h3>
+        <h3 className="text-sm font-semibold mb-3 text-[#EAECEF]">Connected</h3>
         {DAPP_CONNECTIONS.map((dapp) => (
-          <div key={dapp.id} className="glass-card rounded-xl p-3.5 flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 rounded-xl bg-secondary flex items-center justify-center text-xl overflow-hidden">
+          <div key={dapp.id} className="bnb-card rounded-xl p-3.5 flex items-center gap-3 mb-2">
+            <div className="w-10 h-10 rounded-xl bg-[#2B3139] flex items-center justify-center text-xl overflow-hidden">
               {dapp.icon.startsWith('/') ? <img src={dapp.icon} alt={dapp.name} className="w-full h-full object-cover" /> : dapp.icon}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium">{dapp.name}</p>
-              <p className="text-xs text-muted-foreground truncate">{dapp.domain} · {dapp.lastUsed}</p>
+              <p className="text-sm font-medium text-[#EAECEF]">{dapp.name}</p>
+              <p className="text-xs text-[#848E9C] truncate">{dapp.domain} · {dapp.lastUsed}</p>
             </div>
-            <Badge variant="outline" className="border-qfs-green/30 text-qfs-green text-xs">Active</Badge>
+            <Badge variant="outline" className="border-[#0ECB81]/30 text-[#0ECB81] text-xs">Active</Badge>
           </div>
         ))}
       </div>
 
-      {/* Popular DApps */}
       <div className="px-4">
-        <h3 className="text-sm font-semibold mb-3">Popular DApps</h3>
+        <h3 className="text-sm font-semibold mb-3 text-[#EAECEF]">Popular DApps</h3>
         <div className="grid grid-cols-3 gap-3">
           {popularDApps.map((dapp, i) => (
-            <motion.button
-              key={dapp.name}
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: i * 0.05 }}
-              onClick={() => addToast(`Opening ${dapp.name}...`, 'info')}
-              className="glass-card rounded-xl p-4 flex flex-col items-center gap-2 hover:bg-white/[0.03] transition-colors"
-            >
+            <motion.button key={dapp.name} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: i * 0.05 }} onClick={() => addToast(`Opening ${dapp.name}...`, 'info')} className="bnb-card rounded-xl p-4 flex flex-col items-center gap-2 hover:border-[#363C45] transition-colors">
               <span className="text-2xl flex items-center justify-center w-10 h-10 overflow-hidden rounded-lg">
                 {dapp.icon.startsWith('/') ? <img src={dapp.icon} alt={dapp.name} className="w-full h-full object-cover" /> : dapp.icon}
               </span>
-              <span className="text-xs font-medium text-center">{dapp.name}</span>
-              <Badge variant="secondary" className="text-[10px] px-1.5 py-0">{dapp.chain}</Badge>
+              <span className="text-xs font-medium text-[#EAECEF] text-center">{dapp.name}</span>
+              <Badge variant="secondary" className="text-[10px] px-1.5 py-0 bg-[#2B3139] text-[#848E9C] border-0">{dapp.chain}</Badge>
             </motion.button>
           ))}
         </div>
       </div>
 
-      {/* DApp Browser placeholder */}
       <div className="px-4 mt-6">
-        <div className="glass-card rounded-xl p-6 flex flex-col items-center text-center">
-          <Globe className="size-10 text-muted-foreground mb-3" />
-          <p className="text-sm font-medium mb-1">DApp Browser</p>
-          <p className="text-xs text-muted-foreground mb-4">Browse and interact with decentralized applications directly from your wallet</p>
-          <button
-            onClick={() => addToast('DApp browser coming soon!', 'info')}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-secondary hover:bg-white/5 transition-colors text-sm text-accent"
-          >
-            <ExternalLink className="size-3.5" />
-            Enter URL
+        <div className="bnb-card rounded-xl p-6 flex flex-col items-center text-center">
+          <Globe className="size-10 text-[#848E9C] mb-3" />
+          <p className="text-sm font-medium text-[#EAECEF] mb-1">DApp Browser</p>
+          <p className="text-xs text-[#848E9C] mb-4">Browse decentralized applications directly</p>
+          <button onClick={() => addToast('DApp browser coming soon!', 'info')} className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#2B3139] hover:bg-[#363C45] transition-colors text-sm text-[#F0B90B]">
+            <ExternalLink className="size-3.5" /> Enter URL
           </button>
         </div>
       </div>
@@ -1640,140 +1256,84 @@ function SettingsScreen() {
   const resetWallet = useWalletStore((s) => s.resetWallet);
   const lockWallet = useWalletStore((s) => s.lockWallet);
   const addToast = useWalletStore((s) => s.addToast);
-
   const [showResetConfirm, setShowResetConfirm] = useState(false);
 
   const settingsGroups = [
-    {
-      title: 'Security',
-      items: [
-        { icon: Lock, label: 'Change Password', action: () => addToast('Password change coming soon', 'info') },
-        { icon: Fingerprint, label: 'Biometric Login', action: () => addToast('Biometric setup coming soon', 'info'), trailing: 'Off' },
-        { icon: Key, label: 'Auto-Lock Timer', action: () => addToast('Auto-lock settings coming soon', 'info'), trailing: '5 min' },
-      ],
-    },
-    {
-      title: 'Networks',
-      items: [
-        { icon: Globe, label: 'Manage Networks', action: () => navigate('networks' as Screen) },
-        { icon: RefreshCw, label: 'Default Network', action: () => {}, trailing: 'Ethereum' },
-      ],
-    },
-    {
-      title: 'Wallet',
-      items: [
-        { icon: Eye, label: 'Show Recovery Phrase', action: () => addToast('This feature requires re-authentication', 'info') },
-        { icon: CopyIcon, label: 'Copy Address', action: () => {
-          navigator.clipboard.writeText(address);
-          addToast('Address copied!', 'success');
-        }},
-        { icon: ExternalLink, label: 'View on Explorer', action: () => addToast('Opening explorer...', 'info') },
-      ],
-    },
-    {
-      title: 'Privacy',
-      items: [
-        { icon: Moon, label: 'Dark Mode', action: () => {}, trailing: 'Always On' },
-        { icon: EyeOff, label: 'Hide Balances', action: () => addToast('Toggle in dashboard', 'info') },
-      ],
-    },
+    { title: 'Security', items: [
+      { icon: Lock, label: 'Change Password', action: () => addToast('Password change coming soon', 'info') },
+      { icon: Fingerprint, label: 'Biometric Login', action: () => addToast('Biometric setup coming soon', 'info'), trailing: 'Off' },
+      { icon: Key, label: 'Auto-Lock Timer', action: () => {}, trailing: '5 min' },
+    ]},
+    { title: 'Networks', items: [
+      { icon: Globe, label: 'Manage Networks', action: () => navigate('networks' as Screen) },
+      { icon: RefreshCw, label: 'Default Network', action: () => {}, trailing: 'Ethereum' },
+    ]},
+    { title: 'Wallet', items: [
+      { icon: Eye, label: 'Show Recovery Phrase', action: () => addToast('This feature requires re-authentication', 'info') },
+      { icon: CopyIcon, label: 'Copy Address', action: () => { navigator.clipboard.writeText(address); addToast('Address copied!', 'success'); }},
+      { icon: ExternalLink, label: 'View on Explorer', action: () => addToast('Opening explorer...', 'info') },
+    ]},
+    { title: 'Privacy', items: [
+      { icon: Moon, label: 'Dark Mode', action: () => {}, trailing: 'Always On' },
+      { icon: EyeOff, label: 'Hide Balances', action: () => addToast('Toggle in dashboard', 'info') },
+    ]},
   ];
 
   return (
-    <motion.div key="settings" variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={pageTransition} className="min-h-screen pb-24">
+    <motion.div key="settings" variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={pageTransition} className="min-h-screen pb-24 bg-[#181A20]">
       <div className="px-4 pt-4 pb-4">
-        <h1 className="text-lg font-semibold">Settings</h1>
+        <h1 className="text-lg font-semibold text-[#EAECEF]">Settings</h1>
       </div>
-
       <div className="px-4 flex flex-col gap-6">
         {settingsGroups.map((group) => (
           <div key={group.title}>
-            <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2 px-1">{group.title}</p>
-            <div className="glass-card rounded-xl overflow-hidden divide-y divide-border">
+            <p className="text-xs text-[#848E9C] uppercase tracking-wider mb-2 px-1">{group.title}</p>
+            <div className="bnb-card rounded-xl overflow-hidden divide-y divide-[#2B3139]">
               {group.items.map((item) => (
-                <button
-                  key={item.label}
-                  onClick={item.action}
-                  className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-white/[0.03] transition-colors text-left"
-                >
-                  <item.icon className="size-4 text-muted-foreground" />
-                  <span className="text-sm flex-1">{item.label}</span>
-                  {item.trailing && <span className="text-xs text-muted-foreground">{item.trailing}</span>}
-                  <ChevronRight className="size-4 text-muted-foreground" />
+                <button key={item.label} onClick={item.action} className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-[#2B3139]/50 transition-colors text-left">
+                  <item.icon className="size-4 text-[#848E9C]" />
+                  <span className="text-sm flex-1 text-[#EAECEF]">{item.label}</span>
+                  {item.trailing && <span className="text-xs text-[#848E9C]">{item.trailing}</span>}
+                  <ChevronRight className="size-4 text-[#5E6673]" />
                 </button>
               ))}
             </div>
           </div>
         ))}
 
-        {/* Danger zone */}
         <div>
-          <p className="text-xs text-qfs-red uppercase tracking-wider mb-2 px-1">Danger Zone</p>
-          <div className="glass-card rounded-xl overflow-hidden divide-y divide-border">
-            <button
-              onClick={lockWallet}
-              className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-white/[0.03] transition-colors text-left"
-            >
-              <Lock className="size-4 text-qfs-red" />
-              <span className="text-sm flex-1">Lock Wallet</span>
+          <p className="text-xs text-[#F6465D] uppercase tracking-wider mb-2 px-1">Danger Zone</p>
+          <div className="bnb-card rounded-xl overflow-hidden divide-y divide-[#2B3139]">
+            <button onClick={lockWallet} className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-[#2B3139]/50 transition-colors text-left">
+              <Lock className="size-4 text-[#F6465D]" />
+              <span className="text-sm flex-1 text-[#EAECEF]">Lock Wallet</span>
             </button>
-            <button
-              onClick={() => setShowResetConfirm(true)}
-              className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-qfs-red/5 transition-colors text-left"
-            >
-              <AlertTriangle className="size-4 text-qfs-red" />
-              <span className="text-sm text-qfs-red flex-1">Reset Wallet</span>
+            <button onClick={() => setShowResetConfirm(true)} className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-[#F6465D]/5 transition-colors text-left">
+              <AlertTriangle className="size-4 text-[#F6465D]" />
+              <span className="text-sm text-[#F6465D] flex-1">Reset Wallet</span>
             </button>
           </div>
         </div>
 
-        {/* App info */}
         <div className="text-center py-4">
-          <div className="w-8 h-8 rounded-lg overflow-hidden mx-auto mb-2">
-            <img src="/qfs-logo.jpg" alt="QFS" className="w-full h-full object-cover" />
-          </div>
-          <p className="text-xs text-muted-foreground">QFS Wallet v1.0.0</p>
-          <p className="text-[10px] text-muted-foreground mt-1">Secure. Non-Custodial. Multichain.</p>
+          <div className="w-8 h-8 rounded-lg overflow-hidden mx-auto mb-2"><img src="/qfs-logo.jpg" alt="QFS" className="w-full h-full object-cover" /></div>
+          <p className="text-xs text-[#848E9C]">QFS Wallet v1.0.0</p>
+          <p className="text-[10px] text-[#5E6673] mt-1">Secure. Non-Custodial. Multichain.</p>
         </div>
       </div>
 
-      {/* Reset confirmation dialog */}
       <AnimatePresence>
         {showResetConfirm && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-            onClick={() => setShowResetConfirm(false)}
-          >
-            <motion.div
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              className="glass-card rounded-2xl p-6 w-full max-w-sm"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="w-12 h-12 rounded-xl bg-qfs-red/10 flex items-center justify-center mx-auto mb-4">
-                <AlertTriangle className="size-6 text-qfs-red" />
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setShowResetConfirm(false)}>
+            <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} className="bnb-card-elevated rounded-2xl p-6 w-full max-w-sm" onClick={(e) => e.stopPropagation()}>
+              <div className="w-12 h-12 rounded-xl bg-[#F6465D]/10 flex items-center justify-center mx-auto mb-4">
+                <AlertTriangle className="size-6 text-[#F6465D]" />
               </div>
-              <h3 className="text-lg font-semibold text-center mb-2">Reset Wallet?</h3>
-              <p className="text-sm text-muted-foreground text-center mb-6">
-                This will delete all wallet data from this device. Make sure you have your recovery phrase backed up.
-              </p>
+              <h3 className="text-lg font-semibold text-center mb-2 text-[#EAECEF]">Reset Wallet?</h3>
+              <p className="text-sm text-[#848E9C] text-center mb-6">This will delete all wallet data. Make sure you have your recovery phrase backed up.</p>
               <div className="flex gap-3">
-                <button
-                  onClick={() => setShowResetConfirm(false)}
-                  className="flex-1 h-10 rounded-xl border border-border text-sm font-medium hover:bg-white/5 transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={() => { resetWallet(); addToast('Wallet has been reset', 'info'); }}
-                  className="flex-1 h-10 rounded-xl bg-qfs-red text-white text-sm font-medium hover:bg-qfs-red/90 transition-colors"
-                >
-                  Reset
-                </button>
+                <button onClick={() => setShowResetConfirm(false)} className="flex-1 h-10 rounded-xl bnb-btn-outline text-sm font-medium">Cancel</button>
+                <button onClick={() => { resetWallet(); addToast('Wallet has been reset', 'info'); }} className="flex-1 h-10 rounded-xl bg-[#F6465D] text-white text-sm font-medium hover:bg-[#F6465D]/90 transition-colors">Reset</button>
               </div>
             </motion.div>
           </motion.div>
@@ -1788,86 +1348,33 @@ function WalletLockScreen() {
   const unlockWallet = useWalletStore((s) => s.unlockWallet);
   const address = useWalletStore((s) => s.address);
   const addToast = useWalletStore((s) => s.addToast);
-
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isUnlocking, setIsUnlocking] = useState(false);
 
   const handleUnlock = useCallback(async () => {
-    if (password.length < 1) {
-      addToast('Enter your password', 'error');
-      return;
-    }
+    if (password.length < 1) { addToast('Enter your password', 'error'); return; }
     setIsUnlocking(true);
-    // Simulate unlock - in production this would decrypt the wallet
-    setTimeout(() => {
-      unlockWallet();
-      addToast('Wallet unlocked!', 'success');
-      setIsUnlocking(false);
-    }, 800);
+    setTimeout(() => { unlockWallet(); addToast('Wallet unlocked!', 'success'); setIsUnlocking(false); }, 800);
   }, [password, unlockWallet, addToast]);
 
   return (
-    <motion.div
-      key="lock"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className="min-h-screen flex flex-col items-center justify-center px-6"
-    >
-      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] rounded-full bg-primary/6 blur-[80px] pointer-events-none" />
-      <div className="absolute bottom-1/3 right-1/4 w-[200px] h-[200px] rounded-full bg-accent/4 blur-[80px] pointer-events-none" />
-
-      <motion.div
-        initial={{ scale: 0.8, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ delay: 0.1 }}
-        className="w-20 h-20 rounded-3xl qfs-glow mb-8 overflow-hidden"
-      >
+    <motion.div key="lock" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="min-h-screen flex flex-col items-center justify-center px-6 bg-[#181A20]">
+      <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ delay: 0.1 }} className="w-20 h-20 rounded-3xl mb-8 overflow-hidden shadow-lg shadow-[#F0B90B]/10">
         <img src="/qfs-logo.jpg" alt="QFS" className="w-full h-full object-cover" />
       </motion.div>
-
-      <motion.h1
-        initial={{ y: 10, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.2 }}
-        className="text-xl font-semibold mb-1"
-      >
-        Wallet Locked
-      </motion.h1>
-      <motion.p
-        initial={{ y: 10, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.25 }}
-        className="text-sm text-muted-foreground mb-8 text-center"
-      >
+      <motion.h1 initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }} className="text-xl font-semibold mb-1 text-[#EAECEF]">Wallet Locked</motion.h1>
+      <motion.p initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.25 }} className="text-sm text-[#848E9C] mb-8 text-center">
         {address ? truncateAddress(address) : 'QFS Wallet'}
       </motion.p>
-
-      <motion.div
-        initial={{ y: 20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.3 }}
-        className="w-full max-w-xs"
-      >
+      <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.3 }} className="w-full max-w-xs">
         <div className="relative mb-4">
-          <Input
-            type={showPassword ? 'text' : 'password'}
-            placeholder="Enter password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleUnlock()}
-            className="h-12 pr-10 text-base"
-            autoFocus
-          />
-          <button onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+          <Input type={showPassword ? 'text' : 'password'} placeholder="Enter password" value={password} onChange={(e) => setPassword(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleUnlock()} className="h-12 pr-10 text-base" autoFocus />
+          <button onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#848E9C] hover:text-[#EAECEF]">
             {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
           </button>
         </div>
-        <button
-          onClick={handleUnlock}
-          disabled={isUnlocking}
-          className="w-full h-12 rounded-xl blue-gold-gradient text-white font-semibold hover:opacity-90 transition-opacity disabled:opacity-50"
-        >
+        <button onClick={handleUnlock} disabled={isUnlocking} className="w-full h-12 rounded-xl bnb-btn-primary text-base">
           {isUnlocking ? 'Unlocking...' : 'Unlock'}
         </button>
       </motion.div>
@@ -1883,32 +1390,19 @@ function NetworksScreen() {
   const addToast = useWalletStore((s) => s.addToast);
 
   return (
-    <motion.div key="networks" variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={pageTransition} className="min-h-screen flex flex-col">
+    <motion.div key="networks" variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={pageTransition} className="min-h-screen flex flex-col bg-[#181A20]">
       <ScreenHeader title="Networks" onBack={() => navigate('settings')} />
       <div className="flex-1 px-4 pb-8 overflow-y-auto">
-        <p className="text-xs text-muted-foreground mb-3">Select a network to switch to</p>
+        <p className="text-xs text-[#848E9C] mb-3">Select a network to switch to</p>
         <div className="flex flex-col gap-2">
           {SUPPORTED_CHAINS.map((chain, i) => (
-            <motion.button
-              key={chain.id}
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: i * 0.05 }}
-              onClick={() => { selectChain(chain.id); addToast(`Switched to ${chain.name}`, 'success'); }}
-              className={`glass-card rounded-xl p-4 flex items-center gap-3 transition-colors ${
-                chain.id === currentChainId ? 'border-primary/30' : 'hover:bg-white/[0.03]'
-              }`}
-            >
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center text-lg" style={{ backgroundColor: chain.color + '15', color: chain.color }}>
-                {chain.icon}
-              </div>
+            <motion.button key={chain.id} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.05 }} onClick={() => { selectChain(chain.id); addToast(`Switched to ${chain.name}`, 'success'); }} className={`bnb-card rounded-xl p-4 flex items-center gap-3 transition-colors ${chain.id === currentChainId ? 'border-[#F0B90B]/30' : 'hover:border-[#363C45]'}`}>
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center text-lg" style={{ backgroundColor: chain.color + '15', color: chain.color }}>{chain.icon}</div>
               <div className="flex-1 text-left">
-                <p className="text-sm font-medium">{chain.name}</p>
-                <p className="text-xs text-muted-foreground">Chain ID: {chain.id}</p>
+                <p className="text-sm font-medium text-[#EAECEF]">{chain.name}</p>
+                <p className="text-xs text-[#848E9C]">Chain ID: {chain.id}</p>
               </div>
-              {chain.id === currentChainId && (
-                <Badge className="bg-primary/10 text-primary border-primary/20">Active</Badge>
-              )}
+              {chain.id === currentChainId && <Badge className="bg-[#F0B90B]/10 text-[#F0B90B] border-[#F0B90B]/20 text-xs">Active</Badge>}
             </motion.button>
           ))}
         </div>
@@ -1917,37 +1411,32 @@ function NetworksScreen() {
   );
 }
 
-// ─── Copy Button Helper ──────────────────────────────────────────────
+// ─── Copy Button ─────────────────────────────────────────────────────
 function CopyButton({ text }: { text: string }) {
   const [copied, setCopied] = useState(false);
   const addToast = useWalletStore((s) => s.addToast);
-
   const handleCopy = useCallback(() => {
-    navigator.clipboard.writeText(text);
-    setCopied(true);
-    addToast('Copied!', 'success');
-    setTimeout(() => setCopied(false), 2000);
+    navigator.clipboard.writeText(text); setCopied(true); addToast('Copied!', 'success'); setTimeout(() => setCopied(false), 2000);
   }, [text, addToast]);
-
   return (
-    <button onClick={handleCopy} className="p-1 rounded hover:bg-white/5 transition-colors">
-      {copied ? <Check className="size-3.5 text-qfs-green" /> : <CopyIcon className="size-3.5 text-muted-foreground" />}
+    <button onClick={handleCopy} className="p-1 rounded hover:bg-[#363C45] transition-colors">
+      {copied ? <Check className="size-3.5 text-[#0ECB81]" /> : <CopyIcon className="size-3.5 text-[#848E9C]" />}
     </button>
   );
 }
 
-// ─── Bottom Navigation ───────────────────────────────────────────────
+// ─── Bottom Navigation (Trust Wallet Style) ──────────────────────────
 function BottomNav() {
   const navigate = useWalletStore((s) => s.navigate);
   const currentScreen = useWalletStore((s) => s.currentScreen);
   const [showMore, setShowMore] = useState(false);
 
   const navItems = [
-    { icon: HomeIcon, label: 'Inicio', screen: 'dashboard' as Screen },
-    { icon: Wallet, label: 'Wallet', screen: 'wallet' as Screen },
+    { icon: HomeIcon, label: 'Home', screen: 'dashboard' as Screen },
+    { icon: TrendingUp, label: 'Markets', screen: 'staking' as Screen },
     { icon: ArrowLeftRight, label: 'Swap', screen: 'swap' as Screen },
-    { icon: TrendingUp, label: 'Staking', screen: 'staking' as Screen },
-    { icon: Globe, label: 'DApps', screen: 'dapps' as Screen },
+    { icon: Clock, label: 'History', screen: 'dapps' as Screen },
+    { icon: Wallet, label: 'Wallet', screen: 'wallet' as Screen },
   ];
 
   const isActive = (screen: Screen) => currentScreen === screen;
@@ -1956,64 +1445,36 @@ function BottomNav() {
     <>
       <nav className="fixed bottom-0 left-0 right-0 z-40">
         <div className="max-w-md lg:max-w-lg mx-auto">
-          <div className="mx-2 mb-2 rounded-2xl glass-card border-t border-border/50">
-            <div className="flex items-center justify-around py-2">
+          <div className="bnb-bottom-nav px-2">
+            <div className="flex items-center justify-around">
               {navItems.map((item) => (
                 <button
                   key={item.screen}
                   onClick={() => navigate(item.screen)}
-                  className={`flex flex-col items-center gap-0.5 px-2 py-1.5 rounded-xl transition-colors min-w-[56px] ${
-                    isActive(item.screen) ? 'text-accent' : 'text-muted-foreground hover:text-foreground'
-                  }`}
+                  className={`bnb-nav-item ${isActive(item.screen) ? 'active' : ''}`}
                 >
-                  <item.icon className={`size-5 ${isActive(item.screen) ? 'text-accent' : ''}`} />
+                  <item.icon className="size-5" />
                   <span className="text-[10px] font-medium">{item.label}</span>
-                  {isActive(item.screen) && (
-                    <motion.div layoutId="nav-indicator" className="w-1 h-1 rounded-full bg-primary" />
-                  )}
                 </button>
               ))}
 
-              {/* More menu (Settings) */}
+              {/* Settings */}
               <div className="relative">
-                <button
-                  onClick={() => setShowMore(!showMore)}
-                  className={`flex flex-col items-center gap-0.5 px-2 py-1.5 rounded-xl transition-colors min-w-[56px] ${
-                    isActive('settings') ? 'text-accent' : 'text-muted-foreground hover:text-foreground'
-                  }`}
-                >
-                  <Menu className="size-5" />
+                <button onClick={() => setShowMore(!showMore)} className={`bnb-nav-item ${isActive('settings') ? 'active' : ''}`}>
+                  <Settings className="size-5" />
                   <span className="text-[10px] font-medium">More</span>
                 </button>
-
                 <AnimatePresence>
                   {showMore && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                      className="absolute bottom-full right-0 mb-2 w-48 glass-card rounded-xl overflow-hidden"
-                    >
-                      <button
-                        onClick={() => { navigate('settings'); setShowMore(false); }}
-                        className="w-full flex items-center gap-3 px-4 py-3 hover:bg-white/5 transition-colors text-left"
-                      >
-                        <Settings className="size-4 text-muted-foreground" />
-                        <span className="text-sm">Settings</span>
+                    <motion.div initial={{ opacity: 0, y: 10, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 10, scale: 0.95 }} className="absolute bottom-full right-0 mb-2 w-48 bnb-card-elevated rounded-xl overflow-hidden">
+                      <button onClick={() => { navigate('settings'); setShowMore(false); }} className="w-full flex items-center gap-3 px-4 py-3 hover:bg-[#363C45] transition-colors text-left">
+                        <Settings className="size-4 text-[#848E9C]" /><span className="text-sm text-[#EAECEF]">Settings</span>
                       </button>
-                      <button
-                        onClick={() => { navigate('networks' as Screen); setShowMore(false); }}
-                        className="w-full flex items-center gap-3 px-4 py-3 hover:bg-white/5 transition-colors text-left"
-                      >
-                        <Globe className="size-4 text-muted-foreground" />
-                        <span className="text-sm">Networks</span>
+                      <button onClick={() => { navigate('networks' as Screen); setShowMore(false); }} className="w-full flex items-center gap-3 px-4 py-3 hover:bg-[#363C45] transition-colors text-left">
+                        <Globe className="size-4 text-[#848E9C]" /><span className="text-sm text-[#EAECEF]">Networks</span>
                       </button>
-                      <button
-                        onClick={() => setShowMore(false)}
-                        className="w-full flex items-center gap-3 px-4 py-3 hover:bg-white/5 transition-colors text-left"
-                      >
-                        <Shield className="size-4 text-muted-foreground" />
-                        <span className="text-sm">Security</span>
+                      <button onClick={() => setShowMore(false)} className="w-full flex items-center gap-3 px-4 py-3 hover:bg-[#363C45] transition-colors text-left">
+                        <Shield className="size-4 text-[#848E9C]" /><span className="text-sm text-[#EAECEF]">Security</span>
                       </button>
                     </motion.div>
                   )}
@@ -2021,15 +1482,16 @@ function BottomNav() {
               </div>
             </div>
           </div>
+          {/* Safe area for mobile */}
+          <div className="h-[env(safe-area-inset-bottom)]" />
         </div>
       </nav>
-      {/* Click-away for more menu */}
       {showMore && <div className="fixed inset-0 z-30" onClick={() => setShowMore(false)} />}
     </>
   );
 }
 
-// ─── Add Token Modal ───────────────────────────────────────────────────
+// ─── Add Token Modal ─────────────────────────────────────────────────
 function AddTokenModal({ chainId, onClose }: { chainId: number; onClose: () => void }) {
   const addToken = useWalletStore((s) => s.addToken);
   const addToast = useWalletStore((s) => s.addToast);
@@ -2049,117 +1511,61 @@ function AddTokenModal({ chainId, onClose }: { chainId: number; onClose: () => v
   }, [availableTokens, searchQuery]);
 
   const handleAddCustom = () => {
-    if (!customSymbol || !customAddress) {
-      addToast('Symbol and address are required', 'error');
-      return;
-    }
-    addToken({
-      symbol: customSymbol.toUpperCase(),
-      name: customName || customSymbol.toUpperCase(),
-      address: customAddress,
-      decimals: parseInt(customDecimals) || 18,
-      balance: '0.00',
-      valueUsd: 0,
-      chainId,
-    });
+    if (!customSymbol || !customAddress) { addToast('Symbol and address are required', 'error'); return; }
+    addToken({ symbol: customSymbol.toUpperCase(), name: customName || customSymbol.toUpperCase(), address: customAddress, decimals: parseInt(customDecimals) || 18, balance: '0.00', valueUsd: 0, chainId });
     addToast(`${customSymbol.toUpperCase()} added to ${chain?.name}`, 'success');
     onClose();
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-end"
-      onClick={onClose}
-    >
-      <motion.div
-        initial={{ y: '100%' }}
-        animate={{ y: 0 }}
-        exit={{ y: '100%' }}
-        transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-        className="w-full max-w-md lg:max-w-lg mx-auto glass-card rounded-t-3xl p-5 max-h-[85vh] overflow-y-auto"
-        onClick={(e) => e.stopPropagation()}
-      >
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-end" onClick={onClose}>
+      <motion.div initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }} transition={{ type: 'spring', damping: 25, stiffness: 300 }} className="w-full max-w-md lg:max-w-lg mx-auto bg-[#1E2329] rounded-t-3xl p-5 max-h-[85vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between mb-5">
-          <h3 className="text-lg font-semibold">Add Token</h3>
-          <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-white/5">
-            <X className="size-5 text-muted-foreground" />
-          </button>
+          <h3 className="text-lg font-semibold text-[#EAECEF]">Add Token</h3>
+          <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-[#363C45]"><X className="size-5 text-[#848E9C]" /></button>
         </div>
-
-        <div className="flex gap-1 p-1 bg-secondary rounded-xl mb-4">
-          <button onClick={() => setMode('search')} className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors ${mode === 'search' ? 'bg-primary text-black' : 'text-muted-foreground'}`}>
-            Search
-          </button>
-          <button onClick={() => setMode('custom')} className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors ${mode === 'custom' ? 'bg-primary text-black' : 'text-muted-foreground'}`}>
-            Custom
-          </button>
+        <div className="flex gap-1 p-1 bg-[#2B3139] rounded-xl mb-4">
+          <button onClick={() => setMode('search')} className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors ${mode === 'search' ? 'bg-[#F0B90B] text-[#0B0E11]' : 'text-[#848E9C]'}`}>Search</button>
+          <button onClick={() => setMode('custom')} className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors ${mode === 'custom' ? 'bg-[#F0B90B] text-[#0B0E11]' : 'text-[#848E9C]'}`}>Custom</button>
         </div>
-
         {mode === 'search' ? (
           <>
             <div className="relative mb-4">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-[#848E9C]" />
               <Input placeholder="Search by name or symbol..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-10" />
             </div>
             <div className="flex flex-col gap-1.5">
               {filteredTokens.map((token) => (
-                <div key={token.address + token.symbol} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/[0.03] transition-colors">
-                  <div className={`w-9 h-9 rounded-lg flex items-center justify-center text-xs font-bold shrink-0 ${hasTokenIcon(token.symbol) ? 'overflow-hidden' : 'bg-secondary text-muted-foreground'}`}>
-                    <TokenIcon symbol={token.symbol} />
-                  </div>
+                <div key={token.address + token.symbol} className="flex items-center gap-3 p-3 rounded-xl hover:bg-[#2B3139]/50 transition-colors">
+                  <TokenIcon symbol={token.symbol} size={36} />
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium">{token.symbol}</p>
-                    <p className="text-xs text-muted-foreground truncate">{token.name}</p>
+                    <p className="text-sm font-medium text-[#EAECEF]">{token.symbol}</p>
+                    <p className="text-xs text-[#848E9C] truncate">{token.name}</p>
                   </div>
-                  <button
-                    onClick={() => { addToken({ ...token, balance: '0.00', valueUsd: 0 }); addToast(`${token.symbol} added`, 'success'); onClose(); }}
-                    className="px-3 py-1.5 rounded-lg bg-primary/10 text-accent text-xs font-medium hover:bg-primary/20 transition-colors"
-                  >Add</button>
+                  <button onClick={() => { addToken({ ...token, balance: '0.00', valueUsd: 0 }); addToast(`${token.symbol} added`, 'success'); onClose(); }} className="px-3 py-1.5 rounded-lg bg-[#F0B90B]/10 text-[#F0B90B] text-xs font-medium hover:bg-[#F0B90B]/20 transition-colors">Add</button>
                 </div>
               ))}
-              {filteredTokens.length === 0 && (
-                <div className="text-center py-8">
-                  <p className="text-sm text-muted-foreground">No tokens found</p>
-                </div>
-              )}
+              {filteredTokens.length === 0 && <div className="text-center py-8"><p className="text-sm text-[#848E9C]">No tokens found</p></div>}
             </div>
           </>
         ) : (
           <div className="flex flex-col gap-4">
-            <div>
-              <label className="text-xs text-muted-foreground mb-1.5 block">Contract Address</label>
-              <Input placeholder="0x..." value={customAddress} onChange={(e) => setCustomAddress(e.target.value)} />
-            </div>
+            <div><label className="text-xs text-[#848E9C] mb-1.5 block">Contract Address</label><Input placeholder="0x..." value={customAddress} onChange={(e) => setCustomAddress(e.target.value)} /></div>
             <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="text-xs text-muted-foreground mb-1.5 block">Symbol</label>
-                <Input placeholder="TOKEN" value={customSymbol} onChange={(e) => setCustomSymbol(e.target.value)} />
-              </div>
-              <div>
-                <label className="text-xs text-muted-foreground mb-1.5 block">Decimals</label>
-                <Input placeholder="18" value={customDecimals} onChange={(e) => setCustomDecimals(e.target.value)} />
-              </div>
+              <div><label className="text-xs text-[#848E9C] mb-1.5 block">Symbol</label><Input placeholder="TOKEN" value={customSymbol} onChange={(e) => setCustomSymbol(e.target.value)} /></div>
+              <div><label className="text-xs text-[#848E9C] mb-1.5 block">Decimals</label><Input placeholder="18" value={customDecimals} onChange={(e) => setCustomDecimals(e.target.value)} /></div>
             </div>
-            <div>
-              <label className="text-xs text-muted-foreground mb-1.5 block">Name (optional)</label>
-              <Input placeholder="Token Name" value={customName} onChange={(e) => setCustomName(e.target.value)} />
-            </div>
-            <button onClick={handleAddCustom} className="w-full h-12 rounded-xl blue-gold-gradient text-white font-semibold hover:opacity-90 transition-opacity mt-2">
-              Add Token
-            </button>
+            <div><label className="text-xs text-[#848E9C] mb-1.5 block">Name (optional)</label><Input placeholder="Token Name" value={customName} onChange={(e) => setCustomName(e.target.value)} /></div>
+            <button onClick={handleAddCustom} className="w-full h-[52px] rounded-xl bnb-btn-primary text-base mt-2">Add Token</button>
           </div>
         )}
-
-        <p className="text-[10px] text-muted-foreground text-center mt-4">Network: {chain?.name} (Chain ID: {chainId})</p>
+        <p className="text-[10px] text-[#5E6673] text-center mt-4">Network: {chain?.name} (Chain ID: {chainId})</p>
       </motion.div>
     </motion.div>
   );
 }
 
-// ─── Wallet Screen (token list view) ─────────────────────────────────
+// ─── Wallet Screen (Token List) ──────────────────────────────────────
 function WalletScreen() {
   const navigate = useWalletStore((s) => s.navigate);
   const currentChainId = useWalletStore((s) => s.currentChainId);
@@ -2189,15 +1595,15 @@ function WalletScreen() {
   useEffect(() => { loadTokensForChain(currentChainId); }, [currentChainId, loadTokensForChain]);
 
   return (
-    <motion.div key="wallet" variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={pageTransition} className="min-h-screen pb-24">
+    <motion.div key="wallet" variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={pageTransition} className="min-h-screen pb-24 bg-[#181A20]">
       <div className="px-4 pt-4 pb-2 flex items-center justify-between">
-        <h1 className="text-lg font-semibold">Wallet</h1>
+        <h1 className="text-lg font-semibold text-[#EAECEF]">Wallet</h1>
         <div className="flex items-center gap-2">
-          <button onClick={() => setBalanceHidden(!balanceHidden)} className="p-2 rounded-lg hover:bg-white/5">
-            {balanceHidden ? <EyeOff className="size-4 text-muted-foreground" /> : <Eye className="size-4 text-muted-foreground" />}
+          <button onClick={() => setBalanceHidden(!balanceHidden)} className="p-2 rounded-lg hover:bg-[#2B3139]">
+            {balanceHidden ? <EyeOff className="size-4 text-[#848E9C]" /> : <Eye className="size-4 text-[#848E9C]" />}
           </button>
-          <button onClick={() => setShowAddToken(true)} className="p-2 rounded-lg hover:bg-white/5">
-            <Plus className="size-4 text-accent" />
+          <button onClick={() => setShowAddToken(true)} className="p-2 rounded-lg hover:bg-[#2B3139]">
+            <Plus className="size-4 text-[#F0B90B]" />
           </button>
         </div>
       </div>
@@ -2206,11 +1612,7 @@ function WalletScreen() {
       <div className="px-4 mb-4">
         <div className="flex gap-2 overflow-x-auto pb-1 -mx-4 px-4">
           {SUPPORTED_CHAINS.map((c) => (
-            <button
-              key={c.id}
-              onClick={() => selectChain(c.id)}
-              className={`shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${c.id === currentChainId ? 'bg-primary text-black' : 'bg-secondary text-muted-foreground hover:text-foreground'}`}
-            >
+            <button key={c.id} onClick={() => selectChain(c.id)} className={`shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${c.id === currentChainId ? 'bg-[#F0B90B] text-[#0B0E11]' : 'bg-[#2B3139] text-[#848E9C] hover:text-[#EAECEF]'}`}>
               {c.icon} {c.symbol}
             </button>
           ))}
@@ -2219,43 +1621,34 @@ function WalletScreen() {
 
       {/* Total balance */}
       <div className="px-4 mb-4">
-        <p className="text-3xl font-bold mb-1">{balanceHidden ? '••••••' : '$4,001.10'}</p>
-        <p className="text-xs text-muted-foreground">Total balance on {chain?.name}</p>
+        <p className="text-3xl font-bold text-[#EAECEF] mb-1">{balanceHidden ? '••••••' : '$4,001.10'}</p>
+        <p className="text-xs text-[#848E9C]">Total balance on {chain?.name}</p>
       </div>
 
       {/* Token list */}
-      <div className="px-4">
-        <div className="flex flex-col gap-2">
+      <div className="px-2">
+        <div className="flex flex-col">
           {chainTokens.map((token, i) => (
-            <motion.div
-              key={token.address + token.symbol}
-              initial={{ opacity: 0, y: 5 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.04 }}
-              className="glass-card rounded-xl p-4 flex items-center justify-between cursor-pointer hover:bg-white/[0.03] transition-colors"
-            >
+            <motion.div key={token.address + token.symbol} initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }} className="token-row">
               <div className="flex items-center gap-3">
-                <div className={`w-11 h-11 rounded-xl flex items-center justify-center text-sm font-bold ${hasTokenIcon(token.symbol) ? 'overflow-hidden' : 'bg-secondary text-muted-foreground'}`}>
-                  <TokenIcon symbol={token.symbol} />
-                </div>
+                <TokenIcon symbol={token.symbol} size={44} />
                 <div>
-                  <p className="text-sm font-semibold">{token.symbol}</p>
-                  <p className="text-xs text-muted-foreground">{token.name}</p>
+                  <p className="text-sm font-semibold text-[#EAECEF]">{token.symbol}</p>
+                  <p className="text-[11px] text-[#848E9C]">{token.name}</p>
                 </div>
               </div>
               <div className="text-right">
-                <p className="text-sm font-semibold">{balanceHidden ? '••••' : (token as any).balance}</p>
-                <p className={`text-xs ${(token as any).change24h >= 0 ? 'text-qfs-green' : 'text-qfs-red'}`}>
+                <p className="text-sm font-semibold text-[#EAECEF]">{balanceHidden ? '••••' : (token as any).balance}</p>
+                <p className={`text-[11px] ${(token as any).change24h >= 0 ? 'text-[#0ECB81]' : 'text-[#F6465D]'}`}>
                   {balanceHidden ? '' : ((token as any).valueUsd > 0 ? `$${(token as any).valueUsd.toLocaleString('en-US', { minimumFractionDigits: 2 })}` : '—')}
                 </p>
               </div>
             </motion.div>
           ))}
         </div>
-
         <div className="mt-3 flex items-center gap-1.5 justify-center">
-          <Info className="size-3 text-muted-foreground" />
-          <p className="text-xs text-muted-foreground">Demo data — connect to view real balances</p>
+          <Info className="size-3 text-[#848E9C]" />
+          <p className="text-[11px] text-[#848E9C]">Demo data — connect to view real balances</p>
         </div>
       </div>
 
@@ -2274,53 +1667,31 @@ function QFSWallet() {
   const showOnboarding = useWalletStore((s) => s.showOnboarding);
   const initialize = useWalletStore((s) => s.initialize);
 
-  useEffect(() => {
-    initialize();
-  }, [initialize]);
+  useEffect(() => { initialize(); }, [initialize]);
 
   const showNav = isWalletCreated && !isWalletLocked && !['create-wallet', 'import-wallet', 'seed-verify'].includes(currentScreen);
 
   const renderScreen = () => {
-    // Lock screen
-    if (isWalletCreated && isWalletLocked) {
-      return <WalletLockScreen />;
-    }
-
-    // Onboarding
-    if (showOnboarding && !isWalletCreated) {
-      return <OnboardingScreen />;
-    }
-
+    if (isWalletCreated && isWalletLocked) return <WalletLockScreen />;
+    if (showOnboarding && !isWalletCreated) return <OnboardingScreen />;
     switch (currentScreen) {
-      case 'create-wallet':
-        return <CreateWalletScreen />;
-      case 'import-wallet':
-        return <ImportWalletScreen />;
-      case 'dashboard':
-        return <DashboardScreen />;
-      case 'send':
-        return <SendScreen />;
-      case 'receive':
-        return <ReceiveScreen />;
-      case 'swap':
-        return <SwapScreen />;
-      case 'staking':
-        return <StakingScreen />;
-      case 'dapps':
-        return <DAppsScreen />;
-      case 'settings':
-        return <SettingsScreen />;
-      case 'wallet':
-        return <WalletScreen />;
-      case 'networks':
-        return <NetworksScreen />;
-      default:
-        return <DashboardScreen />;
+      case 'create-wallet': return <CreateWalletScreen />;
+      case 'import-wallet': return <ImportWalletScreen />;
+      case 'dashboard': return <DashboardScreen />;
+      case 'send': return <SendScreen />;
+      case 'receive': return <ReceiveScreen />;
+      case 'swap': return <SwapScreen />;
+      case 'staking': return <StakingScreen />;
+      case 'dapps': return <DAppsScreen />;
+      case 'settings': return <SettingsScreen />;
+      case 'wallet': return <WalletScreen />;
+      case 'networks': return <NetworksScreen />;
+      default: return <DashboardScreen />;
     }
   };
 
   return (
-    <div className="min-h-screen bg-background max-w-md lg:max-w-lg mx-auto relative">
+    <div className="min-h-screen bg-[#181A20] max-w-md lg:max-w-lg mx-auto relative">
       <ToastContainer />
       <AnimatePresence mode="wait">
         {renderScreen()}

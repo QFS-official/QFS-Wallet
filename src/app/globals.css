@@ -38,7 +38,6 @@
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
   --color-qfs-green: var(--qfs-green);
-  --color-qfs-green-dark: var(--qfs-green-dark);
   --color-qfs-red: var(--qfs-red);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -48,65 +47,63 @@
 
 :root {
   --radius: 0.75rem;
-  /* QFS Dark Premium Theme - Blue & Gold */
-  --background: #070B14;
-  --foreground: #E8EAF0;
-  --card: #0D1321;
-  --card-foreground: #E8EAF0;
-  --popover: #111827;
-  --popover-foreground: #E8EAF0;
-  --primary: #2563EB;
-  --primary-foreground: #FFFFFF;
-  --secondary: #151D2E;
-  --secondary-foreground: #E8EAF0;
-  --muted: #151D2E;
-  --muted-foreground: #6B7A99;
+  /* Binance Wallet Dark Theme */
+  --background: #181A20;
+  --foreground: #EAECEF;
+  --card: #1E2329;
+  --card-foreground: #EAECEF;
+  --popover: #2B3139;
+  --popover-foreground: #EAECEF;
+  --primary: #F0B90B;
+  --primary-foreground: #0B0E11;
+  --secondary: #2B3139;
+  --secondary-foreground: #EAECEF;
+  --muted: #2B3139;
+  --muted-foreground: #848E9C;
   --accent: #F0B90B;
-  --accent-foreground: #1A1200;
-  --destructive: #EF4444;
-  --border: #1E293B;
-  --input: #131B2B;
-  --ring: #2563EB;
-  --chart-1: #2563EB;
-  --chart-2: #D4A843;
-  --chart-3: #8B5CF6;
-  --chart-4: #06B6D4;
-  --chart-5: #EF4444;
-  --sidebar: #0A1020;
-  --sidebar-foreground: #E8EAF0;
-  --sidebar-primary: #2563EB;
-  --sidebar-primary-foreground: #FFFFFF;
-  --sidebar-accent: #151D2E;
-  --sidebar-accent-foreground: #E8EAF0;
-  --sidebar-border: #1E293B;
-  --sidebar-ring: #2563EB;
-  --qfs-green: #22C55E;
-  --qfs-green-dark: #16A34A;
-  --qfs-red: #EF4444;
+  --accent-foreground: #0B0E11;
+  --destructive: #F6465D;
+  --border: #2B3139;
+  --input: #2B3139;
+  --ring: #F0B90B;
+  --chart-1: #F0B90B;
+  --chart-2: #0ECB81;
+  --chart-3: #F6465D;
+  --chart-4: #1E90FF;
+  --chart-5: #8B5CF6;
+  --sidebar: #181A20;
+  --sidebar-foreground: #EAECEF;
+  --sidebar-primary: #F0B90B;
+  --sidebar-primary-foreground: #0B0E11;
+  --sidebar-accent: #2B3139;
+  --sidebar-accent-foreground: #EAECEF;
+  --sidebar-border: #2B3139;
+  --sidebar-ring: #F0B90B;
+  --qfs-green: #0ECB81;
+  --qfs-red: #F6465D;
 }
 
 .dark {
-  --background: #070B14;
-  --foreground: #E8EAF0;
-  --card: #0D1321;
-  --card-foreground: #E8EAF0;
-  --popover: #111827;
-  --popover-foreground: #E8EAF0;
-  --primary: #2563EB;
-  --primary-foreground: #FFFFFF;
-  --secondary: #151D2E;
-  --secondary-foreground: #E8EAF0;
-  --muted: #151D2E;
-  --muted-foreground: #6B7A99;
+  --background: #181A20;
+  --foreground: #EAECEF;
+  --card: #1E2329;
+  --card-foreground: #EAECEF;
+  --popover: #2B3139;
+  --popover-foreground: #EAECEF;
+  --primary: #F0B90B;
+  --primary-foreground: #0B0E11;
+  --secondary: #2B3139;
+  --secondary-foreground: #EAECEF;
+  --muted: #2B3139;
+  --muted-foreground: #848E9C;
   --accent: #F0B90B;
-  --accent-foreground: #1A1200;
-  --destructive: #EF4444;
-  --border: #1E293B;
-  --input: #131B2B;
-  --ring: #2563EB;
-  --qfs-green: #22C55E;
-  --qfs-green-dark: #16A34A;
-  --qfs-red: #EF4444;
+  --accent-foreground: #0B0E11;
+  --destructive: #F6465D;
+  --border: #2B3139;
+  --input: #2B3139;
+  --ring: #F0B90B;
+  --qfs-green: #0ECB81;
+  --qfs-red: #F6465D;
 }
 
 @layer base {
@@ -119,82 +116,116 @@
   }
 }
 
-/* Custom scrollbar for dark theme */
+/* Scrollbar - Binance style */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 4px;
 }
 ::-webkit-scrollbar-track {
-  background: #070B14;
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #1E293B;
-  border-radius: 3px;
+  background: #2B3139;
+  border-radius: 2px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #2A3A52;
+  background: #3C4451;
 }
 
-/* QFS Blue & Gold Glow effect */
-.qfs-glow {
-  box-shadow: 0 0 20px rgba(37, 99, 235, 0.2), 0 0 60px rgba(37, 99, 235, 0.06);
+/* Binance-style card (no glass, flat) */
+.bnb-card {
+  background: #1E2329;
+  border: 1px solid #2B3139;
 }
 
-.qfs-glow-gold {
-  box-shadow: 0 0 20px rgba(240, 185, 11, 0.2), 0 0 60px rgba(240, 185, 11, 0.06);
+.bnb-card-elevated {
+  background: #2B3139;
+  border: 1px solid #363C45;
 }
 
-.qfs-glow-text {
-  text-shadow: 0 0 20px rgba(37, 99, 235, 0.4);
+/* Primary button - Binance yellow */
+.bnb-btn-primary {
+  background: #F0B90B;
+  color: #0B0E11;
+  font-weight: 600;
+  border-radius: 12px;
+  transition: all 0.15s ease;
+}
+.bnb-btn-primary:hover {
+  background: #F8D12F;
+}
+.bnb-btn-primary:active {
+  background: #D4A30A;
+}
+.bnb-btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
-.qfs-gold-text {
-  text-shadow: 0 0 20px rgba(240, 185, 11, 0.4);
+/* Ghost/outline button */
+.bnb-btn-outline {
+  background: transparent;
+  color: #EAECEF;
+  border: 1px solid #2B3139;
+  border-radius: 12px;
+  transition: all 0.15s ease;
+}
+.bnb-btn-outline:hover {
+  border-color: #F0B90B;
+  color: #F0B90B;
 }
 
-/* Card glass effect */
-.glass-card {
-  background: rgba(13, 19, 33, 0.8);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(30, 41, 59, 0.5);
+/* Action circle button (Trust Wallet style) */
+.action-circle {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #2B3139;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+.action-circle:hover {
+  background: #363C45;
+}
+.action-circle:active {
+  transform: scale(0.95);
 }
 
-/* Gradient backgrounds - Blue & Gold */
-.blue-gold-gradient {
-  background: linear-gradient(135deg, #1D4ED8 0%, #2563EB 40%, #F0B90B 100%);
+/* Token row (Trust Wallet style - clean, no card) */
+.token-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-radius: 12px;
+  transition: background 0.12s ease;
+  cursor: pointer;
+}
+.token-row:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+.token-row:active {
+  background: rgba(255, 255, 255, 0.05);
 }
 
-.blue-gradient {
-  background: linear-gradient(135deg, #1E40AF 0%, #2563EB 50%, #3B82F6 100%);
+/* Bottom nav - Trust Wallet style */
+.bnb-bottom-nav {
+  background: #181A20;
+  border-top: 1px solid #2B3139;
 }
-
-.gold-gradient {
-  background: linear-gradient(135deg, #B8860B 0%, #D4A843 50%, #F0C75E 100%);
+.bnb-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 8px 0;
+  color: #5E6673;
+  transition: color 0.15s ease;
+  min-width: 56px;
 }
-
-.emerald-gradient {
-  background: linear-gradient(135deg, #1D4ED8 0%, #2563EB 40%, #D4A843 100%);
-}
-
-.dark-gradient {
-  background: linear-gradient(180deg, #070B14 0%, #0D1321 100%);
-}
-
-/* Blue-Gold border gradient */
-.gradient-border {
-  position: relative;
-  border: none;
-}
-.gradient-border::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  padding: 1px;
-  background: linear-gradient(135deg, #2563EB, #F0B90B, #2563EB);
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  pointer-events: none;
+.bnb-nav-item.active {
+  color: #F0B90B;
 }
 
 /* Shimmer loading */
@@ -204,7 +235,13 @@
 }
 
 .shimmer {
-  background: linear-gradient(90deg, #151D2E 25%, #1E293B 50%, #151D2E 75%);
+  background: linear-gradient(90deg, #1E2329 25%, #2B3139 50%, #1E2329 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s ease-in-out infinite;
+}
+
+/* Input focus ring */
+input:focus, textarea:focus {
+  border-color: #F0B90B !important;
+  box-shadow: 0 0 0 1px rgba(240, 185, 11, 0.2);
 }

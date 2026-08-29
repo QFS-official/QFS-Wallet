@@ -1999,4 +1999,4 @@
   1999→                        className="w-full flex items-center gap-3 px-4 py-3 hover:bg-white/5 transition-colors text-left"
   2000→                      >
 
-[showing lines 1-2000 of 2335; use offset=2001 with limit to continue reading]
+[showing lines 1-2000 of 2336; use offset=2001 with limit to continue reading]
