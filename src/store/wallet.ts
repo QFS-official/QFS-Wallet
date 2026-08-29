@@ -55,6 +55,14 @@ interface WalletStore {
   addToast: (message: string, type: 'success' | 'error' | 'info') => void;
   removeToast: (id: string) => void;
 
+  // Settings / Security
+  autoLockTimer: number; // seconds, 0 = never
+  setAutoLockTimer: (seconds: number) => void;
+  biometricEnabled: boolean;
+  setBiometricEnabled: (enabled: boolean) => void;
+  hideBalances: boolean;
+  setHideBalances: (hide: boolean) => void;
+
   // Create/Import flow
   showOnboarding: boolean;
   setShowOnboarding: (show: boolean) => void;
@@ -145,6 +153,14 @@ export const useWalletStore = create<WalletStore>((set, get) => ({
   },
   removeToast: (id) => set((s) => ({ toasts: s.toasts.filter((t) => t.id !== id) })),
 
+  // Settings
+  autoLockTimer: 300, // 5 min default
+  setAutoLockTimer: (seconds) => { saveToStorage('settings_autoLock', seconds); set({ autoLockTimer: seconds }); },
+  biometricEnabled: false,
+  setBiometricEnabled: (enabled) => { saveToStorage('settings_biometric', enabled); set({ biometricEnabled: enabled }); },
+  hideBalances: false,
+  setHideBalances: (hide) => { saveToStorage('settings_hideBalances', hide); set({ hideBalances: hide }); },
+
   // Onboarding
   showOnboarding: true,
   setShowOnboarding: (show) => set({ showOnboarding: show }),
@@ -163,6 +179,9 @@ export const useWalletStore = create<WalletStore>((set, get) => ({
           currentChainId: data.chainId || 1,
           currentScreen: 'dashboard',
           showOnboarding: false,
+          autoLockTimer: loadFromStorage<number>('settings_autoLock') ?? 300,
+          biometricEnabled: loadFromStorage<boolean>('settings_biometric') ?? false,
+          hideBalances: loadFromStorage<boolean>('settings_hideBalances') ?? false,
         });
       }
     }
@@ -172,6 +191,10 @@ export const useWalletStore = create<WalletStore>((set, get) => ({
     removeFromStorage('wallet_data');
     removeFromStorage('wallet_created');
     removeFromStorage('tokens');
+    removeFromStorage('custom_tokens');
+    removeFromStorage('settings_autoLock');
+    removeFromStorage('settings_biometric');
+    removeFromStorage('settings_hideBalances');
     set({
       isWalletCreated: false,
       isWalletLocked: true,
