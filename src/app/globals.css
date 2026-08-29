@@ -39,50 +39,57 @@
   --color-card: var(--card);
   --color-qfs-green: var(--qfs-green);
   --color-qfs-red: var(--qfs-red);
+  --color-elevated: var(--elevated);
+  --color-nav-inactive: var(--nav-inactive);
+  --color-info-blue: var(--info-blue);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
 }
 
+/* ─── Light Mode (default :root) ─── */
 :root {
   --radius: 0.75rem;
-  /* Binance Wallet Dark Theme */
-  --background: #181A20;
-  --foreground: #EAECEF;
-  --card: #1E2329;
-  --card-foreground: #EAECEF;
-  --popover: #2B3139;
-  --popover-foreground: #EAECEF;
+  --background: #FFFFFF;
+  --foreground: #0B0E11;
+  --card: #F8F9FA;
+  --card-foreground: #0B0E11;
+  --popover: #FFFFFF;
+  --popover-foreground: #0B0E11;
   --primary: #F0B90B;
   --primary-foreground: #0B0E11;
-  --secondary: #2B3139;
-  --secondary-foreground: #EAECEF;
-  --muted: #2B3139;
+  --secondary: #F0F2F5;
+  --secondary-foreground: #0B0E11;
+  --muted: #F0F2F5;
   --muted-foreground: #848E9C;
   --accent: #F0B90B;
   --accent-foreground: #0B0E11;
   --destructive: #F6465D;
-  --border: #2B3139;
-  --input: #2B3139;
+  --border: #EAECEF;
+  --input: #EAECEF;
   --ring: #F0B90B;
   --chart-1: #F0B90B;
   --chart-2: #0ECB81;
   --chart-3: #F6465D;
   --chart-4: #1E90FF;
   --chart-5: #8B5CF6;
-  --sidebar: #181A20;
-  --sidebar-foreground: #EAECEF;
+  --sidebar: #F8F9FA;
+  --sidebar-foreground: #0B0E11;
   --sidebar-primary: #F0B90B;
   --sidebar-primary-foreground: #0B0E11;
-  --sidebar-accent: #2B3139;
-  --sidebar-accent-foreground: #EAECEF;
-  --sidebar-border: #2B3139;
+  --sidebar-accent: #F0F2F5;
+  --sidebar-accent-foreground: #0B0E11;
+  --sidebar-border: #EAECEF;
   --sidebar-ring: #F0B90B;
   --qfs-green: #0ECB81;
   --qfs-red: #F6465D;
+  --elevated: #E8EBED;
+  --nav-inactive: #848E9C;
+  --info-blue: #1E90FF;
 }
 
+/* ─── Dark Mode (.dark) ─── */
 .dark {
   --background: #181A20;
   --foreground: #EAECEF;
@@ -104,6 +111,9 @@
   --ring: #F0B90B;
   --qfs-green: #0ECB81;
   --qfs-red: #F6465D;
+  --elevated: #363C45;
+  --nav-inactive: #5E6673;
+  --info-blue: #1E90FF;
 }
 
 @layer base {
@@ -116,7 +126,7 @@
   }
 }
 
-/* Scrollbar - Binance style */
+/* Scrollbar */
 ::-webkit-scrollbar {
   width: 4px;
 }
@@ -124,25 +134,25 @@
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #2B3139;
+  background: var(--border);
   border-radius: 2px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #3C4451;
+  background: var(--elevated);
 }
 
-/* Binance-style card (no glass, flat) */
+/* Binance-style card */
 .bnb-card {
-  background: #1E2329;
-  border: 1px solid #2B3139;
+  background: var(--card);
+  border: 1px solid var(--border);
 }
 
 .bnb-card-elevated {
-  background: #2B3139;
-  border: 1px solid #363C45;
+  background: var(--muted);
+  border: 1px solid var(--elevated);
 }
 
-/* Primary button - Binance yellow */
+/* Primary button */
 .bnb-btn-primary {
   background: #F0B90B;
   color: #0B0E11;
@@ -164,8 +174,8 @@
 /* Ghost/outline button */
 .bnb-btn-outline {
   background: transparent;
-  color: #EAECEF;
-  border: 1px solid #2B3139;
+  color: var(--foreground);
+  border: 1px solid var(--border);
   border-radius: 12px;
   transition: all 0.15s ease;
 }
@@ -174,25 +184,25 @@
   color: #F0B90B;
 }
 
-/* Action circle button (Trust Wallet style) */
+/* Action circle button */
 .action-circle {
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  background: #2B3139;
+  background: var(--muted);
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.15s ease;
 }
 .action-circle:hover {
-  background: #363C45;
+  background: var(--elevated);
 }
 .action-circle:active {
   transform: scale(0.95);
 }
 
-/* Token row (Trust Wallet style - clean, no card) */
+/* Token row */
 .token-row {
   display: flex;
   align-items: center;
@@ -203,16 +213,16 @@
   cursor: pointer;
 }
 .token-row:hover {
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--muted);
 }
 .token-row:active {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--elevated);
 }
 
-/* Bottom nav - Trust Wallet style */
+/* Bottom nav */
 .bnb-bottom-nav {
-  background: #181A20;
-  border-top: 1px solid #2B3139;
+  background: var(--background);
+  border-top: 1px solid var(--border);
 }
 .bnb-nav-item {
   display: flex;
@@ -220,7 +230,7 @@
   align-items: center;
   gap: 2px;
   padding: 8px 0;
-  color: #5E6673;
+  color: var(--nav-inactive);
   transition: color 0.15s ease;
   min-width: 56px;
 }
@@ -235,7 +245,7 @@
 }
 
 .shimmer {
-  background: linear-gradient(90deg, #1E2329 25%, #2B3139 50%, #1E2329 75%);
+  background: linear-gradient(90deg, var(--card) 25%, var(--muted) 50%, var(--card) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s ease-in-out infinite;
 }

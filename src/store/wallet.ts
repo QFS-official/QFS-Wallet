@@ -62,6 +62,8 @@ interface WalletStore {
   setBiometricEnabled: (enabled: boolean) => void;
   hideBalances: boolean;
   setHideBalances: (hide: boolean) => void;
+  darkMode: boolean;
+  toggleDarkMode: () => void;
 
   // Create/Import flow
   showOnboarding: boolean;
@@ -160,6 +162,17 @@ export const useWalletStore = create<WalletStore>((set, get) => ({
   setBiometricEnabled: (enabled) => { saveToStorage('settings_biometric', enabled); set({ biometricEnabled: enabled }); },
   hideBalances: false,
   setHideBalances: (hide) => { saveToStorage('settings_hideBalances', hide); set({ hideBalances: hide }); },
+  darkMode: true,
+  toggleDarkMode: () => {
+    const next = !get().darkMode;
+    saveToStorage('settings_darkMode', next);
+    set({ darkMode: next });
+    if (next) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  },
 
   // Onboarding
   showOnboarding: true,
@@ -182,6 +195,7 @@ export const useWalletStore = create<WalletStore>((set, get) => ({
           autoLockTimer: loadFromStorage<number>('settings_autoLock') ?? 300,
           biometricEnabled: loadFromStorage<boolean>('settings_biometric') ?? false,
           hideBalances: loadFromStorage<boolean>('settings_hideBalances') ?? false,
+          darkMode: loadFromStorage<boolean>('settings_darkMode') ?? true,
         });
       }
     }
@@ -195,6 +209,7 @@ export const useWalletStore = create<WalletStore>((set, get) => ({
     removeFromStorage('settings_autoLock');
     removeFromStorage('settings_biometric');
     removeFromStorage('settings_hideBalances');
+    removeFromStorage('settings_darkMode');
     set({
       isWalletCreated: false,
       isWalletLocked: true,

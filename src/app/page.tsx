@@ -110,7 +110,7 @@ function TokenIcon({ symbol, size = 40, className = '' }: { symbol: string; size
   const icon = TOKEN_ICONS[symbol];
   if (icon) return <img src={icon} alt={symbol} className={`rounded-full ${className}`} style={{ width: size, height: size }} />;
   return (
-    <div className={`rounded-full bg-[#2B3139] flex items-center justify-center font-semibold text-[#848E9C] ${className}`} style={{ width: size, height: size, fontSize: size * 0.38 }}>
+    <div className={`rounded-full bg-secondary flex items-center justify-center font-semibold text-muted-foreground ${className}`} style={{ width: size, height: size, fontSize: size * 0.38 }}>
       {symbol.charAt(0)}
     </div>
   );
@@ -123,15 +123,15 @@ function hasTokenIcon(symbol: string): boolean {
 // ─── Helper Components ───────────────────────────────────────────────
 function ScreenHeader({ title, onBack, rightAction }: { title: string; onBack?: () => void; rightAction?: React.ReactNode }) {
   return (
-    <div className="flex items-center justify-between px-4 py-3 sticky top-0 bg-[#181A20] z-10">
+    <div className="flex items-center justify-between px-4 py-3 sticky top-0 bg-background z-10">
       {onBack ? (
-        <button onClick={onBack} className="p-2 -ml-2 rounded-xl hover:bg-[#2B3139] transition-colors">
-          <ChevronLeft className="size-5 text-[#EAECEF]" />
+        <button onClick={onBack} className="p-2 -ml-2 rounded-xl hover:bg-secondary transition-colors">
+          <ChevronLeft className="size-5 text-foreground" />
         </button>
       ) : (
         <div className="w-9" />
       )}
-      <h1 className="text-base font-semibold text-[#EAECEF]">{title}</h1>
+      <h1 className="text-base font-semibold text-foreground">{title}</h1>
       <div className="w-9 flex justify-center">{rightAction}</div>
     </div>
   );
@@ -148,13 +148,13 @@ function ToastContainer() {
             initial={{ opacity: 0, y: -20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -20, scale: 0.95 }}
-            className="rounded-xl px-4 py-3 flex items-center gap-3 bg-[#2B3139] border border-[#363C45]"
+            className="rounded-xl px-4 py-3 flex items-center gap-3 bg-secondary border border-elevated"
           >
             <div className={`w-2 h-2 rounded-full shrink-0 ${
-              toast.type === 'success' ? 'bg-[#0ECB81]' : toast.type === 'error' ? 'bg-[#F6465D]' : 'bg-[#F0B90B]'
+              toast.type === 'success' ? 'bg-qfs-green' : toast.type === 'error' ? 'bg-destructive' : 'bg-primary'
             }`} />
-            <span className="text-sm flex-1 text-[#EAECEF]">{toast.message}</span>
-            <button onClick={() => removeToast(toast.id)} className="text-[#848E9C] hover:text-[#EAECEF]">
+            <span className="text-sm flex-1 text-foreground">{toast.message}</span>
+            <button onClick={() => removeToast(toast.id)} className="text-muted-foreground hover:text-foreground">
               <X className="size-4" />
             </button>
           </motion.div>
@@ -183,7 +183,7 @@ function OnboardingScreen() {
       animate="animate"
       exit="exit"
       transition={pageTransition}
-      className="min-h-screen flex flex-col items-center justify-center px-6 relative overflow-hidden bg-[#181A20]"
+      className="min-h-screen flex flex-col items-center justify-center px-6 relative overflow-hidden bg-background"
     >
       {/* Logo */}
       <motion.div
@@ -201,7 +201,7 @@ function OnboardingScreen() {
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.3, duration: 0.5 }}
-        className="text-3xl font-bold tracking-tight mb-1 text-[#EAECEF]"
+        className="text-3xl font-bold tracking-tight mb-1 text-foreground"
       >
         <span className="font-extrabold">QFS</span>{' '}
         <span style={{ color: '#F0B90B' }}>Wallet</span>
@@ -211,7 +211,7 @@ function OnboardingScreen() {
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.45, duration: 0.5 }}
-        className="text-[#848E9C] text-sm tracking-wider uppercase mb-10"
+        className="text-muted-foreground text-sm tracking-wider uppercase mb-10"
       >
         Secure · Non-Custodial · Multichain
       </motion.p>
@@ -225,12 +225,12 @@ function OnboardingScreen() {
       >
         {features.map((f, i) => (
           <div key={i} className="flex items-center gap-3 text-sm">
-            <div className="w-10 h-10 rounded-xl bg-[#2B3139] flex items-center justify-center shrink-0">
-              <f.icon className="size-4 text-[#F0B90B]" />
+            <div className="w-10 h-10 rounded-xl bg-secondary flex items-center justify-center shrink-0">
+              <f.icon className="size-4 text-primary" />
             </div>
             <div className="leading-tight">
-              <span className="text-[#EAECEF] font-medium">{f.label}</span>
-              <p className="text-[#848E9C] text-xs mt-0.5">{f.desc}</p>
+              <span className="text-foreground font-medium">{f.label}</span>
+              <p className="text-muted-foreground text-xs mt-0.5">{f.desc}</p>
             </div>
           </div>
         ))}
@@ -261,7 +261,7 @@ function OnboardingScreen() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.9 }}
-        className="mt-8 flex items-center gap-2 text-[#848E9C] text-xs"
+        className="mt-8 flex items-center gap-2 text-muted-foreground text-xs"
       >
         <Shield className="size-3" />
         <span>Your keys, your crypto. Always.</span>
@@ -330,35 +330,35 @@ function CreateWalletScreen() {
   }, [password, confirmPassword, setWalletCreated, setLoading, addToast]);
 
   return (
-    <motion.div key="create-wallet" variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={pageTransition} className="min-h-screen flex flex-col bg-[#181A20]">
+    <motion.div key="create-wallet" variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={pageTransition} className="min-h-screen flex flex-col bg-background">
       <ScreenHeader title="Create Wallet" onBack={step === 0 ? () => setShowOnboarding(true) || navigate('create-wallet') : () => setStep((s) => Math.max(0, (s - 1)) as 0)} />
 
       {/* Progress bar */}
       <div className="px-4 mb-2">
         <div className="flex gap-1.5">
           {[0, 1, 2, 3, 4].map((i) => (
-            <div key={i} className={`h-1 flex-1 rounded-full transition-colors duration-300 ${i <= step ? 'bg-[#F0B90B]' : 'bg-[#2B3139]'}`} />
+            <div key={i} className={`h-1 flex-1 rounded-full transition-colors duration-300 ${i <= step ? 'bg-primary' : 'bg-secondary'}`} />
           ))}
         </div>
-        <p className="text-xs text-[#848E9C] mt-2 text-center">Step {step + 1} of 5</p>
+        <p className="text-xs text-muted-foreground mt-2 text-center">Step {step + 1} of 5</p>
       </div>
 
       <div className="flex-1 px-4 pb-8 overflow-y-auto">
         <AnimatePresence mode="wait">
           {step === 0 && (
             <motion.div key="step0" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="flex flex-col items-center pt-12">
-              <div className="w-20 h-20 rounded-2xl bg-[#2B3139] flex items-center justify-center mb-6">
-                <Wallet className="size-10 text-[#F0B90B]" />
+              <div className="w-20 h-20 rounded-2xl bg-secondary flex items-center justify-center mb-6">
+                <Wallet className="size-10 text-primary" />
               </div>
-              <h2 className="text-xl font-semibold mb-3 text-[#EAECEF]">Create a New Wallet</h2>
-              <p className="text-[#848E9C] text-sm text-center max-w-xs mb-8">
+              <h2 className="text-xl font-semibold mb-3 text-foreground">Create a New Wallet</h2>
+              <p className="text-muted-foreground text-sm text-center max-w-xs mb-8">
                 Your wallet will be secured by a 12-word recovery phrase. Keep it safe.
               </p>
               <div className="w-full max-w-xs flex flex-col gap-3">
                 {['Non-custodial — only you control your keys', 'Multi-chain support from day one', 'Built-in staking & swap features'].map((feature, i) => (
-                  <div key={i} className="flex items-center gap-3 text-sm text-[#848E9C]">
-                    <div className="w-5 h-5 rounded-full bg-[#F0B90B]/10 flex items-center justify-center shrink-0">
-                      <Check className="size-3 text-[#F0B90B]" />
+                  <div key={i} className="flex items-center gap-3 text-sm text-muted-foreground">
+                    <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                      <Check className="size-3 text-primary" />
                     </div>
                     {feature}
                   </div>
@@ -372,17 +372,17 @@ function CreateWalletScreen() {
 
           {step === 1 && (
             <motion.div key="step1" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="pt-4">
-              <div className="flex items-center gap-2 mb-4 p-3 rounded-xl bg-[#F6465D]/10 border border-[#F6465D]/20">
-                <AlertTriangle className="size-4 text-[#F6465D] shrink-0" />
-                <p className="text-xs text-[#F6465D]">Never share your recovery phrase with anyone. Store it offline.</p>
+              <div className="flex items-center gap-2 mb-4 p-3 rounded-xl bg-destructive/10 border border-destructive/20">
+                <AlertTriangle className="size-4 text-destructive shrink-0" />
+                <p className="text-xs text-destructive">Never share your recovery phrase with anyone. Store it offline.</p>
               </div>
-              <h2 className="text-lg font-semibold mb-1 text-[#EAECEF]">Your Recovery Phrase</h2>
-              <p className="text-sm text-[#848E9C] mb-4">Write down these 12 words in order.</p>
+              <h2 className="text-lg font-semibold mb-1 text-foreground">Your Recovery Phrase</h2>
+              <p className="text-sm text-muted-foreground mb-4">Write down these 12 words in order.</p>
               <div className="grid grid-cols-3 gap-2 mb-6">
                 {seedPhrase.map((word, i) => (
-                  <div key={i} className="bg-[#2B3139] rounded-xl px-3 py-2.5 flex items-center gap-2">
-                    <span className="text-xs text-[#848E9C] w-4">{i + 1}.</span>
-                    <span className="text-sm font-medium text-[#EAECEF]">{word}</span>
+                  <div key={i} className="bg-secondary rounded-xl px-3 py-2.5 flex items-center gap-2">
+                    <span className="text-xs text-muted-foreground w-4">{i + 1}.</span>
+                    <span className="text-sm font-medium text-foreground">{word}</span>
                   </div>
                 ))}
               </div>
@@ -394,13 +394,13 @@ function CreateWalletScreen() {
 
           {step === 2 && (
             <motion.div key="step2" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="pt-4">
-              <h2 className="text-lg font-semibold mb-1 text-[#EAECEF]">Verify Your Phrase</h2>
-              <p className="text-sm text-[#848E9C] mb-6">Select the correct word for each position.</p>
+              <h2 className="text-lg font-semibold mb-1 text-foreground">Verify Your Phrase</h2>
+              <p className="text-sm text-muted-foreground mb-6">Select the correct word for each position.</p>
               <div className="flex flex-col gap-4 mb-6">
                 {[1, 4, 8, 11].map((idx) => (
                   <div key={idx}>
-                    <label className="text-xs text-[#848E9C] mb-1.5 block">Word #{idx + 1}</label>
-                    <Input placeholder={`Enter word ${idx + 1}`} value={verifyWords[idx] || ''} onChange={(e) => { setVerifyWords((p) => ({ ...p, [idx]: e.target.value })); setVerifyErrors((p) => { const n = new Set(p); n.delete(idx); return n; }); }} className={verifyErrors.has(idx) ? 'border-[#F6465D]' : ''} />
+                    <label className="text-xs text-muted-foreground mb-1.5 block">Word #{idx + 1}</label>
+                    <Input placeholder={`Enter word ${idx + 1}`} value={verifyWords[idx] || ''} onChange={(e) => { setVerifyWords((p) => ({ ...p, [idx]: e.target.value })); setVerifyErrors((p) => { const n = new Set(p); n.delete(idx); return n; }); }} className={verifyErrors.has(idx) ? 'border-destructive' : ''} />
                   </div>
                 ))}
               </div>
@@ -413,26 +413,26 @@ function CreateWalletScreen() {
           {step === 3 && (
             <motion.div key="step3" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="pt-4">
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 rounded-xl bg-[#F0B90B]/10 flex items-center justify-center">
-                  <Lock className="size-6 text-[#F0B90B]" />
+                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                  <Lock className="size-6 text-primary" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-semibold text-[#EAECEF]">Set Password</h2>
-                  <p className="text-xs text-[#848E9C]">This encrypts your wallet locally</p>
+                  <h2 className="text-lg font-semibold text-foreground">Set Password</h2>
+                  <p className="text-xs text-muted-foreground">This encrypts your wallet locally</p>
                 </div>
               </div>
               <div className="flex flex-col gap-4 mb-6">
                 <div>
-                  <label className="text-xs text-[#848E9C] mb-1.5 block">Password</label>
+                  <label className="text-xs text-muted-foreground mb-1.5 block">Password</label>
                   <div className="relative">
                     <Input type={showPassword ? 'text' : 'password'} placeholder="Min. 8 characters" value={password} onChange={(e) => setPassword(e.target.value)} className="pr-10" />
-                    <button onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#848E9C] hover:text-[#EAECEF]">
+                    <button onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
                       {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
                     </button>
                   </div>
                 </div>
                 <div>
-                  <label className="text-xs text-[#848E9C] mb-1.5 block">Confirm Password</label>
+                  <label className="text-xs text-muted-foreground mb-1.5 block">Confirm Password</label>
                   <Input type={showPassword ? 'text' : 'password'} placeholder="Re-enter password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
                 </div>
               </div>
@@ -444,16 +444,16 @@ function CreateWalletScreen() {
 
           {step === 4 && (
             <motion.div key="step4" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="flex flex-col items-center pt-12">
-              <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 200, damping: 15, delay: 0.2 }} className="w-20 h-20 rounded-full bg-[#0ECB81]/10 border-2 border-[#0ECB81]/30 flex items-center justify-center mb-6">
-                <Check className="size-10 text-[#0ECB81]" />
+              <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 200, damping: 15, delay: 0.2 }} className="w-20 h-20 rounded-full bg-qfs-green/10 border-2 border-qfs-green/30 flex items-center justify-center mb-6">
+                <Check className="size-10 text-qfs-green" />
               </motion.div>
-              <h2 className="text-xl font-semibold mb-2 text-[#EAECEF]">Wallet Created!</h2>
-              <p className="text-sm text-[#848E9C] mb-6">Your wallet address:</p>
+              <h2 className="text-xl font-semibold mb-2 text-foreground">Wallet Created!</h2>
+              <p className="text-sm text-muted-foreground mb-6">Your wallet address:</p>
               <div className="bnb-card rounded-xl px-4 py-3 mb-2 flex items-center gap-2">
-                <span className="text-sm font-mono text-[#F0B90B]">{walletAddress ? truncateAddress(walletAddress) : truncateAddress(useWalletStore.getState().address)}</span>
+                <span className="text-sm font-mono text-primary">{walletAddress ? truncateAddress(walletAddress) : truncateAddress(useWalletStore.getState().address)}</span>
                 <CopyButton text={walletAddress || useWalletStore.getState().address} />
               </div>
-              <p className="text-xs text-[#848E9C] mb-8 text-center max-w-xs">
+              <p className="text-xs text-muted-foreground mb-8 text-center max-w-xs">
                 You can find your address anytime on the Receive screen.
               </p>
               <button onClick={() => navigate('dashboard')} className="w-full max-w-xs h-[52px] rounded-xl bnb-btn-primary text-base">
@@ -505,38 +505,38 @@ function ImportWalletScreen() {
   }, [mode, seedInput, password, setWalletCreated, navigate, setLoading, addToast]);
 
   return (
-    <motion.div key="import-wallet" variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={pageTransition} className="min-h-screen flex flex-col bg-[#181A20]">
+    <motion.div key="import-wallet" variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={pageTransition} className="min-h-screen flex flex-col bg-background">
       <ScreenHeader title="Import Wallet" onBack={() => navigate('onboarding' as Screen)} />
       <div className="flex-1 px-4 pb-8 overflow-y-auto">
         {step === 0 ? (
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="pt-4">
-            <div className="flex gap-2 mb-6 p-1 bg-[#2B3139] rounded-xl">
+            <div className="flex gap-2 mb-6 p-1 bg-secondary rounded-xl">
               {(['seed', 'key'] as const).map((m) => (
-                <button key={m} onClick={() => setMode(m)} className={`flex-1 h-10 rounded-lg text-sm font-medium transition-colors ${mode === m ? 'bg-[#F0B90B] text-[#0B0E11]' : 'text-[#848E9C] hover:text-[#EAECEF]'}`}>
+                <button key={m} onClick={() => setMode(m)} className={`flex-1 h-10 rounded-lg text-sm font-medium transition-colors ${mode === m ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'}`}>
                   {m === 'seed' ? 'Seed Phrase' : 'Private Key'}
                 </button>
               ))}
             </div>
             {mode === 'seed' ? (
               <div>
-                <label className="text-xs text-[#848E9C] mb-1.5 block">12-Word Recovery Phrase</label>
-                <textarea value={seedInput} onChange={(e) => setSeedInput(e.target.value)} placeholder="Enter your 12-word recovery phrase separated by spaces" rows={4} className="w-full bg-[#2B3139] border border-[#2B3139] rounded-xl px-3 py-2.5 text-sm text-[#EAECEF] placeholder:text-[#5E6673] focus:outline-none focus:border-[#F0B90B] resize-none" />
+                <label className="text-xs text-muted-foreground mb-1.5 block">12-Word Recovery Phrase</label>
+                <textarea value={seedInput} onChange={(e) => setSeedInput(e.target.value)} placeholder="Enter your 12-word recovery phrase separated by spaces" rows={4} className="w-full bg-secondary border border-border rounded-xl px-3 py-2.5 text-sm text-foreground placeholder:text-nav-inactive focus:outline-none focus:border-primary resize-none" />
               </div>
             ) : (
               <div>
-                <label className="text-xs text-[#848E9C] mb-1.5 block">Private Key</label>
+                <label className="text-xs text-muted-foreground mb-1.5 block">Private Key</label>
                 <Input value={keyInput} onChange={(e) => setKeyInput(e.target.value)} placeholder="Enter your private key (hex format)" type="password" />
                 <div className="flex items-center gap-1.5 mt-2">
-                  <AlertTriangle className="size-3 text-[#F6465D]" />
-                  <p className="text-xs text-[#848E9C]">Importing via private key is less secure</p>
+                  <AlertTriangle className="size-3 text-destructive" />
+                  <p className="text-xs text-muted-foreground">Importing via private key is less secure</p>
                 </div>
               </div>
             )}
             <div className="mt-6">
-              <label className="text-xs text-[#848E9C] mb-1.5 block">Encryption Password</label>
+              <label className="text-xs text-muted-foreground mb-1.5 block">Encryption Password</label>
               <div className="relative">
                 <Input type={showPassword ? 'text' : 'password'} placeholder="Min. 8 characters" value={password} onChange={(e) => setPassword(e.target.value)} className="pr-10" />
-                <button onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#848E9C] hover:text-[#EAECEF]">
+                <button onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
                   {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
                 </button>
               </div>
@@ -547,11 +547,11 @@ function ImportWalletScreen() {
           </motion.div>
         ) : (
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col items-center pt-12">
-            <div className="w-16 h-16 rounded-2xl bg-[#F0B90B]/10 flex items-center justify-center mb-6">
-              <Key className="size-8 text-[#F0B90B]" />
+            <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-6">
+              <Key className="size-8 text-primary" />
             </div>
-            <h2 className="text-lg font-semibold mb-2 text-[#EAECEF]">Confirm Import</h2>
-            <p className="text-sm text-[#848E9C] text-center mb-8 max-w-xs">Make sure you have saved your recovery phrase. This action cannot be undone.</p>
+            <h2 className="text-lg font-semibold mb-2 text-foreground">Confirm Import</h2>
+            <p className="text-sm text-muted-foreground text-center mb-8 max-w-xs">Make sure you have saved your recovery phrase. This action cannot be undone.</p>
             <button onClick={handleConfirm} disabled={isLoading} className="w-full max-w-xs h-[52px] rounded-xl bnb-btn-primary text-base">
               {isLoading ? 'Importing...' : 'Confirm Import'}
             </button>
@@ -579,7 +579,7 @@ function DashboardScreen() {
   const displayTransactions = transactions.length > 0 ? transactions.slice(0, 5) : DEMO_TRANSACTIONS;
 
   return (
-    <motion.div key="dashboard" variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={pageTransition} className="min-h-screen pb-24 bg-[#181A20]">
+    <motion.div key="dashboard" variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={pageTransition} className="min-h-screen pb-24 bg-background">
       {/* Header - Trust Wallet style: simple top bar */}
       <div className="px-4 pt-5 pb-3 flex items-center justify-between">
         <div className="flex items-center gap-2.5">
@@ -587,32 +587,32 @@ function DashboardScreen() {
             <img src="/qfs-logo.jpg" alt="QFS" className="w-full h-full object-cover" />
           </div>
           <div>
-            <p className="text-sm font-semibold text-[#EAECEF]">QFS Wallet</p>
-            <p className="text-[11px] text-[#848E9C]">Main Portfolio</p>
+            <p className="text-sm font-semibold text-foreground">QFS Wallet</p>
+            <p className="text-[11px] text-muted-foreground">Main Portfolio</p>
           </div>
         </div>
         <div className="flex items-center gap-1">
-          <button onClick={() => setLocalBalanceHidden(!localBalanceHidden)} className="p-2.5 rounded-xl hover:bg-[#2B3139] transition-colors">
-            {isHidden ? <EyeOff className="size-[18px] text-[#848E9C]" /> : <Eye className="size-[18px] text-[#848E9C]" />}
+          <button onClick={() => setLocalBalanceHidden(!localBalanceHidden)} className="p-2.5 rounded-xl hover:bg-secondary transition-colors">
+            {isHidden ? <EyeOff className="size-[18px] text-muted-foreground" /> : <Eye className="size-[18px] text-muted-foreground" />}
           </button>
-          <button className="p-2.5 rounded-xl hover:bg-[#2B3139] transition-colors relative">
-            <Bell className="size-[18px] text-[#848E9C]" />
-            <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-[#F0B90B]" />
+          <button className="p-2.5 rounded-xl hover:bg-secondary transition-colors relative">
+            <Bell className="size-[18px] text-muted-foreground" />
+            <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-primary" />
           </button>
         </div>
       </div>
 
       {/* Balance Section - Trust Wallet: centered, large, clean */}
       <div className="px-4 pt-2 pb-4 text-center">
-        <p className="text-[13px] text-[#848E9C] mb-1">Total Balance</p>
-        <h2 className="text-[36px] font-bold text-[#EAECEF] leading-tight tracking-tight">
+        <p className="text-[13px] text-muted-foreground mb-1">Total Balance</p>
+        <h2 className="text-[36px] font-bold text-foreground leading-tight tracking-tight">
           {isHidden ? '••••••' : `$${totalValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
         </h2>
         <div className="flex items-center justify-center gap-1.5 mt-1.5">
-          <span className={`text-xs font-medium px-1.5 py-0.5 rounded-md ${1.2 >= 0 ? 'bg-[#0ECB81]/10 text-[#0ECB81]' : 'bg-[#F6465D]/10 text-[#F6465D]'}`}>
+          <span className={`text-xs font-medium px-1.5 py-0.5 rounded-md ${1.2 >= 0 ? 'bg-qfs-green/10 text-qfs-green' : 'bg-destructive/10 text-destructive'}`}>
             {1.2 >= 0 ? '+' : ''}{1.2}%
           </span>
-          <span className="text-xs text-[#848E9C]">24h</span>
+          <span className="text-xs text-muted-foreground">24h</span>
         </div>
       </div>
 
@@ -620,20 +620,20 @@ function DashboardScreen() {
       <div className="px-6 mb-6">
         <div className="flex items-center justify-between">
           <button onClick={() => navigate('send')} className="flex flex-col items-center gap-2">
-            <div className="action-circle"><ArrowUpRight className="size-5 text-[#F0B90B]" /></div>
-            <span className="text-[11px] text-[#848E9C]">Send</span>
+            <div className="action-circle"><ArrowUpRight className="size-5 text-primary" /></div>
+            <span className="text-[11px] text-muted-foreground">Send</span>
           </button>
           <button onClick={() => navigate('receive')} className="flex flex-col items-center gap-2">
-            <div className="action-circle"><ArrowDownLeft className="size-5 text-[#0ECB81]" /></div>
-            <span className="text-[11px] text-[#848E9C]">Receive</span>
+            <div className="action-circle"><ArrowDownLeft className="size-5 text-qfs-green" /></div>
+            <span className="text-[11px] text-muted-foreground">Receive</span>
           </button>
           <button onClick={() => navigate('swap')} className="flex flex-col items-center gap-2">
-            <div className="action-circle"><ArrowLeftRight className="size-5 text-[#1E90FF]" /></div>
-            <span className="text-[11px] text-[#848E9C]">Swap</span>
+            <div className="action-circle"><ArrowLeftRight className="size-5 text-info-blue" /></div>
+            <span className="text-[11px] text-muted-foreground">Swap</span>
           </button>
           <button onClick={() => addToast('Buy feature coming soon!', 'info')} className="flex flex-col items-center gap-2">
-            <div className="action-circle"><Zap className="size-5 text-[#F0B90B]" /></div>
-            <span className="text-[11px] text-[#848E9C]">Buy</span>
+            <div className="action-circle"><Zap className="size-5 text-primary" /></div>
+            <span className="text-[11px] text-muted-foreground">Buy</span>
           </button>
         </div>
       </div>
@@ -641,8 +641,8 @@ function DashboardScreen() {
       {/* Token List - Trust Wallet: clean rows, no cards */}
       <div className="px-2">
         <div className="flex items-center justify-between px-3 mb-2">
-          <h3 className="text-sm font-semibold text-[#EAECEF]">Tokens</h3>
-          <span className="text-xs text-[#F0B90B]">View All</span>
+          <h3 className="text-sm font-semibold text-foreground">Tokens</h3>
+          <span className="text-xs text-primary">View All</span>
         </div>
         <div className="flex flex-col">
           {DEMO_TOKENS.map((token, i) => (
@@ -657,13 +657,13 @@ function DashboardScreen() {
               <div className="flex items-center gap-3">
                 <TokenIcon symbol={token.symbol} size={40} />
                 <div>
-                  <p className="text-sm font-semibold text-[#EAECEF]">{token.symbol}</p>
-                  <p className="text-[11px] text-[#848E9C]">{token.name}</p>
+                  <p className="text-sm font-semibold text-foreground">{token.symbol}</p>
+                  <p className="text-[11px] text-muted-foreground">{token.name}</p>
                 </div>
               </div>
               <div className="text-right">
-                <p className="text-sm font-semibold text-[#EAECEF]">{isHidden ? '••••' : token.balance}</p>
-                <p className={`text-[11px] ${token.change24h >= 0 ? 'text-[#0ECB81]' : 'text-[#F6465D]'}`}>
+                <p className="text-sm font-semibold text-foreground">{isHidden ? '••••' : token.balance}</p>
+                <p className={`text-[11px] ${token.change24h >= 0 ? 'text-qfs-green' : 'text-destructive'}`}>
                   {isHidden ? '' : `$${token.valueUsd.toLocaleString('en-US', { minimumFractionDigits: 2 })}`}
                 </p>
               </div>
@@ -675,8 +675,8 @@ function DashboardScreen() {
       {/* Recent Transactions - Trust Wallet style */}
       <div className="px-2 mt-4">
         <div className="flex items-center justify-between px-3 mb-2">
-          <h3 className="text-sm font-semibold text-[#EAECEF]">Recent Activity</h3>
-          <span className="text-xs text-[#F0B90B]">View All</span>
+          <h3 className="text-sm font-semibold text-foreground">Recent Activity</h3>
+          <span className="text-xs text-primary">View All</span>
         </div>
         <div className="flex flex-col">
           {displayTransactions.map((tx, i) => (
@@ -689,25 +689,25 @@ function DashboardScreen() {
             >
               <div className="flex items-center gap-3">
                 <div className={`w-9 h-9 rounded-full flex items-center justify-center ${
-                  tx.type === 'receive' || tx.type === 'stake' ? 'bg-[#0ECB81]/10' : tx.type === 'send' ? 'bg-[#F6465D]/10' : 'bg-[#F0B90B]/10'
+                  tx.type === 'receive' || tx.type === 'stake' ? 'bg-qfs-green/10' : tx.type === 'send' ? 'bg-destructive/10' : 'bg-primary/10'
                 }`}>
-                  {tx.type === 'receive' ? <ArrowDownLeft className="size-4 text-[#0ECB81]" /> :
-                   tx.type === 'send' ? <ArrowUpRight className="size-4 text-[#F6465D]" /> :
-                   tx.type === 'swap' ? <ArrowLeftRight className="size-4 text-[#F0B90B]" /> :
-                   <TrendingUp className="size-4 text-[#0ECB81]" />}
+                  {tx.type === 'receive' ? <ArrowDownLeft className="size-4 text-qfs-green" /> :
+                   tx.type === 'send' ? <ArrowUpRight className="size-4 text-destructive" /> :
+                   tx.type === 'swap' ? <ArrowLeftRight className="size-4 text-primary" /> :
+                   <TrendingUp className="size-4 text-qfs-green" />}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-[#EAECEF] capitalize">{tx.type}</p>
-                  <p className="text-[11px] text-[#848E9C] truncate">
+                  <p className="text-sm font-medium text-foreground capitalize">{tx.type}</p>
+                  <p className="text-[11px] text-muted-foreground truncate">
                     {tx.type === 'receive' ? `From: ${truncateAddress(tx.from)}` : tx.type === 'send' ? `To: ${truncateAddress(tx.to)}` : tx.token}
                   </p>
                 </div>
               </div>
               <div className="text-right">
-                <p className={`text-sm font-medium ${tx.type === 'send' ? 'text-[#F6465D]' : 'text-[#0ECB81]'}`}>
+                <p className={`text-sm font-medium ${tx.type === 'send' ? 'text-destructive' : 'text-qfs-green'}`}>
                   {tx.type === 'send' ? '-' : '+'}{tx.amount} {tx.token.includes('→') ? '' : tx.token}
                 </p>
-                <p className="text-[11px] text-[#848E9C]">
+                <p className="text-[11px] text-muted-foreground">
                   {new Date(tx.timestamp).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                 </p>
               </div>
@@ -716,8 +716,8 @@ function DashboardScreen() {
         </div>
         {transactions.length === 0 && (
           <div className="mt-2 flex items-center gap-1.5 justify-center">
-            <Info className="size-3 text-[#848E9C]" />
-            <p className="text-[11px] text-[#848E9C]">Showing demo data</p>
+            <Info className="size-3 text-muted-foreground" />
+            <p className="text-[11px] text-muted-foreground">Showing demo data</p>
           </div>
         )}
       </div>
@@ -759,41 +759,41 @@ function SendScreen() {
   }, [address, toAddress, amount, selectedToken, chain, gasEstimate, addTransaction, addToast, navigate]);
 
   return (
-    <motion.div key="send" variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={pageTransition} className="min-h-screen flex flex-col bg-[#181A20]">
+    <motion.div key="send" variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={pageTransition} className="min-h-screen flex flex-col bg-background">
       <ScreenHeader title="Send" onBack={() => step === 1 ? setStep(0) : navigate('dashboard')} />
       <div className="flex-1 px-4 pb-8 overflow-y-auto">
         <AnimatePresence mode="wait">
           {step === 0 ? (
             <motion.div key="send-form" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="pt-4 flex flex-col gap-5">
               <div>
-                <label className="text-xs text-[#848E9C] mb-1.5 block">Recipient Address</label>
+                <label className="text-xs text-muted-foreground mb-1.5 block">Recipient Address</label>
                 <div className="relative">
                   <Input value={toAddress} onChange={(e) => setToAddress(e.target.value)} placeholder="0x... or ENS name" className="pr-20" />
-                  <button className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded-lg hover:bg-[#363C45]">
-                    <ScanLine className="size-4 text-[#848E9C]" />
+                  <button className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded-lg hover:bg-elevated">
+                    <ScanLine className="size-4 text-muted-foreground" />
                   </button>
                 </div>
               </div>
               <div>
                 <div className="flex items-center justify-between mb-1.5">
-                  <label className="text-xs text-[#848E9C]">Amount</label>
-                  <span className="text-xs text-[#848E9C]">Balance: 0.4521 {selectedToken}</span>
+                  <label className="text-xs text-muted-foreground">Amount</label>
+                  <span className="text-xs text-muted-foreground">Balance: 0.4521 {selectedToken}</span>
                 </div>
                 <div className="relative">
                   <Input type="number" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="0.00" className="pr-24 text-xl font-semibold" />
                   <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
-                    <button onClick={() => setAmount('0.4521')} className="text-xs text-[#F0B90B] px-2 py-0.5 rounded-md bg-[#F0B90B]/10 hover:bg-[#F0B90B]/20 transition-colors font-medium">
+                    <button onClick={() => setAmount('0.4521')} className="text-xs text-primary px-2 py-0.5 rounded-md bg-primary/10 hover:bg-primary/20 transition-colors font-medium">
                       MAX
                     </button>
                   </div>
                 </div>
                 {parseFloat(amount) > 0 && (
-                  <p className="text-xs text-[#848E9C] mt-1.5">≈ ${usdValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD</p>
+                  <p className="text-xs text-muted-foreground mt-1.5">≈ ${usdValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD</p>
                 )}
               </div>
               <div className="bnb-card rounded-xl p-3.5 flex items-center justify-between">
-                <span className="text-sm text-[#848E9C]">Network Fee</span>
-                <span className="text-sm font-medium text-[#EAECEF]">{gasEstimate}</span>
+                <span className="text-sm text-muted-foreground">Network Fee</span>
+                <span className="text-sm font-medium text-foreground">{gasEstimate}</span>
               </div>
               <button onClick={handleSend} className="w-full h-[52px] rounded-xl bnb-btn-primary text-base mt-2">
                 Review Transaction
@@ -802,33 +802,33 @@ function SendScreen() {
           ) : (
             <motion.div key="send-review" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="pt-4">
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 rounded-xl bg-[#F6465D]/10 flex items-center justify-center">
-                  <ArrowUpRight className="size-6 text-[#F6465D]" />
+                <div className="w-12 h-12 rounded-xl bg-destructive/10 flex items-center justify-center">
+                  <ArrowUpRight className="size-6 text-destructive" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-semibold text-[#EAECEF]">Confirm Send</h2>
-                  <p className="text-xs text-[#848E9C]">Review the details below</p>
+                  <h2 className="text-lg font-semibold text-foreground">Confirm Send</h2>
+                  <p className="text-xs text-muted-foreground">Review the details below</p>
                 </div>
               </div>
               <div className="bnb-card rounded-xl p-4 flex flex-col gap-4 mb-6">
                 <div className="flex justify-between">
-                  <span className="text-sm text-[#848E9C]">Sending</span>
-                  <span className="text-sm font-semibold text-[#EAECEF]">{amount} {selectedToken}</span>
+                  <span className="text-sm text-muted-foreground">Sending</span>
+                  <span className="text-sm font-semibold text-foreground">{amount} {selectedToken}</span>
                 </div>
-                <Separator className="bg-[#2B3139]" />
+                <Separator className="bg-secondary" />
                 <div className="flex justify-between">
-                  <span className="text-sm text-[#848E9C]">To</span>
-                  <span className="text-sm font-mono text-[#F0B90B]">{truncateAddress(toAddress)}</span>
+                  <span className="text-sm text-muted-foreground">To</span>
+                  <span className="text-sm font-mono text-primary">{truncateAddress(toAddress)}</span>
                 </div>
-                <Separator className="bg-[#2B3139]" />
+                <Separator className="bg-secondary" />
                 <div className="flex justify-between">
-                  <span className="text-sm text-[#848E9C]">Network</span>
-                  <span className="text-sm text-[#EAECEF]">{chain?.icon} {chain?.name}</span>
+                  <span className="text-sm text-muted-foreground">Network</span>
+                  <span className="text-sm text-foreground">{chain?.icon} {chain?.name}</span>
                 </div>
-                <Separator className="bg-[#2B3139]" />
+                <Separator className="bg-secondary" />
                 <div className="flex justify-between">
-                  <span className="text-sm text-[#848E9C]">Network Fee</span>
-                  <span className="text-sm text-[#EAECEF]">{gasEstimate}</span>
+                  <span className="text-sm text-muted-foreground">Network Fee</span>
+                  <span className="text-sm text-foreground">{gasEstimate}</span>
                 </div>
               </div>
               <button onClick={handleConfirm} className="w-full h-[52px] rounded-xl bnb-btn-primary text-base">
@@ -861,13 +861,13 @@ function ReceiveScreen() {
   }, [displayAddress, addToast]);
 
   return (
-    <motion.div key="receive" variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={pageTransition} className="min-h-screen flex flex-col bg-[#181A20]">
+    <motion.div key="receive" variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={pageTransition} className="min-h-screen flex flex-col bg-background">
       <ScreenHeader title="Receive" onBack={() => navigate('dashboard')} />
       <div className="flex-1 px-4 pb-8 flex flex-col items-center pt-4">
         {/* Chain selector */}
         <div className="flex flex-wrap gap-2 mb-6 justify-center">
           {SUPPORTED_CHAINS.map((c) => (
-            <button key={c.id} onClick={() => selectChain(c.id)} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs transition-colors ${c.id === currentChainId ? 'bg-[#F0B90B] text-[#0B0E11] font-medium' : 'bg-[#2B3139] text-[#848E9C] hover:text-[#EAECEF]'}`}>
+            <button key={c.id} onClick={() => selectChain(c.id)} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs transition-colors ${c.id === currentChainId ? 'bg-primary text-primary-foreground font-medium' : 'bg-secondary text-muted-foreground hover:text-foreground'}`}>
               <span>{c.icon}</span> {c.symbol}
             </button>
           ))}
@@ -880,16 +880,16 @@ function ReceiveScreen() {
           </div>
         </motion.div>
 
-        <p className="text-xs text-[#848E9C] mb-2">Your {chain?.name || 'Ethereum'} Address</p>
+        <p className="text-xs text-muted-foreground mb-2">Your {chain?.name || 'Ethereum'} Address</p>
 
         <div className="bnb-card rounded-xl px-4 py-3 flex items-center gap-2 w-full max-w-sm mb-6">
-          <p className="text-sm font-mono text-[#F0B90B] flex-1 truncate">{displayAddress}</p>
-          <button onClick={handleCopy} className="p-1.5 rounded-lg hover:bg-[#363C45] transition-colors shrink-0">
-            {copied ? <Check className="size-4 text-[#0ECB81]" /> : <CopyIcon className="size-4 text-[#848E9C]" />}
+          <p className="text-sm font-mono text-primary flex-1 truncate">{displayAddress}</p>
+          <button onClick={handleCopy} className="p-1.5 rounded-lg hover:bg-elevated transition-colors shrink-0">
+            {copied ? <Check className="size-4 text-qfs-green" /> : <CopyIcon className="size-4 text-muted-foreground" />}
           </button>
         </div>
 
-        <div className="flex items-center gap-2 text-xs text-[#848E9C]">
+        <div className="flex items-center gap-2 text-xs text-muted-foreground">
           <Info className="size-3" />
           <span>Only send {chain?.symbol} and tokens on {chain?.name} to this address</span>
         </div>
@@ -937,7 +937,7 @@ function SwapScreen() {
   }, [fromAmount, fromToken, toToken, chain, addTransaction, addToast, navigate]);
 
   return (
-    <motion.div key="swap" variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={pageTransition} className="min-h-screen flex flex-col bg-[#181A20]">
+    <motion.div key="swap" variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={pageTransition} className="min-h-screen flex flex-col bg-background">
       <ScreenHeader title="Swap" onBack={() => step === 1 ? setStep(0) : navigate('dashboard')} />
       <div className="flex-1 px-4 pb-8 overflow-y-auto">
         <AnimatePresence mode="wait">
@@ -946,36 +946,36 @@ function SwapScreen() {
               {/* From */}
               <div className="bnb-card rounded-xl p-4 mb-2">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs text-[#848E9C]">From</span>
-                  <span className="text-xs text-[#848E9C]">Balance: 12,580.00 {fromToken}</span>
+                  <span className="text-xs text-muted-foreground">From</span>
+                  <span className="text-xs text-muted-foreground">Balance: 12,580.00 {fromToken}</span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <input type="number" value={fromAmount} onChange={(e) => { setFromAmount(e.target.value); setToAmount((parseFloat(e.target.value) * 0.00027).toFixed(6)); }} placeholder="0.00" className="flex-1 bg-transparent text-2xl font-semibold text-[#EAECEF] outline-none min-w-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
-                  <button className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#2B3139] hover:bg-[#363C45] transition-colors shrink-0">
+                  <input type="number" value={fromAmount} onChange={(e) => { setFromAmount(e.target.value); setToAmount((parseFloat(e.target.value) * 0.00027).toFixed(6)); }} placeholder="0.00" className="flex-1 bg-transparent text-2xl font-semibold text-foreground outline-none min-w-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
+                  <button className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-secondary hover:bg-elevated transition-colors shrink-0">
                     <TokenIcon symbol={fromToken} size={22} />
-                    <span className="text-sm font-medium text-[#EAECEF]">{fromToken}</span>
+                    <span className="text-sm font-medium text-foreground">{fromToken}</span>
                   </button>
                 </div>
               </div>
 
               {/* Swap direction */}
               <div className="flex justify-center -my-3 relative z-10">
-                <button onClick={handleSwapTokens} className="w-10 h-10 rounded-xl bg-[#2B3139] border-4 border-[#181A20] flex items-center justify-center hover:bg-[#363C45] transition-colors">
-                  <ArrowLeftRight className="size-4 text-[#F0B90B]" />
+                <button onClick={handleSwapTokens} className="w-10 h-10 rounded-xl bg-secondary border-4 border-background flex items-center justify-center hover:bg-elevated transition-colors">
+                  <ArrowLeftRight className="size-4 text-primary" />
                 </button>
               </div>
 
               {/* To */}
               <div className="bnb-card rounded-xl p-4 mb-4">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs text-[#848E9C]">To</span>
-                  <span className="text-xs text-[#848E9C]">Balance: 0.0000 {toToken}</span>
+                  <span className="text-xs text-muted-foreground">To</span>
+                  <span className="text-xs text-muted-foreground">Balance: 0.0000 {toToken}</span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <input type="number" value={toAmount} onChange={(e) => setToAmount(e.target.value)} placeholder="0.00" className="flex-1 bg-transparent text-2xl font-semibold text-[#EAECEF] outline-none min-w-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
-                  <button className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#2B3139] hover:bg-[#363C45] transition-colors shrink-0">
+                  <input type="number" value={toAmount} onChange={(e) => setToAmount(e.target.value)} placeholder="0.00" className="flex-1 bg-transparent text-2xl font-semibold text-foreground outline-none min-w-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
+                  <button className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-secondary hover:bg-elevated transition-colors shrink-0">
                     <TokenIcon symbol={toToken} size={22} />
-                    <span className="text-sm font-medium text-[#EAECEF]">{toToken}</span>
+                    <span className="text-sm font-medium text-foreground">{toToken}</span>
                   </button>
                 </div>
               </div>
@@ -984,18 +984,18 @@ function SwapScreen() {
               <div className="bnb-card rounded-xl p-3.5 mb-4">
                 <button onClick={() => setShowSlippage(!showSlippage)} className="flex items-center justify-between w-full">
                   <div className="flex items-center gap-2">
-                    <Settings className="size-3.5 text-[#848E9C]" />
-                    <span className="text-sm text-[#EAECEF]">Slippage Tolerance</span>
+                    <Settings className="size-3.5 text-muted-foreground" />
+                    <span className="text-sm text-foreground">Slippage Tolerance</span>
                   </div>
                   <div className="flex items-center gap-1">
-                    <span className="text-sm font-medium text-[#F0B90B]">{slippage}%</span>
-                    <ChevronDown className={`size-3.5 text-[#848E9C] transition-transform ${showSlippage ? 'rotate-180' : ''}`} />
+                    <span className="text-sm font-medium text-primary">{slippage}%</span>
+                    <ChevronDown className={`size-3.5 text-muted-foreground transition-transform ${showSlippage ? 'rotate-180' : ''}`} />
                   </div>
                 </button>
                 {showSlippage && (
                   <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="flex gap-2 mt-3">
                     {['0.1', '0.5', '1.0', '2.0'].map((s) => (
-                      <button key={s} onClick={() => setSlippage(s)} className={`flex-1 py-1.5 rounded-lg text-xs font-medium transition-colors ${slippage === s ? 'bg-[#F0B90B] text-[#0B0E11]' : 'bg-[#2B3139] text-[#848E9C] hover:text-[#EAECEF]'}`}>
+                      <button key={s} onClick={() => setSlippage(s)} className={`flex-1 py-1.5 rounded-lg text-xs font-medium transition-colors ${slippage === s ? 'bg-primary text-primary-foreground' : 'bg-secondary text-muted-foreground hover:text-foreground'}`}>
                         {s}%
                       </button>
                     ))}
@@ -1005,10 +1005,10 @@ function SwapScreen() {
 
               {fromAmount && parseFloat(fromAmount) > 0 && (
                 <div className="bnb-card rounded-xl p-3.5 mb-6 flex flex-col gap-2.5">
-                  <div className="flex justify-between text-sm"><span className="text-[#848E9C]">Rate</span><span className="text-[#EAECEF]">1 {fromToken} = 0.00027 {toToken}</span></div>
-                  <div className="flex justify-between text-sm"><span className="text-[#848E9C]">Price Impact</span><span className="text-[#0ECB81]">{'<0.01%'}</span></div>
-                  <div className="flex justify-between text-sm"><span className="text-[#848E9C]">Min. Received</span><span className="text-[#EAECEF]">{(parseFloat(toAmountCalc) * (1 - parseFloat(slippage) / 100)).toFixed(6)} {toToken}</span></div>
-                  <div className="flex justify-between text-sm"><span className="text-[#848E9C]">Network Fee</span><span className="text-[#EAECEF]">~$3.50</span></div>
+                  <div className="flex justify-between text-sm"><span className="text-muted-foreground">Rate</span><span className="text-foreground">1 {fromToken} = 0.00027 {toToken}</span></div>
+                  <div className="flex justify-between text-sm"><span className="text-muted-foreground">Price Impact</span><span className="text-qfs-green">{'<0.01%'}</span></div>
+                  <div className="flex justify-between text-sm"><span className="text-muted-foreground">Min. Received</span><span className="text-foreground">{(parseFloat(toAmountCalc) * (1 - parseFloat(slippage) / 100)).toFixed(6)} {toToken}</span></div>
+                  <div className="flex justify-between text-sm"><span className="text-muted-foreground">Network Fee</span><span className="text-foreground">~$3.50</span></div>
                 </div>
               )}
 
@@ -1019,32 +1019,32 @@ function SwapScreen() {
           ) : (
             <motion.div key="swap-confirm" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="pt-4">
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 rounded-xl bg-[#F0B90B]/10 flex items-center justify-center">
-                  <ArrowLeftRight className="size-6 text-[#F0B90B]" />
+                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                  <ArrowLeftRight className="size-6 text-primary" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-semibold text-[#EAECEF]">Confirm Swap</h2>
-                  <p className="text-xs text-[#848E9C]">You are swapping</p>
+                  <h2 className="text-lg font-semibold text-foreground">Confirm Swap</h2>
+                  <p className="text-xs text-muted-foreground">You are swapping</p>
                 </div>
               </div>
               <div className="bnb-card rounded-2xl p-6 mb-6">
                 <div className="flex items-center justify-center gap-4 mb-4">
                   <div className="text-center">
-                    <p className="text-2xl font-bold text-[#EAECEF]">{parseFloat(fromAmount).toLocaleString('en-US', { maximumFractionDigits: 2 })}</p>
-                    <p className="text-sm text-[#848E9C]">{fromToken}</p>
+                    <p className="text-2xl font-bold text-foreground">{parseFloat(fromAmount).toLocaleString('en-US', { maximumFractionDigits: 2 })}</p>
+                    <p className="text-sm text-muted-foreground">{fromToken}</p>
                   </div>
-                  <ArrowLeftRight className="size-5 text-[#F0B90B]" />
+                  <ArrowLeftRight className="size-5 text-primary" />
                   <div className="text-center">
-                    <p className="text-2xl font-bold text-[#F0B90B]">{parseFloat(toAmountCalc).toFixed(6)}</p>
-                    <p className="text-sm text-[#848E9C]">{toToken}</p>
+                    <p className="text-2xl font-bold text-primary">{parseFloat(toAmountCalc).toFixed(6)}</p>
+                    <p className="text-sm text-muted-foreground">{toToken}</p>
                   </div>
                 </div>
-                <Separator className="bg-[#2B3139] mb-4" />
+                <Separator className="bg-secondary mb-4" />
                 <div className="flex flex-col gap-2.5">
-                  <div className="flex justify-between text-sm"><span className="text-[#848E9C]">Rate</span><span className="text-[#EAECEF]">1 {fromToken} = 0.00027 {toToken}</span></div>
-                  <div className="flex justify-between text-sm"><span className="text-[#848E9C]">Slippage</span><span className="text-[#EAECEF]">{slippage}%</span></div>
-                  <div className="flex justify-between text-sm"><span className="text-[#848E9C]">Network</span><span className="text-[#EAECEF]">{chain?.icon} {chain?.name}</span></div>
-                  <div className="flex justify-between text-sm"><span className="text-[#848E9C]">Network Fee</span><span className="text-[#EAECEF]">~$3.50</span></div>
+                  <div className="flex justify-between text-sm"><span className="text-muted-foreground">Rate</span><span className="text-foreground">1 {fromToken} = 0.00027 {toToken}</span></div>
+                  <div className="flex justify-between text-sm"><span className="text-muted-foreground">Slippage</span><span className="text-foreground">{slippage}%</span></div>
+                  <div className="flex justify-between text-sm"><span className="text-muted-foreground">Network</span><span className="text-foreground">{chain?.icon} {chain?.name}</span></div>
+                  <div className="flex justify-between text-sm"><span className="text-muted-foreground">Network Fee</span><span className="text-foreground">~$3.50</span></div>
                 </div>
               </div>
               <button onClick={handleConfirm} className="w-full h-[52px] rounded-xl bnb-btn-primary text-base">
@@ -1086,32 +1086,32 @@ function StakingScreen() {
   };
 
   return (
-    <motion.div key="staking" variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={pageTransition} className="min-h-screen pb-24 bg-[#181A20]">
+    <motion.div key="staking" variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={pageTransition} className="min-h-screen pb-24 bg-background">
       <div className="px-4 pt-4 pb-2 flex items-center justify-between">
-        <h1 className="text-lg font-semibold text-[#EAECEF]">Staking</h1>
-        <button onClick={() => setShowCalculator(!showCalculator)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#2B3139] hover:bg-[#363C45] transition-colors">
-          <BarChart3 className="size-3.5 text-[#F0B90B]" />
-          <span className="text-xs text-[#EAECEF]">Calculator</span>
+        <h1 className="text-lg font-semibold text-foreground">Staking</h1>
+        <button onClick={() => setShowCalculator(!showCalculator)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-secondary hover:bg-elevated transition-colors">
+          <BarChart3 className="size-3.5 text-primary" />
+          <span className="text-xs text-foreground">Calculator</span>
         </button>
       </div>
 
       {showCalculator && (
         <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="px-4 mb-4">
           <div className="bnb-card rounded-xl p-4">
-            <h3 className="text-sm font-semibold mb-3 text-[#EAECEF]">Rewards Calculator</h3>
+            <h3 className="text-sm font-semibold mb-3 text-foreground">Rewards Calculator</h3>
             <div className="flex gap-3 mb-3">
               <div className="flex-1">
-                <label className="text-xs text-[#848E9C] mb-1 block">Amount (QFS)</label>
+                <label className="text-xs text-muted-foreground mb-1 block">Amount (QFS)</label>
                 <Input type="number" value={calcAmount} onChange={(e) => setCalcAmount(e.target.value)} placeholder="1000" />
               </div>
               <div className="flex-1">
-                <label className="text-xs text-[#848E9C] mb-1 block">Days</label>
+                <label className="text-xs text-muted-foreground mb-1 block">Days</label>
                 <Input type="number" value={calcDays} onChange={(e) => setCalcDays(e.target.value)} placeholder="90" />
               </div>
             </div>
-            <div className="bg-[#F0B90B]/5 rounded-lg p-3 flex items-center justify-between">
-              <span className="text-xs text-[#848E9C]">Estimated Rewards</span>
-              <span className="text-lg font-bold text-[#F0B90B]">{estimatedRewards.toFixed(2)} QFS</span>
+            <div className="bg-primary/5 rounded-lg p-3 flex items-center justify-between">
+              <span className="text-xs text-muted-foreground">Estimated Rewards</span>
+              <span className="text-lg font-bold text-primary">{estimatedRewards.toFixed(2)} QFS</span>
             </div>
           </div>
         </motion.div>
@@ -1120,53 +1120,53 @@ function StakingScreen() {
       <div className="px-4 mb-4">
         <div className="bnb-card rounded-xl p-4 flex items-center justify-between">
           <div>
-            <p className="text-xs text-[#848E9C]">Total Staked</p>
-            <p className="text-lg font-semibold text-[#EAECEF]">{stakingPositions.length > 0 ? '5,000.00' : '0.00'} QFS</p>
+            <p className="text-xs text-muted-foreground">Total Staked</p>
+            <p className="text-lg font-semibold text-foreground">{stakingPositions.length > 0 ? '5,000.00' : '0.00'} QFS</p>
           </div>
           <div className="text-right">
-            <p className="text-xs text-[#848E9C]">Total Rewards</p>
-            <p className="text-lg font-semibold text-[#0ECB81]">{stakingPositions.length > 0 ? '123.45' : '0.00'} QFS</p>
+            <p className="text-xs text-muted-foreground">Total Rewards</p>
+            <p className="text-lg font-semibold text-qfs-green">{stakingPositions.length > 0 ? '123.45' : '0.00'} QFS</p>
           </div>
         </div>
       </div>
 
       <div className="px-4">
-        <h3 className="text-sm font-semibold mb-3 text-[#EAECEF]">Staking Pools</h3>
+        <h3 className="text-sm font-semibold mb-3 text-foreground">Staking Pools</h3>
         <div className="flex flex-col gap-3">
           {STAKING_POOLS.map((sp, i) => (
-            <motion.div key={sp.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }} className="bnb-card rounded-xl p-4 cursor-pointer hover:border-[#363C45] transition-colors" onClick={() => setSelectedPool(selectedPool === sp.id ? null : sp.id)}>
+            <motion.div key={sp.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }} className="bnb-card rounded-xl p-4 cursor-pointer hover:border-elevated transition-colors" onClick={() => setSelectedPool(selectedPool === sp.id ? null : sp.id)}>
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-10 h-10 rounded-xl bg-[#F0B90B] flex items-center justify-center">
-                    <Coins className="size-5 text-[#0B0E11]" />
+                  <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center">
+                    <Coins className="size-5 text-primary-foreground" />
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-[#EAECEF]">{sp.name}</p>
-                    <p className="text-xs text-[#848E9C]">{sp.durationLabel} lock</p>
+                    <p className="text-sm font-semibold text-foreground">{sp.name}</p>
+                    <p className="text-xs text-muted-foreground">{sp.durationLabel} lock</p>
                   </div>
                 </div>
-                <Badge className="bg-[#F0B90B]/10 text-[#F0B90B] border-[#F0B90B]/20 hover:bg-[#F0B90B]/15 text-xs">{formatAPY(sp.apy)}</Badge>
+                <Badge className="bg-primary/10 text-primary border-primary/20 hover:bg-primary/15 text-xs">{formatAPY(sp.apy)}</Badge>
               </div>
-              <div className="flex items-center justify-between text-xs text-[#848E9C]">
+              <div className="flex items-center justify-between text-xs text-muted-foreground">
                 <span>TVL: {formatTVL(sp.tvl)}</span>
                 <span>Min: {sp.minStake.toLocaleString()} QFS</span>
               </div>
               <AnimatePresence>
                 {selectedPool === sp.id && (
                   <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="mt-4">
-                    <Separator className="bg-[#2B3139] mb-4" />
+                    <Separator className="bg-secondary mb-4" />
                     <div className="flex flex-col gap-3">
                       <div>
                         <div className="flex items-center justify-between mb-1.5">
-                          <label className="text-xs text-[#848E9C]">Amount (QFS)</label>
-                          <span className="text-xs text-[#848E9C]">Balance: {qfsBalance || '12,580.00'}</span>
+                          <label className="text-xs text-muted-foreground">Amount (QFS)</label>
+                          <span className="text-xs text-muted-foreground">Balance: {qfsBalance || '12,580.00'}</span>
                         </div>
                         <div className="relative">
                           <Input type="number" value={stakeAmount} onChange={(e) => setStakeAmount(e.target.value)} placeholder={`Min ${sp.minStake}`} />
-                          <button onClick={() => setStakeAmount(qfsBalance || '12580')} className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-[#F0B90B] px-2 py-0.5 rounded-md bg-[#F0B90B]/10 font-medium">MAX</button>
+                          <button onClick={() => setStakeAmount(qfsBalance || '12580')} className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-primary px-2 py-0.5 rounded-md bg-primary/10 font-medium">MAX</button>
                         </div>
                       </div>
-                      <div className="flex items-center gap-2 text-xs text-[#848E9C]">
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
                         <Clock className="size-3" />
                         <span>Estimated: {calculateStakingRewards(parseFloat(stakeAmount) || 0, sp.apy, sp.duration).toFixed(2)} QFS rewards</span>
                       </div>
@@ -1200,38 +1200,38 @@ function DAppsScreen() {
   ];
 
   return (
-    <motion.div key="dapps" variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={pageTransition} className="min-h-screen pb-24 bg-[#181A20]">
+    <motion.div key="dapps" variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={pageTransition} className="min-h-screen pb-24 bg-background">
       <div className="px-4 pt-4 pb-2 flex items-center justify-between">
-        <h1 className="text-lg font-semibold text-[#EAECEF]">DApps</h1>
-        <button className="p-2 rounded-lg hover:bg-[#2B3139]"><Search className="size-4 text-[#848E9C]" /></button>
+        <h1 className="text-lg font-semibold text-foreground">DApps</h1>
+        <button className="p-2 rounded-lg hover:bg-secondary"><Search className="size-4 text-muted-foreground" /></button>
       </div>
 
       <div className="px-4 mb-6">
-        <h3 className="text-sm font-semibold mb-3 text-[#EAECEF]">Connected</h3>
+        <h3 className="text-sm font-semibold mb-3 text-foreground">Connected</h3>
         {DAPP_CONNECTIONS.map((dapp) => (
           <div key={dapp.id} className="bnb-card rounded-xl p-3.5 flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 rounded-xl bg-[#2B3139] flex items-center justify-center text-xl overflow-hidden">
+            <div className="w-10 h-10 rounded-xl bg-secondary flex items-center justify-center text-xl overflow-hidden">
               {dapp.icon.startsWith('/') ? <img src={dapp.icon} alt={dapp.name} className="w-full h-full object-cover" /> : dapp.icon}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-[#EAECEF]">{dapp.name}</p>
-              <p className="text-xs text-[#848E9C] truncate">{dapp.domain} · {dapp.lastUsed}</p>
+              <p className="text-sm font-medium text-foreground">{dapp.name}</p>
+              <p className="text-xs text-muted-foreground truncate">{dapp.domain} · {dapp.lastUsed}</p>
             </div>
-            <Badge variant="outline" className="border-[#0ECB81]/30 text-[#0ECB81] text-xs">Active</Badge>
+            <Badge variant="outline" className="border-qfs-green/30 text-qfs-green text-xs">Active</Badge>
           </div>
         ))}
       </div>
 
       <div className="px-4">
-        <h3 className="text-sm font-semibold mb-3 text-[#EAECEF]">Popular DApps</h3>
+        <h3 className="text-sm font-semibold mb-3 text-foreground">Popular DApps</h3>
         <div className="grid grid-cols-3 gap-3">
           {popularDApps.map((dapp, i) => (
-            <motion.button key={dapp.name} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: i * 0.05 }} onClick={() => addToast(`Opening ${dapp.name}...`, 'info')} className="bnb-card rounded-xl p-4 flex flex-col items-center gap-2 hover:border-[#363C45] transition-colors">
+            <motion.button key={dapp.name} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: i * 0.05 }} onClick={() => addToast(`Opening ${dapp.name}...`, 'info')} className="bnb-card rounded-xl p-4 flex flex-col items-center gap-2 hover:border-elevated transition-colors">
               <span className="text-2xl flex items-center justify-center w-10 h-10 overflow-hidden rounded-lg">
                 {dapp.icon.startsWith('/') ? <img src={dapp.icon} alt={dapp.name} className="w-full h-full object-cover" /> : dapp.icon}
               </span>
-              <span className="text-xs font-medium text-[#EAECEF] text-center">{dapp.name}</span>
-              <Badge variant="secondary" className="text-[10px] px-1.5 py-0 bg-[#2B3139] text-[#848E9C] border-0">{dapp.chain}</Badge>
+              <span className="text-xs font-medium text-foreground text-center">{dapp.name}</span>
+              <Badge variant="secondary" className="text-[10px] px-1.5 py-0 bg-secondary text-muted-foreground border-0">{dapp.chain}</Badge>
             </motion.button>
           ))}
         </div>
@@ -1239,10 +1239,10 @@ function DAppsScreen() {
 
       <div className="px-4 mt-6">
         <div className="bnb-card rounded-xl p-6 flex flex-col items-center text-center">
-          <Globe className="size-10 text-[#848E9C] mb-3" />
-          <p className="text-sm font-medium text-[#EAECEF] mb-1">DApp Browser</p>
-          <p className="text-xs text-[#848E9C] mb-4">Browse decentralized applications directly</p>
-          <button onClick={() => addToast('DApp browser coming soon!', 'info')} className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#2B3139] hover:bg-[#363C45] transition-colors text-sm text-[#F0B90B]">
+          <Globe className="size-10 text-muted-foreground mb-3" />
+          <p className="text-sm font-medium text-foreground mb-1">DApp Browser</p>
+          <p className="text-xs text-muted-foreground mb-4">Browse decentralized applications directly</p>
+          <button onClick={() => addToast('DApp browser coming soon!', 'info')} className="flex items-center gap-2 px-4 py-2 rounded-lg bg-secondary hover:bg-elevated transition-colors text-sm text-primary">
             <ExternalLink className="size-3.5" /> Enter URL
           </button>
         </div>
@@ -1267,6 +1267,8 @@ function SettingsScreen() {
   const setBiometricEnabled = useWalletStore((s) => s.setBiometricEnabled);
   const hideBalances = useWalletStore((s) => s.hideBalances);
   const setHideBalances = useWalletStore((s) => s.setHideBalances);
+  const darkMode = useWalletStore((s) => s.darkMode);
+  const toggleDarkMode = useWalletStore((s) => s.toggleDarkMode);
 
   const chain = getChainById(currentChainId);
 
@@ -1342,96 +1344,96 @@ function SettingsScreen() {
   };
 
   return (
-    <motion.div key="settings" variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={pageTransition} className="min-h-screen pb-24 bg-[#181A20]">
+    <motion.div key="settings" variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={pageTransition} className="min-h-screen pb-24 bg-background">
       <div className="px-4 pt-4 pb-4">
-        <h1 className="text-lg font-semibold text-[#EAECEF]">Settings</h1>
+        <h1 className="text-lg font-semibold text-foreground">Settings</h1>
       </div>
       <div className="px-4 flex flex-col gap-6">
         {/* ─── Security ─── */}
         <div>
-          <p className="text-xs text-[#848E9C] uppercase tracking-wider mb-2 px-1">Security</p>
-          <div className="bnb-card rounded-xl overflow-hidden divide-y divide-[#2B3139]">
+          <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2 px-1">Security</p>
+          <div className="bnb-card rounded-xl overflow-hidden divide-y divide-border">
             {/* Change Password */}
-            <button onClick={() => setShowChangePassword(true)} className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-[#2B3139]/50 transition-colors text-left">
-              <Lock className="size-4 text-[#848E9C]" />
-              <span className="text-sm flex-1 text-[#EAECEF]">Change Password</span>
-              <ChevronRight className="size-4 text-[#5E6673]" />
+            <button onClick={() => setShowChangePassword(true)} className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-secondary/50 transition-colors text-left">
+              <Lock className="size-4 text-muted-foreground" />
+              <span className="text-sm flex-1 text-foreground">Change Password</span>
+              <ChevronRight className="size-4 text-nav-inactive" />
             </button>
             {/* Biometric Login */}
-            <button onClick={handleToggleBiometric} className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-[#2B3139]/50 transition-colors text-left">
-              <Fingerprint className="size-4 text-[#848E9C]" />
-              <span className="text-sm flex-1 text-[#EAECEF]">Biometric Login</span>
-              <div onClick={(e) => { e.stopPropagation(); handleToggleBiometric(); }} className={`w-10 h-6 rounded-full p-0.5 transition-colors cursor-pointer ${biometricEnabled ? 'bg-[#F0B90B]' : 'bg-[#2B3139]'} border border-[#363C45]`}>
-                <div className={`w-5 h-5 rounded-full transition-transform duration-200 ${biometricEnabled ? 'translate-x-4 bg-[#0B0E11]' : 'translate-x-0 bg-[#848E9C]'}`} />
+            <button onClick={handleToggleBiometric} className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-secondary/50 transition-colors text-left">
+              <Fingerprint className="size-4 text-muted-foreground" />
+              <span className="text-sm flex-1 text-foreground">Biometric Login</span>
+              <div onClick={(e) => { e.stopPropagation(); handleToggleBiometric(); }} className={`w-10 h-6 rounded-full p-0.5 transition-colors cursor-pointer ${biometricEnabled ? 'bg-primary' : 'bg-secondary'} border border-elevated`}>
+                <div className={`w-5 h-5 rounded-full transition-transform duration-200 ${biometricEnabled ? 'translate-x-4 bg-primary-foreground' : 'translate-x-0 bg-muted-foreground'}`} />
               </div>
             </button>
             {/* Auto-Lock Timer */}
-            <button onClick={() => setShowAutoLockPicker(true)} className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-[#2B3139]/50 transition-colors text-left">
-              <Key className="size-4 text-[#848E9C]" />
-              <span className="text-sm flex-1 text-[#EAECEF]">Auto-Lock Timer</span>
-              <span className="text-xs text-[#F0B90B] mr-1">{getAutoLockLabel()}</span>
-              <ChevronRight className="size-4 text-[#5E6673]" />
+            <button onClick={() => setShowAutoLockPicker(true)} className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-secondary/50 transition-colors text-left">
+              <Key className="size-4 text-muted-foreground" />
+              <span className="text-sm flex-1 text-foreground">Auto-Lock Timer</span>
+              <span className="text-xs text-primary mr-1">{getAutoLockLabel()}</span>
+              <ChevronRight className="size-4 text-nav-inactive" />
             </button>
           </div>
         </div>
 
         {/* ─── Networks ─── */}
         <div>
-          <p className="text-xs text-[#848E9C] uppercase tracking-wider mb-2 px-1">Networks</p>
-          <div className="bnb-card rounded-xl overflow-hidden divide-y divide-[#2B3139]">
-            <button onClick={() => navigate('networks' as Screen)} className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-[#2B3139]/50 transition-colors text-left">
-              <Globe className="size-4 text-[#848E9C]" />
-              <span className="text-sm flex-1 text-[#EAECEF]">Manage Networks</span>
-              <ChevronRight className="size-4 text-[#5E6673]" />
+          <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2 px-1">Networks</p>
+          <div className="bnb-card rounded-xl overflow-hidden divide-y divide-border">
+            <button onClick={() => navigate('networks' as Screen)} className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-secondary/50 transition-colors text-left">
+              <Globe className="size-4 text-muted-foreground" />
+              <span className="text-sm flex-1 text-foreground">Manage Networks</span>
+              <ChevronRight className="size-4 text-nav-inactive" />
             </button>
-            <button onClick={() => setShowNetworkPicker(true)} className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-[#2B3139]/50 transition-colors text-left">
-              <RefreshCw className="size-4 text-[#848E9C]" />
-              <span className="text-sm flex-1 text-[#EAECEF]">Default Network</span>
-              <span className="text-xs text-[#F0B90B] mr-1">{chain?.name || 'Ethereum'}</span>
-              <ChevronRight className="size-4 text-[#5E6673]" />
+            <button onClick={() => setShowNetworkPicker(true)} className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-secondary/50 transition-colors text-left">
+              <RefreshCw className="size-4 text-muted-foreground" />
+              <span className="text-sm flex-1 text-foreground">Default Network</span>
+              <span className="text-xs text-primary mr-1">{chain?.name || 'Ethereum'}</span>
+              <ChevronRight className="size-4 text-nav-inactive" />
             </button>
           </div>
         </div>
 
         {/* ─── Wallet ─── */}
         <div>
-          <p className="text-xs text-[#848E9C] uppercase tracking-wider mb-2 px-1">Wallet</p>
-          <div className="bnb-card rounded-xl overflow-hidden divide-y divide-[#2B3139]">
-            <button onClick={() => { setRecoveryPassword(''); setRecoveryVerified(false); setShowRecoveryWords(false); setShowRecoveryPhrase(true); }} className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-[#2B3139]/50 transition-colors text-left">
-              <Eye className="size-4 text-[#848E9C]" />
-              <span className="text-sm flex-1 text-[#EAECEF]">Show Recovery Phrase</span>
-              <AlertTriangle className="size-3.5 text-[#F6465D] mr-1" />
-              <ChevronRight className="size-4 text-[#5E6673]" />
+          <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2 px-1">Wallet</p>
+          <div className="bnb-card rounded-xl overflow-hidden divide-y divide-border">
+            <button onClick={() => { setRecoveryPassword(''); setRecoveryVerified(false); setShowRecoveryWords(false); setShowRecoveryPhrase(true); }} className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-secondary/50 transition-colors text-left">
+              <Eye className="size-4 text-muted-foreground" />
+              <span className="text-sm flex-1 text-foreground">Show Recovery Phrase</span>
+              <AlertTriangle className="size-3.5 text-destructive mr-1" />
+              <ChevronRight className="size-4 text-nav-inactive" />
             </button>
-            <button onClick={() => { navigator.clipboard.writeText(address); addToast('Address copied!', 'success'); }} className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-[#2B3139]/50 transition-colors text-left">
-              <CopyIcon className="size-4 text-[#848E9C]" />
-              <span className="text-sm flex-1 text-[#EAECEF]">Copy Address</span>
-              <ChevronRight className="size-4 text-[#5E6673]" />
+            <button onClick={() => { navigator.clipboard.writeText(address); addToast('Address copied!', 'success'); }} className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-secondary/50 transition-colors text-left">
+              <CopyIcon className="size-4 text-muted-foreground" />
+              <span className="text-sm flex-1 text-foreground">Copy Address</span>
+              <ChevronRight className="size-4 text-nav-inactive" />
             </button>
-            <button onClick={() => { window.open(getExplorerUrl(), '_blank', 'noopener'); }} className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-[#2B3139]/50 transition-colors text-left">
-              <ExternalLink className="size-4 text-[#848E9C]" />
-              <span className="text-sm flex-1 text-[#EAECEF]">View on Explorer</span>
-              <ChevronRight className="size-4 text-[#5E6673]" />
+            <button onClick={() => { window.open(getExplorerUrl(), '_blank', 'noopener'); }} className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-secondary/50 transition-colors text-left">
+              <ExternalLink className="size-4 text-muted-foreground" />
+              <span className="text-sm flex-1 text-foreground">View on Explorer</span>
+              <ChevronRight className="size-4 text-nav-inactive" />
             </button>
           </div>
         </div>
 
         {/* ─── Privacy ─── */}
         <div>
-          <p className="text-xs text-[#848E9C] uppercase tracking-wider mb-2 px-1">Privacy</p>
-          <div className="bnb-card rounded-xl overflow-hidden divide-y divide-[#2B3139]">
-            <div className="w-full flex items-center gap-3 px-4 py-3.5">
-              <Moon className="size-4 text-[#848E9C]" />
-              <span className="text-sm flex-1 text-[#EAECEF]">Dark Mode</span>
-              <div className="w-10 h-6 rounded-full p-0.5 bg-[#F0B90B] border border-[#F0B90B]/50 cursor-not-allowed">
-                <div className="w-5 h-5 rounded-full translate-x-4 bg-[#0B0E11]" />
+          <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2 px-1">Privacy</p>
+          <div className="bnb-card rounded-xl overflow-hidden divide-y divide-border">
+            <button onClick={toggleDarkMode} className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-secondary/50 transition-colors text-left">
+              <Moon className="size-4 text-muted-foreground" />
+              <span className="text-sm flex-1 text-foreground">Dark Mode</span>
+              <div className={`w-10 h-6 rounded-full p-0.5 transition-colors border cursor-pointer ${darkMode ? 'bg-primary border-primary/50' : 'bg-secondary border-elevated'}`}>
+                <div className={`w-5 h-5 rounded-full transition-transform duration-200 ${darkMode ? 'translate-x-4 bg-primary-foreground' : 'translate-x-0 bg-muted-foreground'}`} />
               </div>
-            </div>
-            <button onClick={() => setHideBalances(!hideBalances)} className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-[#2B3139]/50 transition-colors text-left">
-              <EyeOff className="size-4 text-[#848E9C]" />
-              <span className="text-sm flex-1 text-[#EAECEF]">Hide Balances</span>
-              <div className={`w-10 h-6 rounded-full p-0.5 transition-colors border ${hideBalances ? 'bg-[#F0B90B] border-[#F0B90B]/50' : 'bg-[#2B3139] border-[#363C45]'}`}>
-                <div className={`w-5 h-5 rounded-full transition-transform duration-200 ${hideBalances ? 'translate-x-4 bg-[#0B0E11]' : 'translate-x-0 bg-[#848E9C]'}`} />
+            </button>
+            <button onClick={() => setHideBalances(!hideBalances)} className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-secondary/50 transition-colors text-left">
+              <EyeOff className="size-4 text-muted-foreground" />
+              <span className="text-sm flex-1 text-foreground">Hide Balances</span>
+              <div className={`w-10 h-6 rounded-full p-0.5 transition-colors border ${hideBalances ? 'bg-primary border-primary/50' : 'bg-secondary border-elevated'}`}>
+                <div className={`w-5 h-5 rounded-full transition-transform duration-200 ${hideBalances ? 'translate-x-4 bg-primary-foreground' : 'translate-x-0 bg-muted-foreground'}`} />
               </div>
             </button>
           </div>
@@ -1439,23 +1441,23 @@ function SettingsScreen() {
 
         {/* ─── Danger Zone ─── */}
         <div>
-          <p className="text-xs text-[#F6465D] uppercase tracking-wider mb-2 px-1">Danger Zone</p>
-          <div className="bnb-card rounded-xl overflow-hidden divide-y divide-[#2B3139]">
-            <button onClick={lockWallet} className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-[#2B3139]/50 transition-colors text-left">
-              <Lock className="size-4 text-[#F6465D]" />
-              <span className="text-sm flex-1 text-[#EAECEF]">Lock Wallet</span>
+          <p className="text-xs text-destructive uppercase tracking-wider mb-2 px-1">Danger Zone</p>
+          <div className="bnb-card rounded-xl overflow-hidden divide-y divide-border">
+            <button onClick={lockWallet} className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-secondary/50 transition-colors text-left">
+              <Lock className="size-4 text-destructive" />
+              <span className="text-sm flex-1 text-foreground">Lock Wallet</span>
             </button>
-            <button onClick={() => setShowResetConfirm(true)} className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-[#F6465D]/5 transition-colors text-left">
-              <AlertTriangle className="size-4 text-[#F6465D]" />
-              <span className="text-sm text-[#F6465D] flex-1">Reset Wallet</span>
+            <button onClick={() => setShowResetConfirm(true)} className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-destructive/5 transition-colors text-left">
+              <AlertTriangle className="size-4 text-destructive" />
+              <span className="text-sm text-destructive flex-1">Reset Wallet</span>
             </button>
           </div>
         </div>
 
         <div className="text-center py-4">
           <div className="w-8 h-8 rounded-lg overflow-hidden mx-auto mb-2"><img src="/qfs-logo.jpg" alt="QFS" className="w-full h-full object-cover" /></div>
-          <p className="text-xs text-[#848E9C]">QFS Wallet v1.0.0</p>
-          <p className="text-[10px] text-[#5E6673] mt-1">Secure. Non-Custodial. Multichain.</p>
+          <p className="text-xs text-muted-foreground">QFS Wallet v1.0.0</p>
+          <p className="text-[10px] text-nav-inactive mt-1">Secure. Non-Custodial. Multichain.</p>
         </div>
       </div>
 
@@ -1465,28 +1467,28 @@ function SettingsScreen() {
       <AnimatePresence>
         {showChangePassword && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setShowChangePassword(false)}>
-            <motion.div initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }} transition={{ type: 'spring', damping: 25, stiffness: 300 }} className="bg-[#1E2329] rounded-2xl p-6 w-full max-w-sm" onClick={(e) => e.stopPropagation()}>
+            <motion.div initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }} transition={{ type: 'spring', damping: 25, stiffness: 300 }} className="bg-card rounded-2xl p-6 w-full max-w-sm" onClick={(e) => e.stopPropagation()}>
               <div className="flex items-center justify-between mb-5">
-                <h3 className="text-lg font-semibold text-[#EAECEF]">Change Password</h3>
-                <button onClick={() => setShowChangePassword(false)} className="p-1.5 rounded-lg hover:bg-[#363C45]"><X className="size-5 text-[#848E9C]" /></button>
+                <h3 className="text-lg font-semibold text-foreground">Change Password</h3>
+                <button onClick={() => setShowChangePassword(false)} className="p-1.5 rounded-lg hover:bg-elevated"><X className="size-5 text-muted-foreground" /></button>
               </div>
               <div className="flex flex-col gap-4">
                 <div>
-                  <label className="text-xs text-[#848E9C] mb-1.5 block">Current Password</label>
+                  <label className="text-xs text-muted-foreground mb-1.5 block">Current Password</label>
                   <div className="relative">
                     <Input type={showPwdCurrent ? 'text' : 'password'} placeholder="Enter current password" value={currentPwd} onChange={(e) => setCurrentPwd(e.target.value)} className="pr-10" />
-                    <button onClick={() => setShowPwdCurrent(!showPwdCurrent)} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#848E9C] hover:text-[#EAECEF]">{showPwdCurrent ? <EyeOff className="size-4" /> : <Eye className="size-4" />}</button>
+                    <button onClick={() => setShowPwdCurrent(!showPwdCurrent)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">{showPwdCurrent ? <EyeOff className="size-4" /> : <Eye className="size-4" />}</button>
                   </div>
                 </div>
                 <div>
-                  <label className="text-xs text-[#848E9C] mb-1.5 block">New Password</label>
+                  <label className="text-xs text-muted-foreground mb-1.5 block">New Password</label>
                   <div className="relative">
                     <Input type={showPwdNew ? 'text' : 'password'} placeholder="Min. 8 characters" value={newPwd} onChange={(e) => setNewPwd(e.target.value)} className="pr-10" />
-                    <button onClick={() => setShowPwdNew(!showPwdNew)} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#848E9C] hover:text-[#EAECEF]">{showPwdNew ? <EyeOff className="size-4" /> : <Eye className="size-4" />}</button>
+                    <button onClick={() => setShowPwdNew(!showPwdNew)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">{showPwdNew ? <EyeOff className="size-4" /> : <Eye className="size-4" />}</button>
                   </div>
                 </div>
                 <div>
-                  <label className="text-xs text-[#848E9C] mb-1.5 block">Confirm New Password</label>
+                  <label className="text-xs text-muted-foreground mb-1.5 block">Confirm New Password</label>
                   <Input type="password" placeholder="Re-enter new password" value={confirmPwd} onChange={(e) => setConfirmPwd(e.target.value)} />
                 </div>
                 <button onClick={handleChangePassword} className="w-full h-[52px] rounded-xl bnb-btn-primary text-base mt-1">Update Password</button>
@@ -1500,14 +1502,14 @@ function SettingsScreen() {
       <AnimatePresence>
         {showAutoLockPicker && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-end" onClick={() => setShowAutoLockPicker(false)}>
-            <motion.div initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }} transition={{ type: 'spring', damping: 25, stiffness: 300 }} className="w-full max-w-md lg:max-w-lg mx-auto bg-[#1E2329] rounded-t-3xl p-5" onClick={(e) => e.stopPropagation()}>
-              <div className="w-10 h-1 rounded-full bg-[#363C45] mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-[#EAECEF] mb-4">Auto-Lock Timer</h3>
+            <motion.div initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }} transition={{ type: 'spring', damping: 25, stiffness: 300 }} className="w-full max-w-md lg:max-w-lg mx-auto bg-card rounded-t-3xl p-5" onClick={(e) => e.stopPropagation()}>
+              <div className="w-10 h-1 rounded-full bg-elevated mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-foreground mb-4">Auto-Lock Timer</h3>
               <div className="flex flex-col gap-2">
                 {AUTO_LOCK_OPTIONS.map((opt) => (
-                  <button key={opt.value} onClick={() => { setAutoLockTimer(opt.value); setShowAutoLockPicker(false); addToast(`Auto-lock set to ${opt.label}`, 'success'); }} className={`w-full flex items-center justify-between px-4 py-3.5 rounded-xl transition-colors ${autoLockTimer === opt.value ? 'bg-[#F0B90B]/10 border border-[#F0B90B]/30' : 'hover:bg-[#2B3139]'}`}>
-                    <span className={`text-sm ${autoLockTimer === opt.value ? 'text-[#F0B90B] font-medium' : 'text-[#EAECEF]'}`}>{opt.label}</span>
-                    {autoLockTimer === opt.value && <Check className="size-4 text-[#F0B90B]" />}
+                  <button key={opt.value} onClick={() => { setAutoLockTimer(opt.value); setShowAutoLockPicker(false); addToast(`Auto-lock set to ${opt.label}`, 'success'); }} className={`w-full flex items-center justify-between px-4 py-3.5 rounded-xl transition-colors ${autoLockTimer === opt.value ? 'bg-primary/10 border border-primary/30' : 'hover:bg-secondary'}`}>
+                    <span className={`text-sm ${autoLockTimer === opt.value ? 'text-primary font-medium' : 'text-foreground'}`}>{opt.label}</span>
+                    {autoLockTimer === opt.value && <Check className="size-4 text-primary" />}
                   </button>
                 ))}
               </div>
@@ -1520,41 +1522,41 @@ function SettingsScreen() {
       <AnimatePresence>
         {showRecoveryPhrase && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-end" onClick={() => setShowRecoveryPhrase(false)}>
-            <motion.div initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }} transition={{ type: 'spring', damping: 25, stiffness: 300 }} className="w-full max-w-md lg:max-w-lg mx-auto bg-[#1E2329] rounded-t-3xl p-5 max-h-[85vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
-              <div className="w-10 h-1 rounded-full bg-[#363C45] mx-auto mb-4" />
+            <motion.div initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }} transition={{ type: 'spring', damping: 25, stiffness: 300 }} className="w-full max-w-md lg:max-w-lg mx-auto bg-card rounded-t-3xl p-5 max-h-[85vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+              <div className="w-10 h-1 rounded-full bg-elevated mx-auto mb-4" />
               <div className="flex items-center justify-between mb-5">
-                <h3 className="text-lg font-semibold text-[#EAECEF]">Recovery Phrase</h3>
-                <button onClick={() => setShowRecoveryPhrase(false)} className="p-1.5 rounded-lg hover:bg-[#363C45]"><X className="size-5 text-[#848E9C]" /></button>
+                <h3 className="text-lg font-semibold text-foreground">Recovery Phrase</h3>
+                <button onClick={() => setShowRecoveryPhrase(false)} className="p-1.5 rounded-lg hover:bg-elevated"><X className="size-5 text-muted-foreground" /></button>
               </div>
 
               {!recoveryVerified ? (
                 <div>
-                  <div className="flex items-center gap-2 mb-4 p-3 rounded-xl bg-[#F6465D]/10 border border-[#F6465D]/20">
-                    <AlertTriangle className="size-4 text-[#F6465D] shrink-0" />
-                    <p className="text-xs text-[#F6465D]">Never share your recovery phrase. Anyone with these words can access your wallet.</p>
+                  <div className="flex items-center gap-2 mb-4 p-3 rounded-xl bg-destructive/10 border border-destructive/20">
+                    <AlertTriangle className="size-4 text-destructive shrink-0" />
+                    <p className="text-xs text-destructive">Never share your recovery phrase. Anyone with these words can access your wallet.</p>
                   </div>
                   <div className="mb-4">
-                    <label className="text-xs text-[#848E9C] mb-1.5 block">Enter your password to continue</label>
+                    <label className="text-xs text-muted-foreground mb-1.5 block">Enter your password to continue</label>
                     <Input type="password" placeholder="Password" value={recoveryPassword} onChange={(e) => setRecoveryPassword(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleVerifyRecovery()} />
                   </div>
                   <button onClick={handleVerifyRecovery} className="w-full h-[52px] rounded-xl bnb-btn-primary text-base">Verify</button>
                 </div>
               ) : !showRecoveryWords ? (
                 <div className="text-center">
-                  <div className="w-16 h-16 rounded-2xl bg-[#F6465D]/10 flex items-center justify-center mx-auto mb-4">
-                    <AlertTriangle className="size-8 text-[#F6465D]" />
+                  <div className="w-16 h-16 rounded-2xl bg-destructive/10 flex items-center justify-center mx-auto mb-4">
+                    <AlertTriangle className="size-8 text-destructive" />
                   </div>
-                  <h4 className="text-base font-semibold text-[#EAECEF] mb-2">Are you sure?</h4>
-                  <p className="text-sm text-[#848E9C] mb-6">Make sure no one is watching your screen. Your recovery phrase will be displayed.</p>
+                  <h4 className="text-base font-semibold text-foreground mb-2">Are you sure?</h4>
+                  <p className="text-sm text-muted-foreground mb-6">Make sure no one is watching your screen. Your recovery phrase will be displayed.</p>
                   <button onClick={() => setShowRecoveryWords(true)} className="w-full h-[52px] rounded-xl bnb-btn-primary text-base">Show Recovery Phrase</button>
                 </div>
               ) : (
                 <div>
                   <div className="grid grid-cols-3 gap-2 mb-4">
                     {['abandon', 'ability', 'absent', 'absorb', 'abstract', 'absurd', 'abuse', 'access', 'accident', 'account', 'accuse', 'achieve'].map((word, i) => (
-                      <div key={i} className="bg-[#2B3139] rounded-xl px-3 py-2.5 flex items-center gap-2">
-                        <span className="text-xs text-[#848E9C] w-4">{i + 1}.</span>
-                        <span className="text-sm font-medium text-[#EAECEF]">{word}</span>
+                      <div key={i} className="bg-secondary rounded-xl px-3 py-2.5 flex items-center gap-2">
+                        <span className="text-xs text-muted-foreground w-4">{i + 1}.</span>
+                        <span className="text-sm font-medium text-foreground">{word}</span>
                       </div>
                     ))}
                   </div>
@@ -1572,17 +1574,17 @@ function SettingsScreen() {
       <AnimatePresence>
         {showNetworkPicker && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-end" onClick={() => setShowNetworkPicker(false)}>
-            <motion.div initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }} transition={{ type: 'spring', damping: 25, stiffness: 300 }} className="w-full max-w-md lg:max-w-lg mx-auto bg-[#1E2329] rounded-t-3xl p-5 max-h-[70vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
-              <div className="w-10 h-1 rounded-full bg-[#363C45] mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-[#EAECEF] mb-4">Default Network</h3>
+            <motion.div initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }} transition={{ type: 'spring', damping: 25, stiffness: 300 }} className="w-full max-w-md lg:max-w-lg mx-auto bg-card rounded-t-3xl p-5 max-h-[70vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+              <div className="w-10 h-1 rounded-full bg-elevated mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-foreground mb-4">Default Network</h3>
               <div className="flex flex-col gap-2">
                 {SUPPORTED_CHAINS.map((c) => (
-                  <button key={c.id} onClick={() => { selectChain(c.id); setShowNetworkPicker(false); addToast(`Default network set to ${c.name}`, 'success'); }} className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-xl transition-colors ${c.id === currentChainId ? 'bg-[#F0B90B]/10 border border-[#F0B90B]/30' : 'hover:bg-[#2B3139]'}`}>
+                  <button key={c.id} onClick={() => { selectChain(c.id); setShowNetworkPicker(false); addToast(`Default network set to ${c.name}`, 'success'); }} className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-xl transition-colors ${c.id === currentChainId ? 'bg-primary/10 border border-primary/30' : 'hover:bg-secondary'}`}>
                     <div className="w-8 h-8 rounded-lg flex items-center justify-center text-base" style={{ backgroundColor: c.color + '15', color: c.color }}>{c.icon}</div>
                     <div className="flex-1 text-left">
-                      <span className={`text-sm ${c.id === currentChainId ? 'text-[#F0B90B] font-medium' : 'text-[#EAECEF]'}`}>{c.name}</span>
+                      <span className={`text-sm ${c.id === currentChainId ? 'text-primary font-medium' : 'text-foreground'}`}>{c.name}</span>
                     </div>
-                    {c.id === currentChainId && <Check className="size-4 text-[#F0B90B]" />}
+                    {c.id === currentChainId && <Check className="size-4 text-primary" />}
                   </button>
                 ))}
               </div>
@@ -1596,14 +1598,14 @@ function SettingsScreen() {
         {showResetConfirm && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setShowResetConfirm(false)}>
             <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} className="bnb-card-elevated rounded-2xl p-6 w-full max-w-sm" onClick={(e) => e.stopPropagation()}>
-              <div className="w-12 h-12 rounded-xl bg-[#F6465D]/10 flex items-center justify-center mx-auto mb-4">
-                <AlertTriangle className="size-6 text-[#F6465D]" />
+              <div className="w-12 h-12 rounded-xl bg-destructive/10 flex items-center justify-center mx-auto mb-4">
+                <AlertTriangle className="size-6 text-destructive" />
               </div>
-              <h3 className="text-lg font-semibold text-center mb-2 text-[#EAECEF]">Reset Wallet?</h3>
-              <p className="text-sm text-[#848E9C] text-center mb-6">This will delete all wallet data. Make sure you have your recovery phrase backed up.</p>
+              <h3 className="text-lg font-semibold text-center mb-2 text-foreground">Reset Wallet?</h3>
+              <p className="text-sm text-muted-foreground text-center mb-6">This will delete all wallet data. Make sure you have your recovery phrase backed up.</p>
               <div className="flex gap-3">
                 <button onClick={() => setShowResetConfirm(false)} className="flex-1 h-10 rounded-xl bnb-btn-outline text-sm font-medium">Cancel</button>
-                <button onClick={() => { resetWallet(); addToast('Wallet has been reset', 'info'); }} className="flex-1 h-10 rounded-xl bg-[#F6465D] text-white text-sm font-medium hover:bg-[#F6465D]/90 transition-colors">Reset</button>
+                <button onClick={() => { resetWallet(); addToast('Wallet has been reset', 'info'); }} className="flex-1 h-10 rounded-xl bg-destructive text-white text-sm font-medium hover:bg-destructive/90 transition-colors">Reset</button>
               </div>
             </motion.div>
           </motion.div>
@@ -1629,18 +1631,18 @@ function WalletLockScreen() {
   }, [password, unlockWallet, addToast]);
 
   return (
-    <motion.div key="lock" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="min-h-screen flex flex-col items-center justify-center px-6 bg-[#181A20]">
+    <motion.div key="lock" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="min-h-screen flex flex-col items-center justify-center px-6 bg-background">
       <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ delay: 0.1 }} className="w-20 h-20 rounded-3xl mb-8 overflow-hidden shadow-lg shadow-[#F0B90B]/10">
         <img src="/qfs-logo.jpg" alt="QFS" className="w-full h-full object-cover" />
       </motion.div>
-      <motion.h1 initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }} className="text-xl font-semibold mb-1 text-[#EAECEF]">Wallet Locked</motion.h1>
-      <motion.p initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.25 }} className="text-sm text-[#848E9C] mb-8 text-center">
+      <motion.h1 initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }} className="text-xl font-semibold mb-1 text-foreground">Wallet Locked</motion.h1>
+      <motion.p initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.25 }} className="text-sm text-muted-foreground mb-8 text-center">
         {address ? truncateAddress(address) : 'QFS Wallet'}
       </motion.p>
       <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.3 }} className="w-full max-w-xs">
         <div className="relative mb-4">
           <Input type={showPassword ? 'text' : 'password'} placeholder="Enter password" value={password} onChange={(e) => setPassword(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleUnlock()} className="h-12 pr-10 text-base" autoFocus />
-          <button onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#848E9C] hover:text-[#EAECEF]">
+          <button onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
             {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
           </button>
         </div>
@@ -1660,19 +1662,19 @@ function NetworksScreen() {
   const addToast = useWalletStore((s) => s.addToast);
 
   return (
-    <motion.div key="networks" variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={pageTransition} className="min-h-screen flex flex-col bg-[#181A20]">
+    <motion.div key="networks" variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={pageTransition} className="min-h-screen flex flex-col bg-background">
       <ScreenHeader title="Networks" onBack={() => navigate('settings')} />
       <div className="flex-1 px-4 pb-8 overflow-y-auto">
-        <p className="text-xs text-[#848E9C] mb-3">Select a network to switch to</p>
+        <p className="text-xs text-muted-foreground mb-3">Select a network to switch to</p>
         <div className="flex flex-col gap-2">
           {SUPPORTED_CHAINS.map((chain, i) => (
-            <motion.button key={chain.id} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.05 }} onClick={() => { selectChain(chain.id); addToast(`Switched to ${chain.name}`, 'success'); }} className={`bnb-card rounded-xl p-4 flex items-center gap-3 transition-colors ${chain.id === currentChainId ? 'border-[#F0B90B]/30' : 'hover:border-[#363C45]'}`}>
+            <motion.button key={chain.id} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.05 }} onClick={() => { selectChain(chain.id); addToast(`Switched to ${chain.name}`, 'success'); }} className={`bnb-card rounded-xl p-4 flex items-center gap-3 transition-colors ${chain.id === currentChainId ? 'border-primary/30' : 'hover:border-elevated'}`}>
               <div className="w-10 h-10 rounded-xl flex items-center justify-center text-lg" style={{ backgroundColor: chain.color + '15', color: chain.color }}>{chain.icon}</div>
               <div className="flex-1 text-left">
-                <p className="text-sm font-medium text-[#EAECEF]">{chain.name}</p>
-                <p className="text-xs text-[#848E9C]">Chain ID: {chain.id}</p>
+                <p className="text-sm font-medium text-foreground">{chain.name}</p>
+                <p className="text-xs text-muted-foreground">Chain ID: {chain.id}</p>
               </div>
-              {chain.id === currentChainId && <Badge className="bg-[#F0B90B]/10 text-[#F0B90B] border-[#F0B90B]/20 text-xs">Active</Badge>}
+              {chain.id === currentChainId && <Badge className="bg-primary/10 text-primary border-primary/20 text-xs">Active</Badge>}
             </motion.button>
           ))}
         </div>
@@ -1689,8 +1691,8 @@ function CopyButton({ text }: { text: string }) {
     navigator.clipboard.writeText(text); setCopied(true); addToast('Copied!', 'success'); setTimeout(() => setCopied(false), 2000);
   }, [text, addToast]);
   return (
-    <button onClick={handleCopy} className="p-1 rounded hover:bg-[#363C45] transition-colors">
-      {copied ? <Check className="size-3.5 text-[#0ECB81]" /> : <CopyIcon className="size-3.5 text-[#848E9C]" />}
+    <button onClick={handleCopy} className="p-1 rounded hover:bg-elevated transition-colors">
+      {copied ? <Check className="size-3.5 text-qfs-green" /> : <CopyIcon className="size-3.5 text-muted-foreground" />}
     </button>
   );
 }
@@ -1737,14 +1739,14 @@ function BottomNav() {
                 <AnimatePresence>
                   {showMore && (
                     <motion.div initial={{ opacity: 0, y: 10, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 10, scale: 0.95 }} className="absolute bottom-full right-0 mb-2 w-48 bnb-card-elevated rounded-xl overflow-hidden">
-                      <button onClick={() => { navigate('settings'); setShowMore(false); }} className="w-full flex items-center gap-3 px-4 py-3 hover:bg-[#363C45] transition-colors text-left">
-                        <Settings className="size-4 text-[#848E9C]" /><span className="text-sm text-[#EAECEF]">Settings</span>
+                      <button onClick={() => { navigate('settings'); setShowMore(false); }} className="w-full flex items-center gap-3 px-4 py-3 hover:bg-elevated transition-colors text-left">
+                        <Settings className="size-4 text-muted-foreground" /><span className="text-sm text-foreground">Settings</span>
                       </button>
-                      <button onClick={() => { navigate('networks' as Screen); setShowMore(false); }} className="w-full flex items-center gap-3 px-4 py-3 hover:bg-[#363C45] transition-colors text-left">
-                        <Globe className="size-4 text-[#848E9C]" /><span className="text-sm text-[#EAECEF]">Networks</span>
+                      <button onClick={() => { navigate('networks' as Screen); setShowMore(false); }} className="w-full flex items-center gap-3 px-4 py-3 hover:bg-elevated transition-colors text-left">
+                        <Globe className="size-4 text-muted-foreground" /><span className="text-sm text-foreground">Networks</span>
                       </button>
-                      <button onClick={() => setShowMore(false)} className="w-full flex items-center gap-3 px-4 py-3 hover:bg-[#363C45] transition-colors text-left">
-                        <Shield className="size-4 text-[#848E9C]" /><span className="text-sm text-[#EAECEF]">Security</span>
+                      <button onClick={() => setShowMore(false)} className="w-full flex items-center gap-3 px-4 py-3 hover:bg-elevated transition-colors text-left">
+                        <Shield className="size-4 text-muted-foreground" /><span className="text-sm text-foreground">Security</span>
                       </button>
                     </motion.div>
                   )}
@@ -1789,47 +1791,47 @@ function AddTokenModal({ chainId, onClose }: { chainId: number; onClose: () => v
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-end" onClick={onClose}>
-      <motion.div initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }} transition={{ type: 'spring', damping: 25, stiffness: 300 }} className="w-full max-w-md lg:max-w-lg mx-auto bg-[#1E2329] rounded-t-3xl p-5 max-h-[85vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+      <motion.div initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }} transition={{ type: 'spring', damping: 25, stiffness: 300 }} className="w-full max-w-md lg:max-w-lg mx-auto bg-card rounded-t-3xl p-5 max-h-[85vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between mb-5">
-          <h3 className="text-lg font-semibold text-[#EAECEF]">Add Token</h3>
-          <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-[#363C45]"><X className="size-5 text-[#848E9C]" /></button>
+          <h3 className="text-lg font-semibold text-foreground">Add Token</h3>
+          <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-elevated"><X className="size-5 text-muted-foreground" /></button>
         </div>
-        <div className="flex gap-1 p-1 bg-[#2B3139] rounded-xl mb-4">
-          <button onClick={() => setMode('search')} className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors ${mode === 'search' ? 'bg-[#F0B90B] text-[#0B0E11]' : 'text-[#848E9C]'}`}>Search</button>
-          <button onClick={() => setMode('custom')} className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors ${mode === 'custom' ? 'bg-[#F0B90B] text-[#0B0E11]' : 'text-[#848E9C]'}`}>Custom</button>
+        <div className="flex gap-1 p-1 bg-secondary rounded-xl mb-4">
+          <button onClick={() => setMode('search')} className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors ${mode === 'search' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground'}`}>Search</button>
+          <button onClick={() => setMode('custom')} className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors ${mode === 'custom' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground'}`}>Custom</button>
         </div>
         {mode === 'search' ? (
           <>
             <div className="relative mb-4">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-[#848E9C]" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
               <Input placeholder="Search by name or symbol..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-10" />
             </div>
             <div className="flex flex-col gap-1.5">
               {filteredTokens.map((token) => (
-                <div key={token.address + token.symbol} className="flex items-center gap-3 p-3 rounded-xl hover:bg-[#2B3139]/50 transition-colors">
+                <div key={token.address + token.symbol} className="flex items-center gap-3 p-3 rounded-xl hover:bg-secondary/50 transition-colors">
                   <TokenIcon symbol={token.symbol} size={36} />
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-[#EAECEF]">{token.symbol}</p>
-                    <p className="text-xs text-[#848E9C] truncate">{token.name}</p>
+                    <p className="text-sm font-medium text-foreground">{token.symbol}</p>
+                    <p className="text-xs text-muted-foreground truncate">{token.name}</p>
                   </div>
-                  <button onClick={() => { addToken({ ...token, balance: '0.00', valueUsd: 0 }); addToast(`${token.symbol} added`, 'success'); onClose(); }} className="px-3 py-1.5 rounded-lg bg-[#F0B90B]/10 text-[#F0B90B] text-xs font-medium hover:bg-[#F0B90B]/20 transition-colors">Add</button>
+                  <button onClick={() => { addToken({ ...token, balance: '0.00', valueUsd: 0 }); addToast(`${token.symbol} added`, 'success'); onClose(); }} className="px-3 py-1.5 rounded-lg bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20 transition-colors">Add</button>
                 </div>
               ))}
-              {filteredTokens.length === 0 && <div className="text-center py-8"><p className="text-sm text-[#848E9C]">No tokens found</p></div>}
+              {filteredTokens.length === 0 && <div className="text-center py-8"><p className="text-sm text-muted-foreground">No tokens found</p></div>}
             </div>
           </>
         ) : (
           <div className="flex flex-col gap-4">
-            <div><label className="text-xs text-[#848E9C] mb-1.5 block">Contract Address</label><Input placeholder="0x..." value={customAddress} onChange={(e) => setCustomAddress(e.target.value)} /></div>
+            <div><label className="text-xs text-muted-foreground mb-1.5 block">Contract Address</label><Input placeholder="0x..." value={customAddress} onChange={(e) => setCustomAddress(e.target.value)} /></div>
             <div className="grid grid-cols-2 gap-3">
-              <div><label className="text-xs text-[#848E9C] mb-1.5 block">Symbol</label><Input placeholder="TOKEN" value={customSymbol} onChange={(e) => setCustomSymbol(e.target.value)} /></div>
-              <div><label className="text-xs text-[#848E9C] mb-1.5 block">Decimals</label><Input placeholder="18" value={customDecimals} onChange={(e) => setCustomDecimals(e.target.value)} /></div>
+              <div><label className="text-xs text-muted-foreground mb-1.5 block">Symbol</label><Input placeholder="TOKEN" value={customSymbol} onChange={(e) => setCustomSymbol(e.target.value)} /></div>
+              <div><label className="text-xs text-muted-foreground mb-1.5 block">Decimals</label><Input placeholder="18" value={customDecimals} onChange={(e) => setCustomDecimals(e.target.value)} /></div>
             </div>
-            <div><label className="text-xs text-[#848E9C] mb-1.5 block">Name (optional)</label><Input placeholder="Token Name" value={customName} onChange={(e) => setCustomName(e.target.value)} /></div>
+            <div><label className="text-xs text-muted-foreground mb-1.5 block">Name (optional)</label><Input placeholder="Token Name" value={customName} onChange={(e) => setCustomName(e.target.value)} /></div>
             <button onClick={handleAddCustom} className="w-full h-[52px] rounded-xl bnb-btn-primary text-base mt-2">Add Token</button>
           </div>
         )}
-        <p className="text-[10px] text-[#5E6673] text-center mt-4">Network: {chain?.name} (Chain ID: {chainId})</p>
+        <p className="text-[10px] text-nav-inactive text-center mt-4">Network: {chain?.name} (Chain ID: {chainId})</p>
       </motion.div>
     </motion.div>
   );
@@ -1865,15 +1867,15 @@ function WalletScreen() {
   useEffect(() => { loadTokensForChain(currentChainId); }, [currentChainId, loadTokensForChain]);
 
   return (
-    <motion.div key="wallet" variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={pageTransition} className="min-h-screen pb-24 bg-[#181A20]">
+    <motion.div key="wallet" variants={pageVariants} initial="initial" animate="animate" exit="exit" transition={pageTransition} className="min-h-screen pb-24 bg-background">
       <div className="px-4 pt-4 pb-2 flex items-center justify-between">
-        <h1 className="text-lg font-semibold text-[#EAECEF]">Wallet</h1>
+        <h1 className="text-lg font-semibold text-foreground">Wallet</h1>
         <div className="flex items-center gap-2">
-          <button onClick={() => setBalanceHidden(!balanceHidden)} className="p-2 rounded-lg hover:bg-[#2B3139]">
-            {balanceHidden ? <EyeOff className="size-4 text-[#848E9C]" /> : <Eye className="size-4 text-[#848E9C]" />}
+          <button onClick={() => setBalanceHidden(!balanceHidden)} className="p-2 rounded-lg hover:bg-secondary">
+            {balanceHidden ? <EyeOff className="size-4 text-muted-foreground" /> : <Eye className="size-4 text-muted-foreground" />}
           </button>
-          <button onClick={() => setShowAddToken(true)} className="p-2 rounded-lg hover:bg-[#2B3139]">
-            <Plus className="size-4 text-[#F0B90B]" />
+          <button onClick={() => setShowAddToken(true)} className="p-2 rounded-lg hover:bg-secondary">
+            <Plus className="size-4 text-primary" />
           </button>
         </div>
       </div>
@@ -1882,7 +1884,7 @@ function WalletScreen() {
       <div className="px-4 mb-4">
         <div className="flex gap-2 overflow-x-auto pb-1 -mx-4 px-4">
           {SUPPORTED_CHAINS.map((c) => (
-            <button key={c.id} onClick={() => selectChain(c.id)} className={`shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${c.id === currentChainId ? 'bg-[#F0B90B] text-[#0B0E11]' : 'bg-[#2B3139] text-[#848E9C] hover:text-[#EAECEF]'}`}>
+            <button key={c.id} onClick={() => selectChain(c.id)} className={`shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${c.id === currentChainId ? 'bg-primary text-primary-foreground' : 'bg-secondary text-muted-foreground hover:text-foreground'}`}>
               {c.icon} {c.symbol}
             </button>
           ))}
@@ -1891,8 +1893,8 @@ function WalletScreen() {
 
       {/* Total balance */}
       <div className="px-4 mb-4">
-        <p className="text-3xl font-bold text-[#EAECEF] mb-1">{balanceHidden ? '••••••' : '$4,001.10'}</p>
-        <p className="text-xs text-[#848E9C]">Total balance on {chain?.name}</p>
+        <p className="text-3xl font-bold text-foreground mb-1">{balanceHidden ? '••••••' : '$4,001.10'}</p>
+        <p className="text-xs text-muted-foreground">Total balance on {chain?.name}</p>
       </div>
 
       {/* Token list */}
@@ -1903,13 +1905,13 @@ function WalletScreen() {
               <div className="flex items-center gap-3">
                 <TokenIcon symbol={token.symbol} size={44} />
                 <div>
-                  <p className="text-sm font-semibold text-[#EAECEF]">{token.symbol}</p>
-                  <p className="text-[11px] text-[#848E9C]">{token.name}</p>
+                  <p className="text-sm font-semibold text-foreground">{token.symbol}</p>
+                  <p className="text-[11px] text-muted-foreground">{token.name}</p>
                 </div>
               </div>
               <div className="text-right">
-                <p className="text-sm font-semibold text-[#EAECEF]">{balanceHidden ? '••••' : (token as any).balance}</p>
-                <p className={`text-[11px] ${(token as any).change24h >= 0 ? 'text-[#0ECB81]' : 'text-[#F6465D]'}`}>
+                <p className="text-sm font-semibold text-foreground">{balanceHidden ? '••••' : (token as any).balance}</p>
+                <p className={`text-[11px] ${(token as any).change24h >= 0 ? 'text-qfs-green' : 'text-destructive'}`}>
                   {balanceHidden ? '' : ((token as any).valueUsd > 0 ? `$${(token as any).valueUsd.toLocaleString('en-US', { minimumFractionDigits: 2 })}` : '—')}
                 </p>
               </div>
@@ -1917,8 +1919,8 @@ function WalletScreen() {
           ))}
         </div>
         <div className="mt-3 flex items-center gap-1.5 justify-center">
-          <Info className="size-3 text-[#848E9C]" />
-          <p className="text-[11px] text-[#848E9C]">Demo data — connect to view real balances</p>
+          <Info className="size-3 text-muted-foreground" />
+          <p className="text-[11px] text-muted-foreground">Demo data — connect to view real balances</p>
         </div>
       </div>
 
@@ -1936,8 +1938,13 @@ function QFSWallet() {
   const isWalletLocked = useWalletStore((s) => s.isWalletLocked);
   const showOnboarding = useWalletStore((s) => s.showOnboarding);
   const initialize = useWalletStore((s) => s.initialize);
+  const darkMode = useWalletStore((s) => s.darkMode);
 
   useEffect(() => { initialize(); }, [initialize]);
+  useEffect(() => {
+    if (darkMode) document.documentElement.classList.add('dark');
+    else document.documentElement.classList.remove('dark');
+  }, [darkMode]);
 
   const showNav = isWalletCreated && !isWalletLocked && !['create-wallet', 'import-wallet', 'seed-verify'].includes(currentScreen);
 
@@ -1961,7 +1968,7 @@ function QFSWallet() {
   };
 
   return (
-    <div className="min-h-screen bg-[#181A20] max-w-md lg:max-w-lg mx-auto relative">
+    <div className="min-h-screen bg-background max-w-md lg:max-w-lg mx-auto relative">
       <ToastContainer />
       <AnimatePresence mode="wait">
         {renderScreen()}
