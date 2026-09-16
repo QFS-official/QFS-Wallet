@@ -26,6 +26,7 @@ interface WalletStore {
 
   // Wallet actions
   setWalletCreated: (address: string, encryptedKey: string) => void;
+  setAddress: (address: string) => void;
   lockWallet: () => void;
   unlockWallet: () => void;
   setBalance: (balance: string) => void;
@@ -265,6 +266,11 @@ export const useWalletStore = create<WalletStore>((set, get) => ({
     saveToStorage('wallet_data', { address, encryptedKey, chainId: get().currentChainId });
     saveToStorage('wallet_created', true);
     set({ isWalletCreated: true, isWalletLocked: false, address, encryptedPrivateKey: encryptedKey, currentScreen: 'dashboard' });
+  },
+  setAddress: (address) => {
+    // Used to "watch" any public wallet address (read-only, no private key)
+    saveToStorage('wallet_data', { address, encryptedKey: get().encryptedPrivateKey, chainId: get().currentChainId });
+    set({ address });
   },
   lockWallet: () => set({ isWalletLocked: true, currentScreen: 'create-wallet' }),
   unlockWallet: () => set({ isWalletLocked: false, currentScreen: 'dashboard' }),
