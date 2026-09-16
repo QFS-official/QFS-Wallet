@@ -6,8 +6,8 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-mono);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -37,221 +37,305 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
-  --color-qfs-green: var(--qfs-green);
-  --color-qfs-red: var(--qfs-red);
+  --color-qfs-cyan: var(--qfs-cyan);
+  --color-qfs-blue: var(--qfs-blue);
+  --color-qfs-emerald: var(--qfs-emerald);
+  --color-qfs-amber: var(--qfs-amber);
+  --color-qfs-violet: var(--qfs-violet);
   --color-elevated: var(--elevated);
   --color-nav-inactive: var(--nav-inactive);
-  --color-info-blue: var(--info-blue);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
 }
 
-/* ─── Light Mode (default :root) ─── */
+/* ─── QFS Wallet Theme (Deep Dark Navy + Electric Cyan) ─── */
 :root {
-  --radius: 0.75rem;
-  --background: #FFFFFF;
-  --foreground: #0B0E11;
-  --card: #F8F9FA;
-  --card-foreground: #0B0E11;
-  --popover: #FFFFFF;
-  --popover-foreground: #0B0E11;
-  --primary: #F0B90B;
-  --primary-foreground: #0B0E11;
-  --secondary: #F0F2F5;
-  --secondary-foreground: #0B0E11;
-  --muted: #F0F2F5;
-  --muted-foreground: #848E9C;
-  --accent: #F0B90B;
-  --accent-foreground: #0B0E11;
+  --radius: 0.875rem;
+
+  /* Dark navy background — primary surface */
+  --background: #0B1120;
+  --foreground: #FFFFFF;
+
+  /* Cards — translucent dark blue with glassmorphism */
+  --card: rgba(17, 24, 39, 0.55);
+  --card-foreground: #FFFFFF;
+  --card-solid: #111827;
+
+  --popover: #1F2937;
+  --popover-foreground: #FFFFFF;
+
+  /* Primary — Electric cyan/blue */
+  --primary: #06B6D4;
+  --primary-foreground: #0B1120;
+
+  --secondary: #1F2937;
+  --secondary-foreground: #E5E7EB;
+
+  --muted: #1F2937;
+  --muted-foreground: #9CA3AF;
+
+  --accent: #3B82F6;
+  --accent-foreground: #FFFFFF;
+
   --destructive: #F6465D;
-  --border: #EAECEF;
-  --input: #EAECEF;
-  --ring: #F0B90B;
-  --chart-1: #F0B90B;
-  --chart-2: #0ECB81;
-  --chart-3: #F6465D;
-  --chart-4: #1E90FF;
-  --chart-5: #8B5CF6;
-  --sidebar: #F8F9FA;
-  --sidebar-foreground: #0B0E11;
-  --sidebar-primary: #F0B90B;
-  --sidebar-primary-foreground: #0B0E11;
-  --sidebar-accent: #F0F2F5;
-  --sidebar-accent-foreground: #0B0E11;
-  --sidebar-border: #EAECEF;
-  --sidebar-ring: #F0B90B;
-  --qfs-green: #0ECB81;
-  --qfs-red: #F6465D;
-  --elevated: #E8EBED;
-  --nav-inactive: #848E9C;
-  --info-blue: #1E90FF;
+
+  --border: rgba(255, 255, 255, 0.06);
+  --input: rgba(255, 255, 255, 0.08);
+  --ring: #06B6D4;
+
+  --chart-1: #06B6D4;
+  --chart-2: #10B981;
+  --chart-3: #F59E0B;
+  --chart-4: #8B5CF6;
+  --chart-5: #3B82F6;
+
+  --sidebar: #0A0F1E;
+  --sidebar-foreground: #E5E7EB;
+  --sidebar-primary: #06B6D4;
+  --sidebar-primary-foreground: #0B1120;
+  --sidebar-accent: rgba(6, 182, 212, 0.1);
+  --sidebar-accent-foreground: #06B6D4;
+  --sidebar-border: rgba(255, 255, 255, 0.04);
+  --sidebar-ring: #06B6D4;
+
+  /* Brand palette */
+  --qfs-cyan: #06B6D4;
+  --qfs-blue: #3B82F6;
+  --qfs-emerald: #10B981;
+  --qfs-amber: #F59E0B;
+  --qfs-violet: #8B5CF6;
+
+  --elevated: #1F2937;
+  --nav-inactive: #6B7280;
 }
 
-/* ─── Dark Mode (.dark) ─── */
+/* Dark mode = default (we are always dark) */
 .dark {
-  --background: #181A20;
-  --foreground: #EAECEF;
-  --card: #1E2329;
-  --card-foreground: #EAECEF;
-  --popover: #2B3139;
-  --popover-foreground: #EAECEF;
-  --primary: #F0B90B;
-  --primary-foreground: #0B0E11;
-  --secondary: #2B3139;
-  --secondary-foreground: #EAECEF;
-  --muted: #2B3139;
-  --muted-foreground: #848E9C;
-  --accent: #F0B90B;
-  --accent-foreground: #0B0E11;
+  --background: #0B1120;
+  --foreground: #FFFFFF;
+  --card: rgba(17, 24, 39, 0.55);
+  --card-foreground: #FFFFFF;
+  --card-solid: #111827;
+  --popover: #1F2937;
+  --popover-foreground: #FFFFFF;
+  --primary: #06B6D4;
+  --primary-foreground: #0B1120;
+  --secondary: #1F2937;
+  --secondary-foreground: #E5E7EB;
+  --muted: #1F2937;
+  --muted-foreground: #9CA3AF;
+  --accent: #3B82F6;
+  --accent-foreground: #FFFFFF;
   --destructive: #F6465D;
-  --border: #2B3139;
-  --input: #2B3139;
-  --ring: #F0B90B;
-  --qfs-green: #0ECB81;
-  --qfs-red: #F6465D;
-  --elevated: #363C45;
-  --nav-inactive: #5E6673;
-  --info-blue: #1E90FF;
+  --border: rgba(255, 255, 255, 0.06);
+  --input: rgba(255, 255, 255, 0.08);
+  --ring: #06B6D4;
 }
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
-  body {
+  html, body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  body {
+    background:
+      radial-gradient(ellipse 80% 50% at 20% 0%, rgba(59, 130, 246, 0.08), transparent 60%),
+      radial-gradient(ellipse 70% 50% at 80% 100%, rgba(139, 92, 246, 0.06), transparent 60%),
+      radial-gradient(ellipse 60% 40% at 50% 50%, rgba(6, 182, 212, 0.04), transparent 70%),
+      #0B1120;
+    min-height: 100vh;
   }
 }
 
 /* Scrollbar */
-::-webkit-scrollbar {
-  width: 4px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {
-  background: var(--border);
-  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
 }
-::-webkit-scrollbar-thumb:hover {
-  background: var(--elevated);
+::-webkit-scrollbar-thumb:hover { background: rgba(6, 182, 212, 0.3); }
+
+/* ─── Glassmorphism utility ─── */
+.glass-card {
+  background: linear-gradient(135deg, rgba(17, 24, 39, 0.65) 0%, rgba(17, 24, 39, 0.45) 100%);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow:
+    0 4px 24px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
-/* Binance-style card */
-.bnb-card {
-  background: var(--card);
-  border: 1px solid var(--border);
+.glass-card-hover {
+  transition: all 0.2s ease;
+}
+.glass-card-hover:hover {
+  border-color: rgba(6, 182, 212, 0.25);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(6, 182, 212, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  transform: translateY(-1px);
 }
 
-.bnb-card-elevated {
-  background: var(--muted);
-  border: 1px solid var(--elevated);
+/* ─── Hero balance gradient ─── */
+.hero-gradient {
+  background:
+    radial-gradient(circle at 25% 30%, rgba(59, 130, 246, 0.35) 0%, transparent 50%),
+    radial-gradient(circle at 75% 75%, rgba(139, 92, 246, 0.3) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(6, 182, 212, 0.18) 0%, transparent 70%),
+    linear-gradient(135deg, #0F172A 0%, #1E1B4B 50%, #0F172A 100%);
+  border: 1px solid rgba(6, 182, 212, 0.15);
 }
 
-/* Primary button */
-.bnb-btn-primary {
-  background: #F0B90B;
-  color: #0B0E11;
+/* ─── QFS neon logo glow ─── */
+.qfs-logo-glow {
+  filter: drop-shadow(0 0 8px rgba(6, 182, 212, 0.5)) drop-shadow(0 0 16px rgba(59, 130, 246, 0.3));
+}
+
+/* ─── Primary button ─── */
+.qfs-btn-primary {
+  background: linear-gradient(135deg, #06B6D4 0%, #3B82F6 100%);
+  color: #0B1120;
   font-weight: 600;
   border-radius: 12px;
   transition: all 0.15s ease;
+  box-shadow: 0 0 0 1px rgba(6, 182, 212, 0.2), 0 4px 12px rgba(6, 182, 212, 0.2);
 }
-.bnb-btn-primary:hover {
-  background: #F8D12F;
+.qfs-btn-primary:hover {
+  box-shadow: 0 0 0 1px rgba(6, 182, 212, 0.35), 0 6px 20px rgba(6, 182, 212, 0.35);
+  transform: translateY(-1px);
 }
-.bnb-btn-primary:active {
-  background: #D4A30A;
-}
-.bnb-btn-primary:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
+.qfs-btn-primary:active { transform: translateY(0); }
+.qfs-btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
 
-/* Ghost/outline button */
-.bnb-btn-outline {
+/* ─── Ghost / outline button ─── */
+.qfs-btn-ghost {
   background: transparent;
   color: var(--foreground);
-  border: 1px solid var(--border);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 12px;
   transition: all 0.15s ease;
 }
-.bnb-btn-outline:hover {
-  border-color: #F0B90B;
-  color: #F0B90B;
+.qfs-btn-ghost:hover {
+  border-color: rgba(6, 182, 212, 0.4);
+  background: rgba(6, 182, 212, 0.05);
 }
 
-/* Action circle button */
+/* ─── Action circle (Enviar/Recibir/etc) ─── */
 .action-circle {
-  width: 48px;
-  height: 48px;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
-  background: var(--muted);
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.15s ease;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: all 0.18s ease;
+  cursor: pointer;
 }
 .action-circle:hover {
-  background: var(--elevated);
+  background: rgba(6, 182, 212, 0.12);
+  border-color: rgba(6, 182, 212, 0.35);
+  box-shadow: 0 0 16px rgba(6, 182, 212, 0.25);
+  transform: translateY(-2px);
 }
-.action-circle:active {
-  transform: scale(0.95);
+.action-circle.primary {
+  background: linear-gradient(135deg, #06B6D4 0%, #3B82F6 100%);
+  border-color: rgba(6, 182, 212, 0.4);
+  color: #0B1120;
+  box-shadow: 0 4px 16px rgba(6, 182, 212, 0.3);
+}
+.action-circle.primary:hover {
+  box-shadow: 0 0 24px rgba(6, 182, 212, 0.5);
+  transform: translateY(-2px);
 }
 
-/* Token row */
-.token-row {
-  display: flex;
+/* ─── Asset row ─── */
+.asset-row {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1fr 80px;
   align-items: center;
-  justify-content: space-between;
   padding: 14px 16px;
   border-radius: 12px;
   transition: background 0.12s ease;
   cursor: pointer;
 }
-.token-row:hover {
-  background: var(--muted);
-}
-.token-row:active {
-  background: var(--elevated);
-}
+.asset-row:hover { background: rgba(255, 255, 255, 0.03); }
 
-/* Bottom nav */
-.bnb-bottom-nav {
-  background: var(--background);
-  border-top: 1px solid var(--border);
-}
-.bnb-nav-item {
+/* ─── Sidebar nav item ─── */
+.sidebar-item {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 2px;
-  padding: 8px 0;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 10px;
   color: var(--nav-inactive);
-  transition: color 0.15s ease;
-  min-width: 56px;
+  font-weight: 500;
+  font-size: 14px;
+  transition: all 0.15s ease;
+  cursor: pointer;
+  position: relative;
 }
-.bnb-nav-item.active {
-  color: #F0B90B;
+.sidebar-item:hover {
+  color: #E5E7EB;
+  background: rgba(255, 255, 255, 0.03);
+}
+.sidebar-item.active {
+  color: var(--qfs-cyan);
+  background: rgba(6, 182, 212, 0.08);
+}
+.sidebar-item.active::before {
+  content: '';
+  position: absolute;
+  left: -16px;
+  top: 8px;
+  bottom: 8px;
+  width: 3px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, #06B6D4, #3B82F6);
 }
 
-/* Shimmer loading */
+/* ─── Shimmer ─── */
 @keyframes shimmer {
   0% { background-position: -200% 0; }
   100% { background-position: 200% 0; }
 }
-
 .shimmer {
   background: linear-gradient(90deg, var(--card) 25%, var(--muted) 50%, var(--card) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s ease-in-out infinite;
 }
 
-/* Input focus ring */
+/* ─── Input focus ─── */
 input:focus, textarea:focus {
-  border-color: #F0B90B !important;
-  box-shadow: 0 0 0 1px rgba(240, 185, 11, 0.2);
+  border-color: rgba(6, 182, 212, 0.5) !important;
+  box-shadow: 0 0 0 1px rgba(6, 182, 212, 0.2);
+  outline: none;
 }
+
+/* ─── Pulse for live indicator ─── */
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+.pulse-soft { animation: pulse-soft 2s ease-in-out infinite; }
+
+/* ─── Spin slow (for orbit ring around logo) ─── */
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.spin-slow { animation: spin-slow 20s linear infinite; }
+
+/* ─── Number tabular for balances ─── */
+.tabular-nums { font-variant-numeric: tabular-nums; }

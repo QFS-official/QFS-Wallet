@@ -1,28 +1,28 @@
-// QFS Wallet - Staking Pool Configurations
+// QFS Wallet — Staking Pool Configurations
 import type { StakingPool } from '@/types/wallet';
 
 export const STAKING_POOLS: StakingPool[] = [
   {
     id: 'qfs-90',
-    name: 'QFS 90 Days',
+    name: 'QFS 90 Días',
     duration: 90,
-    durationLabel: '90 days',
+    durationLabel: '90 días',
     apy: 42.23,
     minStake: 100,
-    maxStake: 10000000,
-    totalStaked: 45230000,
-    tvl: 4070700,
+    maxStake: 10_000_000,
+    totalStaked: 45_230_000,
+    tvl: 4_070_700,
   },
   {
     id: 'qfs-30',
-    name: 'QFS 30 Days',
+    name: 'QFS 30 Días',
     duration: 30,
-    durationLabel: '30 days',
+    durationLabel: '30 días',
     apy: 28.67,
     minStake: 50,
-    maxStake: 5000000,
-    totalStaked: 22150000,
-    tvl: 1993500,
+    maxStake: 5_000_000,
+    totalStaked: 22_150_000,
+    tvl: 1_993_500,
   },
   {
     id: 'qfs-flexible',
@@ -31,9 +31,9 @@ export const STAKING_POOLS: StakingPool[] = [
     durationLabel: 'Flexible',
     apy: 15.25,
     minStake: 10,
-    maxStake: 1000000,
-    totalStaked: 8900000,
-    tvl: 801000,
+    maxStake: 1_000_000,
+    totalStaked: 8_900_000,
+    tvl: 801_000,
   },
 ];
 
@@ -46,11 +46,7 @@ export function formatAPY(apy: number): string {
 }
 
 export function formatTVL(tvl: number): string {
-  if (tvl >= 1000000) {
-    return `$${(tvl / 1000000).toFixed(2)}M`;
-  }
-  if (tvl >= 1000) {
-    return `$${(tvl / 1000).toFixed(2)}K`;
-  }
+  if (tvl >= 1_000_000) return `$${(tvl / 1_000_000).toFixed(2)}M`;
+  if (tvl >= 1_000) return `$${(tvl / 1_000).toFixed(2)}K`;
   return `$${tvl.toFixed(2)}`;
 }

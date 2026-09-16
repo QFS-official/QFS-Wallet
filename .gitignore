@@ -50,5 +50,22 @@ test
 prompt
 
 server.log
-# Skills directory
+
+# Skills directory (local dev only)
 /skills/
+
+# Local worklog (private agent log)
+worklog.md
+
+# Local screenshots / review files (regenerated each session, no need to track)
+/download/*.png
+/download/*.json
+
+# User uploads (don't track user-provided files)
+/upload/
+
+# Z scripts runtime artifacts
+/.zscripts/dev.pid
+
+# Local DB
+/db/custom.db

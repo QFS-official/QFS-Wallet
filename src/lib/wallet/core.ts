@@ -1,6 +1,6 @@
-// QFS Wallet - Core Wallet Module
-// Handles BIP-39 seed phrase generation, key derivation, and encryption
-// All cryptographic operations happen CLIENT-SIDE only
+// QFS Wallet — Core Wallet Module
+// BIP-39 seed phrase generation, HD key derivation, AES-256-GCM encryption.
+// ALL cryptographic operations happen CLIENT-SIDE only.
 
 import { generateMnemonic, validateMnemonic, mnemonicToSeed } from '@scure/bip39';
 import { wordlist } from './wordlist';
@@ -24,7 +24,6 @@ export async function deriveKeyPair(mnemonic: string, index: number = 0) {
   const privateKey = childKey.privateKey;
   const publicKey = childKey.publicKey;
 
-  // Ensure privateKey is a proper Uint8Array and convert to hex with 0x prefix
   const pkHex = '0x' + Buffer.from(privateKey!).toString('hex');
   const wallet = new ethers.Wallet(pkHex);
 
@@ -46,13 +45,13 @@ export async function createEncryptedWallet(password: string, mnemonic?: string,
     address,
     encryptedPrivateKey: encryptedData,
     publicKey,
+    seedPhrase,
   };
 }
 
 export async function unlockWallet(encryptedPrivateKey: string, password: string): Promise<string> {
   try {
     const privateKey = await decrypt(encryptedPrivateKey, password);
-    // privateKey already has 0x prefix from deriveKeyPair
     const wallet = new ethers.Wallet(privateKey);
     return wallet.address;
   } catch {
@@ -66,11 +65,12 @@ export async function privateKeyToAddress(privateKey: string): Promise<string> {
   return wallet.address;
 }
 
-export function truncateAddress(address: string, chars: number = 6): string {
+export function truncateAddress(address: string, chars: number = 4): string {
+  if (!address) return '';
   return `${address.slice(0, chars + 2)}...${address.slice(-chars)}`;
 }
 
-// Storage helpers
+// Storage helpers (all client-side, namespaced)
 const STORAGE_PREFIX = 'qfs_wallet_';
 
 export function saveToStorage(key: string, data: unknown): void {
@@ -95,4 +95,29 @@ export function loadFromStorage<T>(key: string): T | null {
 export function removeFromStorage(key: string): void {
   if (typeof window === 'undefined') return;
   localStorage.removeItem(STORAGE_PREFIX + key);
+}
+
+// Format helpers
+export function formatUsd(value: number, decimals: number = 2): string {
+  if (value >= 1_000_000_000) return `$${(value / 1_000_000_000).toFixed(2)}B`;
+  if (value >= 1_000_000) return `$${(value / 1_000_000).toFixed(2)}M`;
+  if (value >= 1_000) return `$${(value / 1_000).toFixed(2)}K`;
+  return `$${value.toFixed(decimals)}`;
+}
+
+export function formatNumber(value: number, decimals: number = 2): string {
+  return value.toLocaleString('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+}
+
+export function formatPct(value: number, withSign: boolean = true): string {
+  const sign = value >= 0 && withSign ? '+' : '';
+  return `${sign}${value.toFixed(2)}%`;
+}
+
+export function shortTimeAgo(timestamp: number): string {
+  const seconds = Math.floor((Date.now() - timestamp) / 1000);
+  if (seconds < 60) return 'hace unos segundos';
+  if (seconds < 3600) return `hace ${Math.floor(seconds / 60)} min`;
+  if (seconds < 86400) return `hace ${Math.floor(seconds / 3600)} h`;
+  return `hace ${Math.floor(seconds / 86400)} d`;
 }

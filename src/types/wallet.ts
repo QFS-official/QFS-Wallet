@@ -1,4 +1,4 @@
-// GCRM Wallet - Type Definitions
+// QFS Wallet — Type Definitions
 
 export interface WalletState {
   address: string;
@@ -6,7 +6,7 @@ export interface WalletState {
   encryptedPrivateKey: string;
   chain: string;
   balance: string;
-  gcrmBalance: string;
+  qfsBalance: string;
   seedPhraseVerified: boolean;
 }
 
@@ -17,8 +17,11 @@ export interface Token {
   decimals: number;
   balance: string;
   valueUsd: number;
+  change24h: number;
   chainId: number;
   icon?: string;
+  color?: string;
+  sparkline?: number[];
 }
 
 export interface ChainConfig {
@@ -65,10 +68,13 @@ export interface SwapQuote {
   route: string[];
 }
 
+export type TxType = 'receive' | 'send' | 'swap' | 'stake' | 'unstake' | 'claim';
+export type TxStatus = 'pending' | 'confirmed' | 'failed';
+
 export interface Transaction {
   id: string;
-  type: 'send' | 'receive' | 'swap' | 'stake' | 'unstake' | 'claim';
-  status: 'pending' | 'confirmed' | 'failed';
+  type: TxType;
+  status: TxStatus;
   from: string;
   to: string;
   amount: string;
@@ -90,17 +96,29 @@ export interface DAppConnection {
   lastUsed: string;
 }
 
+export interface MarketToken {
+  symbol: string;
+  name: string;
+  price: number;
+  change24h: number;
+  icon: string;
+  color: string;
+}
+
 export type Screen =
   | 'dashboard'
   | 'wallet'
+  | 'send'
+  | 'receive'
   | 'swap'
   | 'staking'
   | 'dapps'
   | 'settings'
+  | 'markets'
+  | 'history'
+  | 'nfts'
   | 'create-wallet'
   | 'import-wallet'
-  | 'send'
-  | 'receive'
   | 'seed-verify'
   | 'transaction-confirm'
   | 'staking-calculator'
