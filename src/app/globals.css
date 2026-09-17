@@ -345,11 +345,10 @@ input:focus, textarea:focus {
 /* Navy → electric blue → cyan radial gradient backdrop */
 .onboarding-bg {
   background:
-    radial-gradient(ellipse 90% 70% at 50% 50%, rgba(0, 212, 255, 0.08), transparent 60%),
-    radial-gradient(ellipse 70% 50% at 20% 80%, rgba(59, 130, 246, 0.12), transparent 60%),
-    radial-gradient(ellipse 60% 50% at 80% 20%, rgba(255, 215, 0, 0.05), transparent 60%),
-    radial-gradient(ellipse 50% 40% at 50% 100%, rgba(0, 153, 204, 0.1), transparent 60%),
-    linear-gradient(135deg, #010812 0%, #051429 30%, #0A1E36 60%, #051429 90%, #010812 100%);
+    radial-gradient(ellipse 90% 70% at 50% 50%, rgba(0, 212, 255, 0.06), transparent 60%),
+    radial-gradient(ellipse 70% 50% at 20% 80%, rgba(59, 130, 246, 0.08), transparent 60%),
+    radial-gradient(ellipse 60% 50% at 80% 20%, rgba(255, 215, 0, 0.03), transparent 60%),
+    #030816;
   position: relative;
   overflow: hidden;
 }
