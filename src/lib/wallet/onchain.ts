@@ -1,8 +1,8 @@
-// QFS Wallet — On-chain balance service using ethers.js
+// QFS Wallet — On-chain balance service using direct JSON-RPC calls
 // Reads native (ETH/POL/BNB) and ERC-20 token balances from public RPCs.
-// Runs entirely client-side. Falls back gracefully when RPC fails.
+// Falls back gracefully when RPC fails.
 
-import { JsonRpcProvider, Contract, formatUnits } from 'ethers';
+import { formatUnits } from 'ethers';
 import type { Token } from '@/types/wallet';
 import { getChainById, getChainRpcList } from './chains';
 import {
@@ -13,14 +13,6 @@ import {
   TRAEX_TOKEN,
   POPULAR_TOKENS,
 } from './tokens';
-
-// ERC-20 minimal ABI for balance reading
-const ERC20_ABI = [
-  'function balanceOf(address owner) view returns (uint256)',
-  'function decimals() view returns (uint8)',
-  'function symbol() view returns (string)',
-  'function name() view returns (string)',
-];
 
 const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
 const FETCH_TIMEOUT_MS = 8000; // 8s per RPC
@@ -38,56 +30,47 @@ export interface OnChainBalance {
   error?: string;
 }
 
-// Provider cache: reuse providers across reads
-const providerCache = new Map<string, JsonRpcProvider>();
-
-async function getProvider(chainId: number): Promise<JsonRpcProvider | null> {
-  const rpcList = getChainRpcList(chainId);
-  if (rpcList.length === 0) return null;
-
-  // Try the cached one first
-  const cacheKey = `${chainId}:${rpcList[0]}`;
-  if (providerCache.has(cacheKey)) {
-    return providerCache.get(cacheKey)!;
+// ─── Direct JSON-RPC call (avoids ethers JsonRpcProvider network detection issues) ──
+async function rpcCall(rpcUrl: string, method: string, params: any[]): Promise<any> {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+  try {
+    const res = await fetch(rpcUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ jsonrpc: '2.0', method, params, id: 1 }),
+      signal: controller.signal,
+    });
+    clearTimeout(timeout);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    if (data.error) throw new Error(data.error.message || 'RPC error');
+    return data.result;
+  } catch (err) {
+    clearTimeout(timeout);
+    throw err;
   }
-
-  // Don't use staticNetwork — let ethers detect the network automatically
-  const provider = new JsonRpcProvider(rpcList[0]);
-  providerCache.set(cacheKey, provider);
-  return provider;
 }
 
-// Create a fresh provider from a specific RPC URL (used when primary fails)
-function createProvider(chainId: number, rpcUrl: string): JsonRpcProvider {
-  // Don't use staticNetwork — let ethers detect the network automatically.
-  // Passing staticNetwork: true with the wrong chainId can cause "failed to detect network" errors.
-  return new JsonRpcProvider(rpcUrl);
+// ─── Helper: encode ERC-20 balanceOf(address) call ─────────────
+// function selector: 0x70a08231 + padded address (32 bytes)
+function encodeBalanceOf(address: string): string {
+  const cleanAddr = address.replace('0x', '').toLowerCase().padStart(64, '0');
+  return '0x70a08231' + cleanAddr;
 }
 
-// Fetch with timeout + RPC fallback
-async function fetchWithFallback<T>(
-  chainId: number,
-  fn: (provider: JsonRpcProvider) => Promise<T>
-): Promise<{ result: T; provider: JsonRpcProvider } | null> {
-  const rpcList = getChainRpcList(chainId);
-  for (const rpc of rpcList) {
-    try {
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
-      const provider = createProvider(chainId, rpc);
-      const result = await fn(provider);
-      clearTimeout(timeout);
-      return { result, provider };
-    } catch (err) {
-      // Try next RPC
-      continue;
-    }
+// ─── Helper: decode hex to bigint ──────────────────────────────
+function hexToBigInt(hex: string): bigint {
+  if (!hex || hex === '0x') return 0n;
+  try {
+    return BigInt(hex);
+  } catch {
+    return 0n;
   }
-  return null;
 }
 
-// ─── Native balance (ETH / BNB / POL) ────────────────────────────
-export async function fetchNativeBalance(
+// ─── Fetch native balance (ETH / BNB / POL) via direct RPC ─────
+async function fetchNativeBalance(
   walletAddress: string,
   chainId: number
 ): Promise<OnChainBalance> {
@@ -108,41 +91,47 @@ export async function fetchNativeBalance(
     };
   }
 
-  const res = await fetchWithFallback(chainId, (p) => p.getBalance(walletAddress));
-  if (!res) {
-    return {
-      symbol: native.symbol,
-      name: native.name,
-      chainId,
-      contractAddress: '0x0',
-      balance: '0.0000',
-      balanceRaw: 0,
-      decimals: native.decimals,
-      isNative: true,
-      status: 'failed',
-      error: 'All RPCs failed',
-    };
-  }
+  const rpcList = getChainRpcList(chainId);
+  for (const rpc of rpcList) {
+    try {
+      const balanceHex = await rpcCall(rpc, 'eth_getBalance', [walletAddress, 'latest']);
+      const balanceWei = hexToBigInt(balanceHex);
+      const balanceStr = formatUnits(balanceWei, native.decimals);
+      const balanceNum = parseFloat(balanceStr);
 
-  const balanceWei = res.result;
-  const balanceStr = formatUnits(balanceWei, native.decimals);
-  const balanceNum = parseFloat(balanceStr);
+      return {
+        symbol: native.symbol,
+        name: native.name,
+        chainId,
+        contractAddress: '0x0',
+        balance: balanceNum.toFixed(4),
+        balanceRaw: balanceNum,
+        decimals: native.decimals,
+        isNative: true,
+        status: balanceNum === 0 ? 'zero' : 'success',
+      };
+    } catch (err) {
+      // Try next RPC
+      continue;
+    }
+  }
 
   return {
     symbol: native.symbol,
     name: native.name,
     chainId,
     contractAddress: '0x0',
-    balance: balanceNum.toFixed(4),
-    balanceRaw: balanceNum,
+    balance: '0.0000',
+    balanceRaw: 0,
     decimals: native.decimals,
     isNative: true,
-    status: balanceNum === 0 ? 'zero' : 'success',
+    status: 'failed',
+    error: 'All RPCs failed',
   };
 }
 
-// ─── ERC-20 balance ──────────────────────────────────────────────
-export async function fetchERC20Balance(
+// ─── Fetch ERC-20 balance via direct RPC ────────────────────────
+async function fetchERC20Balance(
   walletAddress: string,
   chainId: number,
   token: { symbol: string; name: string; address: string; decimals: number }
@@ -162,43 +151,43 @@ export async function fetchERC20Balance(
     };
   }
 
-  const res = await fetchWithFallback(chainId, async (provider) => {
-    const contract = new Contract(token.address, ERC20_ABI, provider);
-    const [balance, decimals] = await Promise.all([
-      contract.balanceOf(walletAddress),
-      contract.decimals().catch(() => token.decimals),
-    ]);
-    return { balance, decimals: Number(decimals) };
-  });
+  const rpcList = getChainRpcList(chainId);
+  const data = encodeBalanceOf(walletAddress);
+  for (const rpc of rpcList) {
+    try {
+      const balanceHex = await rpcCall(rpc, 'eth_call', [{ to: token.address, data }, 'latest']);
+      const balanceWei = hexToBigInt(balanceHex);
+      const balanceStr = formatUnits(balanceWei, token.decimals);
+      const balanceNum = parseFloat(balanceStr);
 
-  if (!res) {
-    return {
-      symbol: token.symbol,
-      name: token.name,
-      chainId,
-      contractAddress: token.address,
-      balance: '0.0000',
-      balanceRaw: 0,
-      decimals: token.decimals,
-      isNative: false,
-      status: 'failed',
-      error: 'All RPCs failed',
-    };
+      return {
+        symbol: token.symbol,
+        name: token.name,
+        chainId,
+        contractAddress: token.address,
+        balance: balanceNum.toFixed(4),
+        balanceRaw: balanceNum,
+        decimals: token.decimals,
+        isNative: false,
+        status: balanceNum === 0 ? 'zero' : 'success',
+      };
+    } catch (err) {
+      // Try next RPC
+      continue;
+    }
   }
-
-  const balanceStr = formatUnits(res.result.balance, res.result.decimals);
-  const balanceNum = parseFloat(balanceStr);
 
   return {
     symbol: token.symbol,
     name: token.name,
     chainId,
     contractAddress: token.address,
-    balance: balanceNum.toFixed(4),
-    balanceRaw: balanceNum,
-    decimals: res.result.decimals,
+    balance: '0.0000',
+    balanceRaw: 0,
+    decimals: token.decimals,
     isNative: false,
-    status: balanceNum === 0 ? 'zero' : 'success',
+    status: 'failed',
+    error: 'All RPCs failed',
   };
 }
 
