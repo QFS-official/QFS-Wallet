@@ -51,23 +51,17 @@ async function getProvider(chainId: number): Promise<JsonRpcProvider | null> {
     return providerCache.get(cacheKey)!;
   }
 
-  // Pick the first RPC for now (we'll add fallback if it fails)
-  const provider = new JsonRpcProvider(rpcList[0], {
-    chainId,
-    name: getChainById(chainId)?.name || 'unknown',
-    staticNetwork: true,
-  });
+  // Don't use staticNetwork — let ethers detect the network automatically
+  const provider = new JsonRpcProvider(rpcList[0]);
   providerCache.set(cacheKey, provider);
   return provider;
 }
 
 // Create a fresh provider from a specific RPC URL (used when primary fails)
 function createProvider(chainId: number, rpcUrl: string): JsonRpcProvider {
-  return new JsonRpcProvider(rpcUrl, {
-    chainId,
-    name: getChainById(chainId)?.name || 'unknown',
-    staticNetwork: true,
-  });
+  // Don't use staticNetwork — let ethers detect the network automatically.
+  // Passing staticNetwork: true with the wrong chainId can cause "failed to detect network" errors.
+  return new JsonRpcProvider(rpcUrl);
 }
 
 // Fetch with timeout + RPC fallback
