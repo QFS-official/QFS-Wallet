@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
-  Lock, Fingerprint, AlertTriangle, ArrowRight, Trash2, Eye, EyeOff, Unlock,
+  Lock, Fingerprint, AlertTriangle, Trash2, Eye, EyeOff, Unlock, Download,
 } from 'lucide-react';
 import { useWalletStore } from '@/store/wallet';
 import { truncateAddress } from '@/lib/wallet/core';
@@ -69,88 +69,125 @@ export function UnlockScreen() {
     navigate('create-wallet');
   };
 
+  // Render PIN dots (7 dots per reference)
+  const maxDots = 8;
+  const pinDots = Array.from({ length: maxDots }, (_, i) => i < pin.length);
+
   return (
-    <OnboardingLayout modalTitle="Unlock Wallet" modalSubtitle={address ? `Address: ${truncateAddress(address, 6)}` : undefined}>
+    <OnboardingLayout
+      modalTitle="Welcome to your QFS Wallet"
+      modalSubtitle="Create a new wallet or import an existing one."
+      onReset={() => setShowResetConfirm(true)}
+    >
       <motion.div
-        initial={{ opacity: 0, y: 12 }}
+        initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
       >
-        <div className="flex justify-center mb-4">
-          <div className="w-12 h-12 rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center">
-            <Lock size={20} className="text-cyan-400" />
-          </div>
-        </div>
-
-        <div className="space-y-4">
-          <div>
-            <label className="text-xs text-[#B0C4DE] mb-1.5 block uppercase tracking-wider text-center">
-              Enter your PIN to unlock
-            </label>
-            <div className="relative">
-              <input
-                value={pin}
-                onChange={(e) => setPin(e.target.value.replace(/[^0-9]/g, '').slice(0, 8))}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') handleUnlock();
-                }}
-                type={showPin ? 'text' : 'password'}
-                inputMode="numeric"
-                placeholder="••••••"
-                className="w-full h-14 px-4 pr-12 rounded-xl bg-white/[0.04] border border-cyan-500/20 text-2xl tracking-widest text-center focus:outline-none focus:border-cyan-500/50"
-                autoFocus
-              />
-              <button
-                onClick={() => setShowPin(!showPin)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 rounded-md hover:bg-white/5 text-[#B0C4DE] hover:text-cyan-400"
-                aria-label={showPin ? 'Hide PIN' : 'Show PIN'}
-              >
-                {showPin ? <EyeOff size={16} /> : <Eye size={16} />}
-              </button>
-            </div>
-          </div>
-
-          {error && (
-            <p className="text-xs text-red-400 flex items-center justify-center gap-1.5">
-              <AlertTriangle size={12} /> {error}
-            </p>
-          )}
-
-          <button
-            onClick={handleUnlock}
-            disabled={unlocking || pin.length < 6}
-            className="w-full h-12 rounded-xl premium-btn flex items-center justify-center gap-2 disabled:opacity-40"
+        {/* ─── PIN input — pill-shaped with dots + eye icon ─── */}
+        <div className="relative mb-3">
+          <div
+            className="flex items-center gap-1.5 h-14 px-4 rounded-full bg-[#020E1C]/80 border border-cyan-500/20"
+            style={{ boxShadow: '0 0 0 1px rgba(0, 212, 255, 0.05) inset' }}
           >
-            {unlocking ? (
-              <>
-                <div className="w-4 h-4 border-2 border-[#020B1A] border-t-transparent rounded-full animate-spin" />
-                Verifying...
-              </>
-            ) : (
-              <>
-                <Unlock size={16} /> Unlock Wallet
-              </>
-            )}
-          </button>
-
-          {biometricEnabled && (
+            {/* PIN dots */}
+            <div className="flex items-center gap-2 flex-1 justify-center">
+              {pinDots.map((filled, i) => (
+                <motion.div
+                  key={i}
+                  initial={false}
+                  animate={{ scale: filled ? 1 : 0.7, opacity: filled ? 1 : 0.3 }}
+                  transition={{ duration: 0.15 }}
+                  className="rounded-full"
+                  style={{
+                    width: 10,
+                    height: 10,
+                    background: filled ? '#00D4FF' : 'rgba(176, 196, 222, 0.3)',
+                    boxShadow: filled ? '0 0 6px rgba(0, 212, 255, 0.4)' : 'none',
+                  }}
+                />
+              ))}
+            </div>
+            {/* Eye toggle */}
             <button
-              onClick={triggerBiometric}
-              className="w-full h-11 rounded-xl premium-btn-ghost flex items-center justify-center gap-2 text-sm"
+              onClick={() => setShowPin(!showPin)}
+              className="p-1 rounded-full hover:bg-white/5 text-[#B0C4DE]/60 hover:text-cyan-400 transition-colors shrink-0"
+              aria-label={showPin ? 'Hide PIN' : 'Show PIN'}
             >
-              <Fingerprint size={16} /> Use Biometrics
-            </button>
-          )}
-
-          <div className="flex items-center justify-center mt-4">
-            <button
-              onClick={() => setShowResetConfirm(true)}
-              className="text-xs text-[#B0C4DE] hover:text-red-400 flex items-center gap-1"
-            >
-              <Trash2 size={11} /> Forgot your PIN? <span className="text-gold-gradient font-semibold">Reset it</span>
+              {showPin ? <EyeOff size={16} /> : <Eye size={16} />}
             </button>
           </div>
+          {/* Hidden actual input for mobile keyboard */}
+          <input
+            value={pin}
+            onChange={(e) => setPin(e.target.value.replace(/[^0-9]/g, '').slice(0, maxDots))}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') handleUnlock();
+            }}
+            type={showPin ? 'text' : 'password'}
+            inputMode="numeric"
+            className="absolute inset-0 opacity-0 w-full h-full cursor-text"
+            autoFocus
+            aria-label="PIN input"
+          />
         </div>
+
+        {error && (
+          <p className="text-xs text-red-400 flex items-center justify-center gap-1.5 mb-3">
+            <AlertTriangle size={12} /> {error}
+          </p>
+        )}
+
+        {/* ─── Unlock Wallet button — gold→cyan gradient, pill shape ─── */}
+        <button
+          onClick={handleUnlock}
+          disabled={unlocking || pin.length < 6}
+          className="w-full h-12 rounded-full flex items-center justify-center gap-2 text-sm font-bold disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+          style={{
+            background: 'linear-gradient(135deg, #FFD700 0%, #00D4FF 100%)',
+            color: '#020B1A',
+            boxShadow: '0 0 0 1px rgba(255, 215, 0, 0.3), 0 4px 20px rgba(0, 212, 255, 0.3)',
+          }}
+        >
+          {unlocking ? (
+            <>
+              <div className="w-4 h-4 border-2 border-[#020B1A] border-t-transparent rounded-full animate-spin" />
+              Verifying...
+            </>
+          ) : (
+            <>
+              <Unlock size={16} /> Unlock Wallet
+            </>
+          )}
+        </button>
+
+        {/* ─── Import Existing Wallet — ghost cyan border, pill shape ─── */}
+        <button
+          onClick={() => navigate('import-wallet')}
+          className="w-full h-11 mt-2.5 rounded-full flex items-center justify-center gap-2 text-sm font-semibold transition-all"
+          style={{
+            background: 'rgba(0, 212, 255, 0.05)',
+            border: '1px solid rgba(0, 212, 255, 0.3)',
+            color: '#B0C4DE',
+          }}
+        >
+          <Download size={14} /> Import Existing Wallet
+        </button>
+
+        {/* Biometric option */}
+        {biometricEnabled && (
+          <button
+            onClick={triggerBiometric}
+            className="w-full h-11 mt-2.5 rounded-full flex items-center justify-center gap-2 text-sm font-semibold transition-all"
+            style={{
+              background: 'rgba(255, 215, 0, 0.05)',
+              border: '1px solid rgba(255, 215, 0, 0.2)',
+              color: '#FFD700',
+            }}
+          >
+            <Fingerprint size={16} /> Use Biometrics
+          </button>
+        )}
       </motion.div>
 
       {/* Reset confirmation modal */}

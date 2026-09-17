@@ -12,6 +12,7 @@ interface OnboardingLayoutProps {
   children: React.ReactNode;
   modalTitle?: string;
   modalSubtitle?: string;
+  onReset?: () => void;
 }
 
 // Flag chip with label
@@ -51,6 +52,7 @@ export function OnboardingLayout({
   children,
   modalTitle = 'Welcome to your QFS Wallet',
   modalSubtitle,
+  onReset,
 }: OnboardingLayoutProps) {
   return (
     <div className="onboarding-bg min-h-screen flex flex-col relative">
@@ -148,49 +150,77 @@ export function OnboardingLayout({
             <Earth3D size={480} />
           </motion.div>
 
-          {/* QFS Golden token — floating above the modal, as visual protagonist */}
-          <motion.div
-            initial={{ opacity: 0, y: -12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4, duration: 0.6 }}
-            className="relative z-20 mb-2"
-          >
-            <div
-              className="relative"
-              style={{ filter: 'drop-shadow(0 0 20px rgba(255, 215, 0, 0.4))' }}
-            >
-              <QFSLogo size={64} withGlow />
-            </div>
-          </motion.div>
-
-          {/* Premium glass modal — larger, more elegant */}
+          {/* Premium glass modal — matching reference design exactly */}
           <motion.div
             initial={{ opacity: 0, y: 16, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ duration: 0.6, delay: 0.15 }}
-            className="premium-glass rounded-3xl p-7 sm:p-10 w-full max-w-lg relative z-10"
+            className="premium-glass rounded-[24px] p-8 sm:p-10 w-full max-w-md relative z-10"
             style={{
               boxShadow: `
-                0 0 0 1px rgba(6, 182, 212, 0.15) inset,
-                0 8px 40px rgba(0, 0, 0, 0.5),
-                0 0 100px rgba(6, 182, 212, 0.1),
-                0 0 60px rgba(255, 215, 0, 0.05)
+                0 0 0 1px rgba(0, 212, 255, 0.2) inset,
+                0 0 0 2px rgba(0, 212, 255, 0.08),
+                0 12px 48px rgba(0, 0, 0, 0.5),
+                0 0 100px rgba(0, 212, 255, 0.08),
+                0 0 60px rgba(255, 215, 0, 0.04)
               `,
             }}
           >
-            {/* Infinity symbol */}
-            <div className="flex justify-center mb-2">
-              <span className="text-cyan-400/50 text-lg tracking-widest">∞</span>
+            {/* ─── QFS Golden Logo — hexagonal, centered ─── */}
+            <div className="flex justify-center mb-3">
+              <div
+                style={{ filter: 'drop-shadow(0 0 12px rgba(255, 215, 0, 0.5))' }}
+              >
+                <QFSLogo size={56} withGlow />
+              </div>
             </div>
 
-            {/* Title */}
-            <h2 className="text-xl sm:text-2xl font-bold text-white text-center mb-1">{modalTitle}</h2>
-            {modalSubtitle && (
-              <p className="text-xs text-[#B0C4DE] text-center mb-5">{modalSubtitle}</p>
-            )}
-            {!modalSubtitle && <div className="mb-5" />}
+            {/* ─── Title: "QFS Wallet" — white + cyan ─── */}
+            <h2 className="text-2xl font-bold text-center mb-1">
+              <span className="text-white">QFS </span>
+              <span className="text-cyan-400">Wallet</span>
+            </h2>
 
+            {/* ─── Subtitle: "QUANTUM FINANCIAL SYSTEM" — gold with decorative lines ─── */}
+            <div className="flex items-center justify-center gap-2 mb-5">
+              <div className="h-px w-8 bg-gradient-to-r from-transparent to-amber-400/50" />
+              <span className="text-[9px] uppercase tracking-[0.2em] text-amber-400/80 font-medium">
+                Quantum Financial System
+              </span>
+              <div className="h-px w-8 bg-gradient-to-l from-transparent to-amber-400/50" />
+            </div>
+
+            {/* ─── Divider line ─── */}
+            <div className="h-px bg-gradient-to-r from-transparent via-cyan-500/15 to-transparent mb-5" />
+
+            {/* ─── Modal title + subtitle ─── */}
+            {modalTitle !== 'Welcome to your QFS Wallet' && (
+              <p className="text-sm font-semibold text-white text-center mb-1">{modalTitle}</p>
+            )}
+            {modalSubtitle && (
+              <p className="text-xs text-[#B0C4DE]/70 text-center italic mb-1">{modalSubtitle}</p>
+            )}
+            <p className="text-[10px] text-[#B0C4DE]/50 text-center italic mb-5">
+              Your private keys never leave your device.
+            </p>
+
+            {/* ─── Children content (PIN input, buttons, etc.) ─── */}
             {children}
+
+            {/* ─── Bottom divider ─── */}
+            <div className="h-px bg-gradient-to-r from-transparent via-cyan-500/10 to-transparent mt-5 mb-3" />
+
+            {/* ─── Footer: Reset link ─── */}
+            <div className="flex items-center justify-center gap-1.5 text-xs">
+              <span className="text-[#B0C4DE]/50">?</span>
+              <span className="text-[#B0C4DE]/60">Forgot your PIN?</span>
+              <button
+                onClick={onReset}
+                className="text-amber-400 font-semibold hover:text-amber-300 transition-colors"
+              >
+                Reset it
+              </button>
+            </div>
           </motion.div>
         </div>
 
