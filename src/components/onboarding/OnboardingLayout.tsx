@@ -90,18 +90,15 @@ export function OnboardingLayout({
           >
             <h1 className="text-3xl xl:text-4xl font-extrabold text-white leading-tight mb-3">
               Welcome to <br />
-              <span className="text-cyan-gradient">QFS Wallet</span>
+              <span className="text-gold-gradient">QFS Wallet</span>
             </h1>
             <p className="text-sm text-[#B0C4DE] leading-relaxed mb-4">
               Manage, send and receive your digital assets securely,
               quickly and without borders.
             </p>
-            <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-cyan-500/5 border border-cyan-500/15">
-              <span className="text-gold-gradient text-xs font-bold">★</span>
-              <p className="text-sm font-semibold text-cyan-gradient">
-                Your financial world, in a single wallet.
-              </p>
-            </div>
+            <p className="text-lg font-bold text-cyan-gradient mb-1">
+              Your financial world, in a single wallet.
+            </p>
           </motion.div>
 
           {/* Feature list — more prominent */}
@@ -116,24 +113,28 @@ export function OnboardingLayout({
               title="Advanced Security"
               description="Your assets are your first priority."
               delay={0.2}
+              variant="cyan"
             />
             <FeatureCard
               icon={Zap}
               title="Global Transactions"
               description="Fast, secure and borderless."
               delay={0.3}
+              variant="cyan"
             />
             <FeatureCard
               icon={Share2}
               title="Multi-Chain"
               description="Multiple networks, one wallet."
               delay={0.4}
+              variant="cyan"
             />
             <FeatureCard
               icon={BarChart3}
               title="Total Control"
               description="Your funds, always in your control."
               delay={0.5}
+              variant="cyan"
             />
           </motion.div>
         </div>
@@ -246,31 +247,35 @@ export function OnboardingLayout({
             <span className="text-cyan-gradient">in a single wallet.</span>
           </motion.p>
 
-          {/* Feature cards — more prominent */}
+          {/* Feature cards — gold variant for right column */}
           <div className="space-y-2.5 mt-1">
             <FeatureCard
               icon={Wallet}
               title="Multiple Assets"
               description="Cryptocurrencies, tokens and more."
               delay={0.3}
+              variant="gold"
             />
             <FeatureCard
               icon={Send}
               title="Send & Receive"
               description="Fast and secure."
               delay={0.4}
+              variant="gold"
             />
             <FeatureCard
               icon={BarChart3}
               title="Transaction History & Stats"
               description="Full control at all times."
               delay={0.5}
+              variant="gold"
             />
             <FeatureCard
               icon={Lock}
               title="Advanced Security"
               description="Your security is our priority."
               delay={0.6}
+              variant="gold"
             />
           </div>
 
