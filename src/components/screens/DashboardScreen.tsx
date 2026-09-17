@@ -12,6 +12,7 @@ import { PortfolioDonut } from '@/components/dashboard/PortfolioDonut';
 import { MarketsList } from '@/components/dashboard/MarketsList';
 import { RecentTransactions } from '@/components/dashboard/RecentTransactions';
 import { TokenIcon } from '@/components/dashboard/TokenIcon';
+import { PortfolioChart } from '@/components/dashboard/PortfolioChart';
 import { useOnChainBalances } from '@/hooks/use-onchain-balances';
 import { useTokenPrices } from '@/hooks/use-token-prices';
 import { formatUsd as formatUsdValue } from '@/lib/wallet/prices';
@@ -229,6 +230,9 @@ export function DashboardScreen({ onAction }: { onAction: (action: Screen) => vo
           {liveMode && balances.length > 0 && (
             <LiveBalancesPanel balances={balances} loading={loading} onRefresh={refresh} />
           )}
+
+          {/* Portfolio historical chart — only in live mode */}
+          {liveMode && balances.length > 0 && <PortfolioChart balances={balances} />}
 
           <StatsRow
             totalAssets={liveStats.totalAssets}
