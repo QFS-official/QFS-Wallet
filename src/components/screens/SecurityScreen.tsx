@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   Fingerprint, Lock, Eye, EyeOff, ShieldCheck, AlertTriangle,
-  KeyRound, RefreshCw, Download, ChevronRight,
+  KeyRound, RefreshCw, Download, ChevronRight, Lock as LockIcon,
 } from 'lucide-react';
 import { useWalletStore } from '@/store/wallet';
 import { ScreenShell } from './ScreenShell';
@@ -18,11 +18,38 @@ export function SecurityScreen() {
   const toggleHideBalances = useWalletStore((s) => s.toggleHideBalances);
   const addToast = useWalletStore((s) => s.addToast);
   const resetWallet = useWalletStore((s) => s.resetWallet);
+  const lockWallet = useWalletStore((s) => s.lockWallet);
 
   const [showResetConfirm, setShowResetConfirm] = useState(false);
 
   return (
     <ScreenShell title="Seguridad" subtitle="Protege tu wallet y configuración de acceso">
+      {/* Lock now button — prominent action */}
+      <motion.div
+        initial={{ opacity: 0, y: 6 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="glass-card rounded-2xl p-5 mb-5 flex items-center justify-between gap-4"
+      >
+        <div className="flex items-center gap-3">
+          <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-cyan-500/10 border border-cyan-500/30">
+            <LockIcon size={20} className="text-cyan-400" />
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-foreground">Bloqueo manual</p>
+            <p className="text-xs text-muted-foreground">Bloquea la app inmediatamente</p>
+          </div>
+        </div>
+        <button
+          onClick={() => {
+            lockWallet();
+            addToast('Billetera bloqueada', 'info');
+          }}
+          className="px-5 h-10 rounded-xl qfs-btn-primary text-sm font-semibold flex items-center gap-2"
+        >
+          <Lock size={14} /> Bloquear ahora
+        </button>
+      </motion.div>
+
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-5">
         <div className="space-y-5">
           {/* Security score */}

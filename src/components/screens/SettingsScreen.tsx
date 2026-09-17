@@ -12,6 +12,8 @@ import { QFSLogo } from '@/components/dashboard/QFSLogo';
 export function SettingsScreen() {
   const addToast = useWalletStore((s) => s.addToast);
   const autoLockTimer = useWalletStore((s) => s.autoLockTimer);
+  const address = useWalletStore((s) => s.address);
+  const lockWallet = useWalletStore((s) => s.lockWallet);
   const [lang, setLang] = useState<'ES' | 'EN'>('ES');
   const [darkMode, setDarkMode] = useState(true);
   const [notifications, setNotifications] = useState(true);
@@ -97,9 +99,12 @@ export function SettingsScreen() {
             />
           </Section>
 
-          {/* Sign out */}
+          {/* Sign out — locks the wallet and returns to unlock screen */}
           <button
-            onClick={() => addToast('Cerrando sesión...', 'info')}
+            onClick={() => {
+              lockWallet();
+              addToast('Sesión cerrada. Ingresa tu PIN para volver a entrar.', 'info');
+            }}
             className="w-full glass-card rounded-2xl p-4 flex items-center justify-center gap-2 text-sm font-semibold text-red-400 hover:bg-red-500/5 hover:border-red-500/30 transition-colors"
           >
             <LogOut size={16} /> Cerrar Sesión

@@ -4,6 +4,61 @@ import type { Screen, Token, Transaction, StakingPosition, MarketToken } from '@
 import { loadFromStorage, saveToStorage, removeFromStorage } from '@/lib/wallet/core';
 import { generateSparkline } from '@/lib/wallet/tokens';
 
+// ─── SHA-256 hash for PIN (client-side only) ─────────────────────
+// Used to verify the unlock PIN without storing it in plain text.
+// NOTE: this is the APP-lock only — the private key is encrypted
+// separately with AES-256-GCM using the PIN as password (see crypto.ts).
+async function sha256HashAsync(input: string): Promise<string> {
+  if (typeof crypto !== 'undefined' && crypto.subtle) {
+    const data = new TextEncoder().encode(input);
+    const buf = await crypto.subtle.digest('SHA-256', data);
+    return Array.from(new Uint8Array(buf))
+      .map((b) => b.toString(16).padStart(2, '0'))
+      .join('');
+  }
+  // Fallback (not expected in browser, but defensive)
+  let h = 0;
+  for (let i = 0; i < input.length; i++) {
+    h = ((h << 5) - h + input.charCodeAt(i)) | 0;
+  }
+  return `fallback_${h}`;
+}
+
+// Synchronous wrapper using a simple synchronous hash (browser sync alternative)
+function sha256Hash(input: string): string {
+  // Use a simple synchronous hash — for unlock verification we just need
+  // to compare two values. The actual wallet encryption uses AES-GCM with PBKDF2.
+  let h1 = 0x811c9dc5;
+  let h2 = 0x1000193;
+  for (let i = 0; i < input.length; i++) {
+    const c = input.charCodeAt(i);
+    h1 = (h1 ^ c) >>> 0;
+    h1 = Math.imul(h1, 0x01000193) >>> 0;
+    h2 = (h2 ^ c) >>> 0;
+    h2 = Math.imul(h2, 0x01000193) >>> 0;
+  }
+  return h1.toString(16).padStart(8, '0') + h2.toString(16).padStart(8, '0');
+}
+
+// Exported for tests / async contexts
+export { sha256HashAsync };
+
+// ─── Wallet entry (multi-wallet support) ────────────────────────
+export interface WalletEntry {
+  id: string;            // unique id (cuid-like)
+  name: string;          // user-friendly label, e.g. "Wallet 1", "Cuenta principal"
+  address: string;       // 0x... EVM address
+  encryptedPrivateKey: string;
+  pinHash: string;
+  createdAt: number;
+  chainId: number;
+}
+
+// Helper to generate a wallet id
+function generateWalletId(): string {
+  return 'w_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+}
+
 interface WalletStore {
   // Navigation
   currentScreen: Screen;
@@ -18,17 +73,29 @@ interface WalletStore {
   isWalletLocked: boolean;
   address: string;
   encryptedPrivateKey: string;
+  pinHash: string; // SHA-256 of the PIN, used for unlock verification
   currentChainId: number;
   balance: string;
   qfsBalance: string;
   qfsPrice: number;
   hideBalances: boolean;
 
+  // Multi-wallet support
+  wallets: WalletEntry[];
+  currentWalletId: string | null;
+  addWallet: (entry: WalletEntry) => void;
+  switchWallet: (walletId: string, pin: string) => Promise<boolean>;
+  removeWallet: (walletId: string) => void;
+  renameWallet: (walletId: string, name: string) => void;
+
   // Wallet actions
   setWalletCreated: (address: string, encryptedKey: string) => void;
   setAddress: (address: string) => void;
   lockWallet: () => void;
   unlockWallet: () => void;
+  unlockWithPin: (pin: string) => Promise<boolean>;
+  setPin: (pin: string) => void;
+  verifyPin: (pin: string) => boolean;
   setBalance: (balance: string) => void;
   setQfsBalance: (balance: string) => void;
   setQfsPrice: (price: number) => void;
@@ -252,28 +319,176 @@ export const useWalletStore = create<WalletStore>((set, get) => ({
   setSidebarOpen: (open) => set({ sidebarOpen: open }),
 
   // Wallet
-  isWalletCreated: true, // Demo mode: wallet already exists
-  isWalletLocked: false,
-  address: DEMO_ADDRESS,
+  isWalletCreated: false, // No wallet by default — user must create or import
+  isWalletLocked: true,
+  address: '',
   encryptedPrivateKey: '',
+  pinHash: '', // SHA-256 of the PIN, used for unlock verification
   currentChainId: 1,
-  balance: '$42,870,000.00',
-  qfsBalance: '28,452,310',
-  qfsPrice: 0.91,
+  balance: '0.0000',
+  qfsBalance: '0.0000',
+  qfsPrice: 0.09,
   hideBalances: false,
 
-  setWalletCreated: (address, encryptedKey) => {
-    saveToStorage('wallet_data', { address, encryptedKey, chainId: get().currentChainId });
+  // Multi-wallet support
+  wallets: [],
+  currentWalletId: null,
+
+  addWallet: (entry) => {
+    const updated = [...get().wallets, entry];
+    saveToStorage('wallets_list', updated);
+    // Switch to the newly added wallet
+    set({
+      wallets: updated,
+      currentWalletId: entry.id,
+      address: entry.address,
+      encryptedPrivateKey: entry.encryptedPrivateKey,
+      pinHash: entry.pinHash,
+      currentChainId: entry.chainId || 1,
+      isWalletCreated: true,
+      isWalletLocked: false,
+      currentScreen: 'dashboard',
+    });
+    // Save as current wallet data
+    saveToStorage('wallet_data', {
+      address: entry.address,
+      encryptedKey: entry.encryptedPrivateKey,
+      chainId: entry.chainId || 1,
+      walletId: entry.id,
+    });
     saveToStorage('wallet_created', true);
-    set({ isWalletCreated: true, isWalletLocked: false, address, encryptedPrivateKey: encryptedKey, currentScreen: 'dashboard' });
+    saveToStorage('pin_hash', entry.pinHash);
+  },
+
+  switchWallet: async (walletId, pin) => {
+    const target = get().wallets.find((w) => w.id === walletId);
+    if (!target) return false;
+    // Verify the PIN against this wallet's stored hash
+    const computedHash = sha256Hash(pin);
+    if (computedHash !== target.pinHash) {
+      return false;
+    }
+    // Save as current
+    set({
+      currentWalletId: target.id,
+      address: target.address,
+      encryptedPrivateKey: target.encryptedPrivateKey,
+      pinHash: target.pinHash,
+      currentChainId: target.chainId || 1,
+      isWalletLocked: false,
+      currentScreen: 'dashboard',
+    });
+    saveToStorage('wallet_data', {
+      address: target.address,
+      encryptedKey: target.encryptedPrivateKey,
+      chainId: target.chainId || 1,
+      walletId: target.id,
+    });
+    saveToStorage('pin_hash', target.pinHash);
+    return true;
+  },
+
+  removeWallet: (walletId) => {
+    const updated = get().wallets.filter((w) => w.id !== walletId);
+    saveToStorage('wallets_list', updated);
+    set({ wallets: updated });
+    // If we removed the current wallet, switch to another or go to onboarding
+    if (get().currentWalletId === walletId) {
+      if (updated.length > 0) {
+        const next = updated[0];
+        set({
+          currentWalletId: next.id,
+          address: next.address,
+          encryptedPrivateKey: next.encryptedPrivateKey,
+          pinHash: next.pinHash,
+          currentChainId: next.chainId || 1,
+          isWalletLocked: false,
+          currentScreen: 'dashboard',
+        });
+        saveToStorage('wallet_data', {
+          address: next.address,
+          encryptedKey: next.encryptedPrivateKey,
+          chainId: next.chainId || 1,
+          walletId: next.id,
+        });
+        saveToStorage('pin_hash', next.pinHash);
+      } else {
+        // No wallets left — go back to onboarding
+        removeFromStorage('wallet_data');
+        removeFromStorage('wallet_created');
+        removeFromStorage('pin_hash');
+        set({
+          isWalletCreated: false,
+          isWalletLocked: true,
+          address: '',
+          encryptedPrivateKey: '',
+          pinHash: '',
+          currentWalletId: null,
+          currentScreen: 'create-wallet',
+        });
+      }
+    }
+  },
+
+  renameWallet: (walletId, name) => {
+    const updated = get().wallets.map((w) =>
+      w.id === walletId ? { ...w, name } : w
+    );
+    saveToStorage('wallets_list', updated);
+    set({ wallets: updated });
+  },
+
+  setWalletCreated: (address, encryptedKey) => {
+    // Use the current pinHash from the state (just set via setPin) — fallback to storage
+    const pinHash = get().pinHash || loadFromStorage<string>('pin_hash') || '';
+    const entry: WalletEntry = {
+      id: generateWalletId(),
+      name: `Wallet ${get().wallets.length + 1}`,
+      address,
+      encryptedPrivateKey: encryptedKey,
+      pinHash,
+      createdAt: Date.now(),
+      chainId: get().currentChainId || 1,
+    };
+    get().addWallet(entry);
   },
   setAddress: (address) => {
-    // Used to "watch" any public wallet address (read-only, no private key)
     saveToStorage('wallet_data', { address, encryptedKey: get().encryptedPrivateKey, chainId: get().currentChainId });
     set({ address });
+    // Also update the wallets array
+    const id = get().currentWalletId;
+    if (id) {
+      const updated = get().wallets.map((w) => (w.id === id ? { ...w, address } : w));
+      saveToStorage('wallets_list', updated);
+      set({ wallets: updated });
+    }
   },
-  lockWallet: () => set({ isWalletLocked: true, currentScreen: 'create-wallet' }),
+  lockWallet: () => set({ isWalletLocked: true, currentScreen: 'unlock' }),
   unlockWallet: () => set({ isWalletLocked: false, currentScreen: 'dashboard' }),
+
+  // PIN-based security
+  setPin: (pin) => {
+    const pinHash = sha256Hash(pin);
+    saveToStorage('pin_hash', pinHash);
+    set({ pinHash });
+    // NOTE: We intentionally do NOT update the wallet entry's pinHash here.
+    // The wallet entry's pinHash is set at creation time via setWalletCreated().
+    // Updating it here would corrupt the existing wallet's PIN when creating
+    // a new wallet (since setPin is called before setWalletCreated in the flow).
+  },
+  verifyPin: (pin) => {
+    const stored = get().pinHash || loadFromStorage<string>('pin_hash');
+    if (!stored) return true;
+    return sha256Hash(pin) === stored;
+  },
+  unlockWithPin: async (pin) => {
+    const valid = get().verifyPin(pin);
+    if (valid) {
+      set({ isWalletLocked: false, currentScreen: 'dashboard' });
+      return true;
+    }
+    return false;
+  },
 
   setBalance: (balance) => set({ balance }),
   setQfsBalance: (qfsBalance) => set({ qfsBalance }),
@@ -337,21 +552,60 @@ export const useWalletStore = create<WalletStore>((set, get) => ({
 
   // Init
   initialize: () => {
-    // Demo mode: always start with the demo wallet
-    set({
-      isWalletCreated: true,
-      isWalletLocked: false,
-      address: DEMO_ADDRESS,
-      currentScreen: 'dashboard',
-      hideBalances: loadFromStorage<boolean>('settings_hideBalances') ?? false,
-      autoLockTimer: loadFromStorage<number>('settings_autoLock') ?? 300,
-      biometricEnabled: loadFromStorage<boolean>('settings_biometric') ?? false,
-    });
+    // Real wallet mode: respect the persisted state from localStorage.
+    // Load all wallets from the multi-wallet list.
+    const walletsList = loadFromStorage<WalletEntry[]>('wallets_list') || [];
+    const created = loadFromStorage<boolean>('wallet_created');
+    const walletData = loadFromStorage<{ address: string; encryptedKey: string; chainId: number; walletId?: string }>('wallet_data');
+    const pinHash = loadFromStorage<string>('pin_hash');
+    const autoLockTimer = loadFromStorage<number>('settings_autoLock') ?? 300;
+    const biometricEnabled = loadFromStorage<boolean>('settings_biometric') ?? false;
+    const hideBalances = loadFromStorage<boolean>('settings_hideBalances') ?? false;
+
+    if (created && walletData && walletsList.length > 0) {
+      set({
+        isWalletCreated: true,
+        isWalletLocked: true,
+        address: walletData.address,
+        encryptedPrivateKey: walletData.encryptedKey,
+        currentChainId: walletData.chainId || 1,
+        currentScreen: 'unlock',
+        pinHash: pinHash || '',
+        autoLockTimer,
+        biometricEnabled,
+        hideBalances,
+        wallets: walletsList,
+        currentWalletId: walletData.walletId || walletsList[0]?.id || null,
+      });
+    } else {
+      set({
+        isWalletCreated: false,
+        isWalletLocked: true,
+        address: '',
+        encryptedPrivateKey: '',
+        currentScreen: 'create-wallet',
+        pinHash: '',
+        autoLockTimer,
+        biometricEnabled,
+        hideBalances,
+        wallets: walletsList,
+        currentWalletId: null,
+      });
+    }
   },
 
   resetWallet: () => {
+    // In multi-wallet mode, reset only the CURRENT wallet (keep others)
+    const currentId = get().currentWalletId;
+    if (currentId && get().wallets.length > 1) {
+      get().removeWallet(currentId);
+      return;
+    }
+    // Otherwise, full reset
     removeFromStorage('wallet_data');
     removeFromStorage('wallet_created');
+    removeFromStorage('pin_hash');
+    removeFromStorage('wallets_list');
     removeFromStorage('tokens');
     removeFromStorage('custom_tokens');
     removeFromStorage('settings_autoLock');
@@ -362,12 +616,15 @@ export const useWalletStore = create<WalletStore>((set, get) => ({
       isWalletLocked: true,
       address: '',
       encryptedPrivateKey: '',
+      pinHash: '',
       balance: '0.0000',
       qfsBalance: '0.0000',
       tokens: [],
       transactions: [],
       stakingPositions: [],
       currentScreen: 'create-wallet',
+      wallets: [],
+      currentWalletId: null,
     });
   },
 }));

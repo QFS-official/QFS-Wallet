@@ -16,12 +16,18 @@ import { DAppsScreen } from '@/components/screens/DAppsScreen';
 import { MarketsScreen } from '@/components/screens/MarketsScreen';
 import { SecurityScreen } from '@/components/screens/SecurityScreen';
 import { SettingsScreen } from '@/components/screens/SettingsScreen';
+import { CreateWalletScreen } from '@/components/screens/CreateWalletScreen';
+import { ImportWalletScreen } from '@/components/screens/ImportWalletScreen';
+import { UnlockScreen } from '@/components/screens/UnlockScreen';
+import { WalletsScreen } from '@/components/screens/WalletsScreen';
 import type { Screen } from '@/types/wallet';
 
 export default function QFSWalletPage() {
   const initialize = useWalletStore((s) => s.initialize);
   const currentScreen = useWalletStore((s) => s.currentScreen);
   const navigate = useWalletStore((s) => s.navigate);
+  const isWalletCreated = useWalletStore((s) => s.isWalletCreated);
+  const isWalletLocked = useWalletStore((s) => s.isWalletLocked);
 
   useEffect(() => {
     initialize();
@@ -33,6 +39,8 @@ export default function QFSWalletPage() {
         return <DashboardScreen onAction={(a) => navigate(a)} />;
       case 'wallet':
         return <WalletScreen />;
+      case 'wallets':
+        return <WalletsScreen />;
       case 'send':
         return <SendScreen />;
       case 'receive':
@@ -49,10 +57,31 @@ export default function QFSWalletPage() {
         return <SecurityScreen />;
       case 'settings':
         return <SettingsScreen />;
+      case 'create-wallet':
+        return <CreateWalletScreen />;
+      case 'import-wallet':
+        return <ImportWalletScreen />;
+      case 'unlock':
+        return <UnlockScreen />;
       default:
         return <DashboardScreen onAction={(a) => navigate(a)} />;
     }
   };
+
+  // Onboarding + unlock screens are full-screen (no sidebar, no header)
+  const isOnboarding =
+    !isWalletCreated ||
+    isWalletLocked ||
+    ['create-wallet', 'import-wallet', 'unlock', 'seed-verify'].includes(currentScreen);
+
+  if (isOnboarding) {
+    return (
+      <div className="min-h-screen bg-background text-foreground">
+        <AnimatePresence mode="wait">{renderScreen()}</AnimatePresence>
+        <ToastContainer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex bg-background text-foreground">
@@ -69,7 +98,7 @@ export default function QFSWalletPage() {
 
         <footer className="mt-auto px-4 lg:px-6 py-4 border-t border-white/[0.04] text-center">
           <p className="text-[11px] text-muted-foreground/70">
-            © 2026 QFS Official · Quantum Financial System · Datos demostrativos — conexión on-chain próximamente
+            © 2026 QFS Official · Quantum Financial System · Tu mundo cripto, en tus manos
           </p>
         </footer>
       </div>

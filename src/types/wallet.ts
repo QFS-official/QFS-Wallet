@@ -108,6 +108,7 @@ export interface MarketToken {
 export type Screen =
   | 'dashboard'
   | 'wallet'
+  | 'wallets'
   | 'send'
   | 'receive'
   | 'swap'
@@ -119,6 +120,7 @@ export type Screen =
   | 'nfts'
   | 'create-wallet'
   | 'import-wallet'
+  | 'unlock'
   | 'seed-verify'
   | 'transaction-confirm'
   | 'staking-calculator'

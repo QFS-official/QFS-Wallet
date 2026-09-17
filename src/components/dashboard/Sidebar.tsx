@@ -17,6 +17,8 @@ import {
   Menu,
   X,
   Sparkles,
+  LogOut,
+  Plus,
 } from 'lucide-react';
 
 interface NavItem {
@@ -28,6 +30,7 @@ interface NavItem {
 const NAV_ITEMS: NavItem[] = [
   { label: 'Inicio', icon: LayoutDashboard, screen: 'dashboard' },
   { label: 'Billetera', icon: WalletIcon, screen: 'wallet' },
+  { label: 'Mis Wallets', icon: Plus, screen: 'wallets' },
   { label: 'Enviar', icon: Send, screen: 'send' },
   { label: 'Recibir', icon: Download, screen: 'receive' },
   { label: 'Swap', icon: ArrowLeftRight, screen: 'swap' },
@@ -43,6 +46,14 @@ export function Sidebar() {
   const navigate = useWalletStore((s) => s.navigate);
   const sidebarOpen = useWalletStore((s) => s.sidebarOpen);
   const setSidebarOpen = useWalletStore((s) => s.setSidebarOpen);
+  const lockWallet = useWalletStore((s) => s.lockWallet);
+  const addToast = useWalletStore((s) => s.addToast);
+
+  const handleSignOut = () => {
+    lockWallet();
+    addToast('Sesión cerrada', 'info');
+    setSidebarOpen(false);
+  };
 
   return (
     <>
@@ -141,6 +152,15 @@ export function Sidebar() {
             }}
           />
         </div>
+
+        {/* Sign out button */}
+        <button
+          onClick={handleSignOut}
+          className="mt-4 w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:text-red-400 hover:bg-red-500/5 transition-colors"
+        >
+          <LogOut size={16} />
+          Cerrar Sesión
+        </button>
 
         {/* Tagline footer */}
         <div className="px-2 mt-auto">

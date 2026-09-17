@@ -13,6 +13,8 @@ import { MarketsList } from '@/components/dashboard/MarketsList';
 import { RecentTransactions } from '@/components/dashboard/RecentTransactions';
 import { TokenIcon } from '@/components/dashboard/TokenIcon';
 import { useOnChainBalances } from '@/hooks/use-onchain-balances';
+import { useTokenPrices } from '@/hooks/use-token-prices';
+import { formatUsd as formatUsdValue } from '@/lib/wallet/prices';
 import { getChainById } from '@/lib/wallet/chains';
 import { type OnChainBalance } from '@/lib/wallet/onchain';
 import type { Screen, Token } from '@/types/wallet';
@@ -264,6 +266,12 @@ function LiveBalancesPanel({
   const nonZero = balances.filter((b) => b.balanceRaw > 0);
   const chains = new Set(balances.map((b) => b.chainId));
 
+  // Fetch prices from CoinGecko
+  const { getPriceFor, getUsdValueFor, lastUpdated: pricesUpdated, loading: pricesLoading } = useTokenPrices(balances);
+
+  // Total USD value across all balances
+  const totalUsd = balances.reduce((sum, b) => sum + getUsdValueFor(b), 0);
+
   return (
     <motion.div
       initial={{ opacity: 0, height: 0 }}
@@ -276,6 +284,14 @@ function LiveBalancesPanel({
           Saldos On-Chain ({chains.size} redes)
         </h3>
         <div className="flex items-center gap-2">
+          {totalUsd > 0 && (
+            <span className="text-sm font-bold text-cyan-400 tabular-nums">
+              {formatUsdValue(totalUsd)}
+            </span>
+          )}
+          {(pricesLoading || loading) && (
+            <div className="w-2.5 h-2.5 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin" />
+          )}
           <span className="text-[10px] text-muted-foreground">
             {nonZero.length} con saldo · {balances.length} totales
           </span>
@@ -297,6 +313,8 @@ function LiveBalancesPanel({
           {balances.map((b) => {
             const chain = getChainById(b.chainId);
             const positive = b.balanceRaw > 0;
+            const price = getPriceFor(b);
+            const usdValue = getUsdValueFor(b);
             return (
               <div
                 key={`${b.symbol}-${b.chainId}`}
@@ -327,9 +345,23 @@ function LiveBalancesPanel({
                   ) : b.status === 'unsupported' ? (
                     <span className="text-[10px] text-amber-400">N/A</span>
                   ) : (
-                    <p className={`text-xs font-semibold tabular-nums ${positive ? 'text-foreground' : 'text-muted-foreground/60'}`}>
-                      {Number(b.balance).toLocaleString('en-US', { maximumFractionDigits: 4 })}
-                    </p>
+                    <>
+                      <p className={`text-xs font-semibold tabular-nums ${positive ? 'text-foreground' : 'text-muted-foreground/60'}`}>
+                        {Number(b.balance).toLocaleString('en-US', { maximumFractionDigits: 4 })}
+                      </p>
+                      {price ? (
+                        <p className="text-[10px] text-emerald-400/80 tabular-nums">
+                          {formatUsdValue(usdValue)}
+                          {price.change24h !== 0 && (
+                            <span className={price.change24h >= 0 ? 'text-emerald-400/60 ml-1' : 'text-red-400/60 ml-1'}>
+                              {price.change24h >= 0 ? '+' : ''}{price.change24h.toFixed(1)}%
+                            </span>
+                          )}
+                        </p>
+                      ) : positive ? (
+                        <p className="text-[10px] text-muted-foreground/40">Sin precio</p>
+                      ) : null}
+                    </>
                   )}
                 </div>
               </div>
@@ -341,6 +373,11 @@ function LiveBalancesPanel({
       {!loading && nonZero.length === 0 && balances.length > 0 && (
         <p className="text-xs text-muted-foreground text-center mt-3">
           Esta wallet no tiene saldos en las 3 redes soportadas. Recibe tokens para verlos aquí.
+        </p>
+      )}
+      {pricesUpdated && (
+        <p className="text-[10px] text-muted-foreground/50 text-right mt-2">
+          Precios: CoinGecko · actualizado {new Date(pricesUpdated).toLocaleTimeString('es-ES')}
         </p>
       )}
     </motion.div>

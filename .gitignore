@@ -69,3 +69,6 @@ worklog.md
 
 # Local DB
 /db/custom.db
+
+# Vercel local (linked project metadata — don't share)
+.vercel
