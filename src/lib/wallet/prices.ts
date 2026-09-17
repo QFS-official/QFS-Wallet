@@ -1,17 +1,13 @@
-// QFS Wallet — CoinGecko price feed
+// QFS Wallet — CoinGecko price feed (via local API proxy to avoid CORS)
 // Fetches USD prices + 24h change for native tokens and ERC-20 tokens
-// Uses the free public API (no auth required, ~50 calls/min rate limit)
+// Uses the app's /api/prices endpoint which proxies to CoinGecko server-side
 
-import { getChainById } from './chains';
-
-// CoinGecko platform IDs by chain
 const PLATFORM_BY_CHAIN: Record<number, string> = {
   1: 'ethereum',
   56: 'binance-smart-chain',
   137: 'polygon-pos',
 };
 
-// CoinGecko coin IDs for native + popular tokens
 const COIN_ID_BY_SYMBOL: Record<string, string> = {
   ETH: 'ethereum',
   BNB: 'binancecoin',
@@ -30,23 +26,18 @@ export interface TokenPrice {
 }
 
 export interface PriceResult {
-  prices: Record<string, TokenPrice>; // keyed by symbol or contract address
+  prices: Record<string, TokenPrice>;
   fetchedAt: number;
   errors: string[];
 }
 
-const COINGECKO_BASE = 'https://api.coingecko.com/api/v3';
 const FETCH_TIMEOUT_MS = 10000;
 
-// ─── Fetch native + popular token prices ────────────────────────
-// symbols: ['ETH', 'BNB', 'POL', 'USDT', 'USDC', 'BTC']
+// ─── Fetch native + popular token prices via local API proxy ────
 async function fetchNativeAndPopularPrices(symbols: string[]): Promise<Record<string, TokenPrice>> {
-  const ids = symbols
-    .map((s) => COIN_ID_BY_SYMBOL[s])
-    .filter(Boolean);
-  if (ids.length === 0) return {};
+  if (symbols.length === 0) return {};
 
-  const url = `${COINGECKO_BASE}/simple/price?ids=${ids.join(',')}&vs_currencies=usd&include_24hr_change=true`;
+  const url = `/api/prices?symbols=${symbols.join(',')}`;
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
 
@@ -58,12 +49,12 @@ async function fetchNativeAndPopularPrices(symbols: string[]): Promise<Record<st
 
     const out: Record<string, TokenPrice> = {};
     for (const s of symbols) {
-      const id = COIN_ID_BY_SYMBOL[s];
-      if (id && data[id]) {
+      const entry = data.prices?.[s];
+      if (entry) {
         out[s] = {
           symbol: s,
-          usd: data[id].usd ?? 0,
-          change24h: data[id].usd_24h_change ?? 0,
+          usd: entry.usd ?? 0,
+          change24h: entry.change24h ?? 0,
           source: 'coingecko',
         };
       }
@@ -75,8 +66,7 @@ async function fetchNativeAndPopularPrices(symbols: string[]): Promise<Record<st
   }
 }
 
-// ─── Fetch ERC-20 token prices by contract address ──────────────
-// Fetches prices for tokens on a specific chain (ETH/BSC/Polygon)
+// ─── Fetch ERC-20 token prices by contract address (direct CoinGecko) ─
 async function fetchERC20Prices(
   chainId: number,
   contractAddresses: string[]
@@ -86,7 +76,7 @@ async function fetchERC20Prices(
   if (!platform) return {};
 
   const addresses = contractAddresses.join(',');
-  const url = `${COINGECKO_BASE}/simple/token_price/${platform}?contract_addresses=${addresses}&vs_currencies=usd&include_24hr_change=true`;
+  const url = `https://api.coingecko.com/api/v3/simple/token_price/${platform}?contract_addresses=${addresses}&vs_currencies=usd&include_24hr_change=true`;
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
 
@@ -102,7 +92,7 @@ async function fetchERC20Prices(
       const entry = data[lower];
       if (entry && entry.usd) {
         out[addr] = {
-          symbol: '', // caller fills this in
+          symbol: '',
           usd: entry.usd,
           change24h: entry.usd_24h_change ?? 0,
           source: 'coingecko',
@@ -117,15 +107,12 @@ async function fetchERC20Prices(
 }
 
 // ─── Main entry: fetch all prices for the displayed balances ─────
-// Balances is an array of OnChainBalance objects
-// Returns a map keyed by symbol (for native/popular) and by contract address (for ERC-20)
 export async function fetchAllPrices(
   balances: Array<{ symbol: string; chainId: number; contractAddress: string; isNative: boolean }>
 ): Promise<PriceResult> {
   const prices: Record<string, TokenPrice> = {};
   const errors: string[] = [];
 
-  // 1. Collect unique native + popular symbols
   const nativeSymbols = new Set<string>();
   for (const b of balances) {
     if (b.isNative) nativeSymbols.add(b.symbol);
@@ -136,10 +123,12 @@ export async function fetchAllPrices(
     Object.assign(prices, nativePrices);
   }
 
-  // 2. Collect ERC-20 contract addresses grouped by chain
+  // Skip QFS/GCRM/AlA/TRAEX — not on CoinGecko
+  const CUSTOM_TOKENS = ['QFS', 'GCRM', 'AlA', 'TRAEX'];
   const erc20ByChain: Record<number, string[]> = {};
   for (const b of balances) {
     if (!b.isNative && b.contractAddress && b.contractAddress !== '0x0' && !COIN_ID_BY_SYMBOL[b.symbol]) {
+      if (CUSTOM_TOKENS.includes(b.symbol)) continue;
       if (!erc20ByChain[b.chainId]) erc20ByChain[b.chainId] = [];
       const addr = b.contractAddress.toLowerCase();
       if (!erc20ByChain[b.chainId].includes(addr)) {
@@ -148,7 +137,6 @@ export async function fetchAllPrices(
     }
   }
 
-  // Fetch ERC-20 prices per chain in parallel
   for (const [chainIdStr, addresses] of Object.entries(erc20ByChain)) {
     const chainId = parseInt(chainIdStr);
     const erc20Prices = await fetchERC20Prices(chainId, addresses);
@@ -162,16 +150,12 @@ export async function fetchAllPrices(
   };
 }
 
-// ─── Helper: get price key for a balance ────────────────────────
-// Native tokens are keyed by symbol (ETH, BNB, POL, USDT, USDC)
-// ERC-20 tokens are keyed by contract address (lowercased)
 export function getPriceKey(balance: { symbol: string; contractAddress: string; isNative: boolean }): string {
   if (balance.isNative) return balance.symbol;
   if (COIN_ID_BY_SYMBOL[balance.symbol]) return balance.symbol;
   return balance.contractAddress.toLowerCase();
 }
 
-// ─── Helper: format USD value ──────────────────────────────────
 export function formatUsd(value: number): string {
   if (value >= 1_000_000_000) return `$${(value / 1_000_000_000).toFixed(2)}B`;
   if (value >= 1_000_000) return `$${(value / 1_000_000).toFixed(2)}M`;

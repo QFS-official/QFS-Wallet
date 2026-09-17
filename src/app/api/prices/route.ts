@@ -1,26 +1,91 @@
-// GCRM Wallet - API Route for Token Prices
 import { NextResponse } from 'next/server';
 
-export async function GET() {
+export const dynamic = 'force-dynamic';
+export const revalidate = 60; // cache 60s at the edge
+
+const COINGECKO_BASE = 'https://api.coingecko.com/api/v3';
+const FETCH_TIMEOUT_MS = 10000;
+
+async function fetchWithTimeout(url: string): Promise<Response> {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
   try {
-    // In production, this would fetch from CoinGecko, CoinMarketCap, or a similar API
-    // For now, return simulated data clearly marked
-    const prices = {
-      GCRM: { usd: 0.09, usd_24h_change: 3.45, usd_market_cap: 9000000 },
-      ETH: { usd: 3245.67, usd_24h_change: -1.23, usd_market_cap: 390000000000 },
-      BNB: { usd: 612.34, usd_24h_change: 0.87, usd_market_cap: 94000000000 },
-      MATIC: { usd: 0.72, usd_24h_change: 5.12, usd_market_cap: 7200000000 },
-      USDT: { usd: 1.00, usd_24h_change: 0.01, usd_market_cap: 110000000000 },
-      USDC: { usd: 1.00, usd_24h_change: -0.005, usd_market_cap: 33000000000 },
+    const res = await fetch(url, { signal: controller.signal });
+    clearTimeout(timeout);
+    return res;
+  } catch (err) {
+    clearTimeout(timeout);
+    throw err;
+  }
+}
+
+// GET /api/prices?symbols=ETH,BNB,POL,USDT,USDC
+// Returns USD prices + 24h change for the requested symbols
+export async function GET(request: Request) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const symbolsParam = searchParams.get('symbols') || '';
+    const symbols = symbolsParam.split(',').map(s => s.trim().toUpperCase()).filter(Boolean);
+
+    if (symbols.length === 0) {
+      return NextResponse.json({ error: 'No symbols provided' }, { status: 400 });
+    }
+
+    // Map symbols to CoinGecko coin IDs
+    const COIN_ID_BY_SYMBOL: Record<string, string> = {
+      ETH: 'ethereum',
+      BNB: 'binancecoin',
+      POL: 'matic-network',
+      MATIC: 'matic-network',
+      USDT: 'tether',
+      USDC: 'usd-coin',
+      BTC: 'bitcoin',
     };
 
+    const ids: string[] = [];
+    const symbolToId: Record<string, string> = {};
+    for (const s of symbols) {
+      const id = COIN_ID_BY_SYMBOL[s];
+      if (id) {
+        ids.push(id);
+        symbolToId[s] = id;
+      }
+    }
+
+    if (ids.length === 0) {
+      return NextResponse.json({ prices: {} });
+    }
+
+    const url = `${COINGECKO_BASE}/simple/price?ids=${ids.join(',')}&vs_currencies=usd&include_24hr_change=true`;
+    const res = await fetchWithTimeout(url);
+    if (!res.ok) {
+      return NextResponse.json(
+        { error: `CoinGecko HTTP ${res.status}` },
+        { status: 502 }
+      );
+    }
+    const data = await res.json();
+
+    // Build response keyed by symbol
+    const prices: Record<string, { usd: number; change24h: number }> = {};
+    for (const [symbol, id] of Object.entries(symbolToId)) {
+      if (data[id]) {
+        prices[symbol] = {
+          usd: data[id].usd ?? 0,
+          change24h: data[id].usd_24h_change ?? 0,
+        };
+      }
+    }
+
     return NextResponse.json({
-      source: 'simulated',
-      disclaimer: 'SIMULATED DATA: In production, connect to CoinGecko/CMC API',
-      timestamp: Date.now(),
-      data: prices,
+      prices,
+      source: 'coingecko',
+      fetchedAt: Date.now(),
     });
-  } catch (error) {
-    return NextResponse.json({ error: 'Failed to fetch prices' }, { status: 500 });
+  } catch (err: any) {
+    return NextResponse.json(
+      { error: err?.message || 'Failed to fetch prices' },
+      { status: 500 }
+    );
   }
 }
