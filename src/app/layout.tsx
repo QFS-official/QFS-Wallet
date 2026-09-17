@@ -16,9 +16,9 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "QFS Wallet | Tu mundo cripto, en tus manos",
+  title: "QFS Wallet | Your financial world, in a single wallet",
   description:
-    "QFS Wallet — Billetera no-custodial, multi-cadena, con staking, swaps y acceso al Quantum Financial System. Seguro · Rápido · Global.",
+    "QFS Wallet — Non-custodial, multi-chain crypto wallet. Manage, send and receive your digital assets securely, quickly and without borders. Part of the Quantum Financial System.",
   keywords: [
     "QFS",
     "Wallet",
@@ -45,7 +45,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="es" suppressHydrationWarning className="dark">
+    <html lang="en" suppressHydrationWarning className="dark">
       <head>
         <script dangerouslySetInnerHTML={{ __html: `
           (function(){

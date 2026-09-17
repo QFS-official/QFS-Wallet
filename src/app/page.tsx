@@ -16,9 +16,9 @@ import { DAppsScreen } from '@/components/screens/DAppsScreen';
 import { MarketsScreen } from '@/components/screens/MarketsScreen';
 import { SecurityScreen } from '@/components/screens/SecurityScreen';
 import { SettingsScreen } from '@/components/screens/SettingsScreen';
-import { CreateWalletScreen } from '@/components/screens/CreateWalletScreen';
-import { ImportWalletScreen } from '@/components/screens/ImportWalletScreen';
-import { UnlockScreen } from '@/components/screens/UnlockScreen';
+import { CreateWalletScreen } from '@/components/onboarding/CreateWalletScreen';
+import { ImportWalletScreen } from '@/components/onboarding/ImportWalletScreen';
+import { UnlockScreen } from '@/components/onboarding/UnlockScreen';
 import { WalletsScreen } from '@/components/screens/WalletsScreen';
 import type { Screen } from '@/types/wallet';
 
