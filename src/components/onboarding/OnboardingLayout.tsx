@@ -139,18 +139,8 @@ export function OnboardingLayout({
           </motion.div>
         </div>
 
-        {/* ─── Center column: Earth + QFS token + modal ──── */}
+        {/* ─── Center column: modal (no Earth background) ─── */}
         <div className="flex flex-col items-center justify-center relative">
-          {/* 3D Earth — large, behind the modal */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.88 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1, delay: 0.1 }}
-            className="absolute inset-0 flex items-center justify-center pointer-events-none"
-          >
-            <Earth3D size={480} />
-          </motion.div>
-
           {/* Premium glass modal — matching reference design exactly */}
           <motion.div
             initial={{ opacity: 0, y: 16, scale: 0.96 }}
