@@ -82,7 +82,7 @@ export function OnboardingLayout({
       {/* ─── Main 3-column content ──────────────────────── */}
       <main className="relative z-10 flex-1 grid grid-cols-1 lg:grid-cols-[1fr_1.3fr_1fr] gap-4 lg:gap-6 px-4 lg:px-10 py-6 items-center min-h-[600px]">
         {/* ─── Left column: headline + features ──────────── */}
-        <div className="hidden lg:flex flex-col gap-5 max-w-md">
+        <div className="flex flex-col gap-5 max-w-md lg:max-w-md">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
@@ -216,7 +216,7 @@ export function OnboardingLayout({
         </div>
 
         {/* ─── Right column: feature cards + skyline ─────── */}
-        <div className="hidden lg:flex flex-col gap-4 max-w-md">
+        <div className="flex flex-col gap-4 max-w-md">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
