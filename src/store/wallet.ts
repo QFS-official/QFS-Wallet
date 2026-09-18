@@ -577,6 +577,32 @@ export const useWalletStore = create<WalletStore>((set, get) => ({
         wallets: walletsList,
         currentWalletId: walletData.walletId || walletsList[0]?.id || null,
       });
+    } else if (created && walletData && walletsList.length === 0) {
+      // MIGRATION: old wallet format (pre-multi-wallet) — migrate to new format
+      const migratedEntry: WalletEntry = {
+        id: generateWalletId(),
+        name: 'Wallet 1',
+        address: walletData.address,
+        encryptedPrivateKey: walletData.encryptedKey,
+        pinHash: pinHash || '',
+        createdAt: Date.now(),
+        chainId: walletData.chainId || 1,
+      };
+      saveToStorage('wallets_list', [migratedEntry]);
+      set({
+        isWalletCreated: true,
+        isWalletLocked: true,
+        address: walletData.address,
+        encryptedPrivateKey: walletData.encryptedKey,
+        currentChainId: walletData.chainId || 1,
+        currentScreen: 'unlock',
+        pinHash: pinHash || '',
+        autoLockTimer,
+        biometricEnabled,
+        hideBalances,
+        wallets: [migratedEntry],
+        currentWalletId: migratedEntry.id,
+      });
     } else {
       set({
         isWalletCreated: false,
